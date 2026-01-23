@@ -1,65 +1,195 @@
 // 收藏页
 
 import 'package:flutter/material.dart';
-import '../widgets/video_grid.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
+import 'package:hibiscus/src/rust/api/models.dart';
+import 'package:hibiscus/src/ui/widgets/video_grid.dart';
 
-class FavoritesPage extends StatelessWidget {
+/// 收藏页状态
+class _FavoritesState {
+  final videos = signal<List<ApiVideoCard>>([]);
+  final isLoading = signal(false);
+  final hasMore = signal(true);
+  final error = signal<String?>(null);
+  int _currentPage = 1;
+
+  Future<void> load({bool refresh = false}) async {
+    if (isLoading.value && !refresh) return;
+
+    if (refresh) {
+      _currentPage = 1;
+      hasMore.value = true;
+    }
+
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      final result = await user_api.getFavorites(page: _currentPage);
+
+      if (refresh) {
+        videos.value = result.videos;
+      } else {
+        videos.value = [...videos.value, ...result.videos];
+      }
+
+      hasMore.value = result.hasNext;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (isLoading.value || !hasMore.value) return;
+    _currentPage++;
+    await load();
+  }
+
+  void reset() {
+    videos.value = [];
+    isLoading.value = false;
+    hasMore.value = true;
+    error.value = null;
+    _currentPage = 1;
+  }
+}
+
+class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
-  
+
+  @override
+  State<FavoritesPage> createState() => _FavoritesPageState();
+}
+
+class _FavoritesPageState extends State<FavoritesPage> {
+  final _state = _FavoritesState();
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _state.load(refresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _state.reset();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _state.loadMore();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('我的收藏'),
       ),
-      body: _buildContent(context, theme),
+      body: Watch((context) {
+        final videos = _state.videos.value;
+        final isLoading = _state.isLoading.value;
+        final error = _state.error.value;
+        final hasMore = _state.hasMore.value;
+
+        if (isLoading && videos.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (error != null && videos.isEmpty) {
+          return _buildErrorState(context, error);
+        }
+
+        if (videos.isEmpty) {
+          return _buildEmptyState(context, theme);
+        }
+
+        return RefreshIndicator(
+          onRefresh: () => _state.load(refresh: true),
+          child: VideoGrid(
+            controller: _scrollController,
+            videos: videos,
+            isLoading: isLoading,
+            hasMore: hasMore,
+          ),
+        );
+      }),
     );
   }
-  
-  Widget _buildContent(BuildContext context, ThemeData theme) {
-    // Mock 数据 - 空状态
-    const isEmpty = false;
-    
-    if (isEmpty) {
-      return Center(
+
+  Widget _buildEmptyState(BuildContext context, ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.favorite_outline,
+            size: 64,
+            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '暂无收藏',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '浏览视频时点击收藏按钮添加',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String error) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.favorite_outline,
+              Icons.error_outline,
               size: 64,
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+              color: theme.colorScheme.error,
             ),
             const SizedBox(height: 16),
-            Text(
-              '暂无收藏',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
+            Text('加载失败', style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              '浏览视频时点击收藏按钮添加',
+              error,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                color: theme.colorScheme.onSurfaceVariant,
               ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => _state.load(refresh: true),
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
             ),
           ],
         ),
-      );
-    }
-    
-    // Mock 收藏列表
-    final mockFavorites = List.generate(12, (index) => VideoItem(
-      id: 'fav_$index',
-      title: '收藏的视频 $index - 这是一个很长的标题用于测试文本溢出效果',
-      coverUrl: '',
-      duration: '${(index + 1) * 5}:${(index * 7) % 60}'.padLeft(5, '0'),
-      views: '${(index + 1) * 1000}',
-    ));
-    
-    return VideoGrid(videos: mockFavorites);
+      ),
+    );
   }
 }

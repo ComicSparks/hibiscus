@@ -2,31 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
 import 'package:hibiscus/src/ui/widgets/video_card.dart';
 
-/// 视频数据模型（临时，后续由 FRB 生成）
-class VideoItem {
-  final String id;
-  final String title;
-  final String coverUrl;
-  final String? duration;
-  final String? views;
-  final List<String> tags;
-  
-  const VideoItem({
-    required this.id,
-    required this.title,
-    required this.coverUrl,
-    this.duration,
-    this.views,
-    this.tags = const [],
-  });
-}
-
 class VideoGrid extends StatelessWidget {
   final ScrollController? controller;
-  final List<VideoItem> videos;
+  final List<ApiVideoCard> videos;
   final bool isLoading;
   final bool hasMore;
   final VoidCallback? onLoadMore;

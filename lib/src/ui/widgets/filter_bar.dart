@@ -1,6 +1,8 @@
 // 过滤条件栏
 
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/state/search_state.dart';
 
 /// 过滤选项数据（从网页提取）
 class FilterOptions {
@@ -141,117 +143,128 @@ class FilterOptions {
 }
 
 class FilterBar extends StatefulWidget {
-  final ValueChanged<Map<String, dynamic>>? onFilterChanged;
-  
-  const FilterBar({super.key, this.onFilterChanged});
-  
+  const FilterBar({super.key});
+
   @override
   State<FilterBar> createState() => _FilterBarState();
 }
 
 class _FilterBarState extends State<FilterBar> {
-  String? _selectedGenre;
-  String? _selectedSort;
-  String? _selectedYear;
-  String? _selectedMonth;
-  String? _selectedDuration;
-  Set<String> _selectedTags = {};
-  bool _broadMatch = false; // 广泛配对
-  
-  void _notifyFilterChanged() {
-    widget.onFilterChanged?.call({
-      'genre': _selectedGenre,
-      'sort': _selectedSort,
-      'year': _selectedYear,
-      'month': _selectedMonth,
-      'duration': _selectedDuration,
-      'tags': _selectedTags.toList(),
-      'broad': _broadMatch,
-    });
+  // 使用状态管理中的过滤条件
+  String? get _selectedGenre => searchState.filters.value?.genre;
+  String? get _selectedSort => searchState.filters.value?.sort;
+  String? get _selectedYear => searchState.filters.value?.year;
+  String? get _selectedMonth => searchState.filters.value?.month;
+  String? get _selectedDuration => searchState.filters.value?.duration;
+  Set<String> get _selectedTags => Set<String>.from(searchState.filters.value?.tags ?? []);
+  bool get _broadMatch => searchState.filters.value?.broadMatch ?? false;
+
+  void _updateGenre(String? value) {
+    searchState.updateGenre(value);
   }
-  
+
+  void _updateSort(String? value) {
+    searchState.updateSort(value);
+  }
+
+  void _updateYear(String? value) {
+    searchState.updateYear(value);
+  }
+
+  void _updateDuration(String? value) {
+    searchState.updateDuration(value);
+  }
+
+  void _updateTags(Set<String> tags, bool broadMatch) {
+    if (searchState.filters.value == null) return;
+    searchState.filters.value = searchState.filters.value!.copyWith(
+      tags: tags.toList(),
+      broadMatch: broadMatch,
+    );
+    searchState.search(refresh: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+
+    return Watch((context) {
+      return Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            bottom: BorderSide(
+              color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+            ),
           ),
         ),
-      ),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          // 影片类型
-          _FilterDropdown(
-            label: '類型',
-            value: _selectedGenre,
-            items: FilterOptions.genres
-                .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
-                .toList(),
-            onChanged: (value) {
-              setState(() => _selectedGenre = value);
-              _notifyFilterChanged();
-            },
-          ),
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            // 影片类型
+            _FilterDropdown(
+              label: '類型',
+              value: _selectedGenre,
+              items: FilterOptions.genres
+                  .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                  .toList(),
+              onChanged: (value) {
+                _updateGenre(value);
+              },
+            ),
+
+            const SizedBox(width: 12),
           
-          const SizedBox(width: 12),
-          
-          // 标签（展开为多选）
-          _FilterChip(
-            label: _selectedTags.isEmpty ? '標籤' : '標籤 (${_selectedTags.length})',
-            isSelected: _selectedTags.isNotEmpty,
-            onTap: () => _showTagsSheet(context),
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // 排序
-          _FilterDropdown(
-            label: '排序',
-            value: _selectedSort,
-            items: FilterOptions.sorts
-                .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
-                .toList(),
-            onChanged: (value) {
-              setState(() => _selectedSort = value);
-              _notifyFilterChanged();
-            },
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // 日期
-          _FilterChip(
-            label: _getDateLabel(),
-            isSelected: _selectedYear != null || _selectedMonth != null,
-            onTap: () => _showDateSheet(context),
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // 时长
-          _FilterDropdown(
-            label: '時長',
-            value: _selectedDuration,
-            items: FilterOptions.durations
-                .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
-                .toList(),
-            onChanged: (value) {
-              setState(() => _selectedDuration = value);
-              _notifyFilterChanged();
-            },
-          ),
-        ],
-      ),
-    );
+            // 标签（展开为多选）
+            _FilterChip(
+              label: _selectedTags.isEmpty ? '標籤' : '標籤 (${_selectedTags.length})',
+              isSelected: _selectedTags.isNotEmpty,
+              onTap: () => _showTagsSheet(context),
+            ),
+
+            const SizedBox(width: 12),
+
+            // 排序
+            _FilterDropdown(
+              label: '排序',
+              value: _selectedSort,
+              items: FilterOptions.sorts
+                  .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                  .toList(),
+              onChanged: (value) {
+                _updateSort(value);
+              },
+            ),
+
+            const SizedBox(width: 12),
+
+            // 日期
+            _FilterChip(
+              label: _getDateLabel(),
+              isSelected: _selectedYear != null || _selectedMonth != null,
+              onTap: () => _showDateSheet(context),
+            ),
+
+            const SizedBox(width: 12),
+
+            // 时长
+            _FilterDropdown(
+              label: '時長',
+              value: _selectedDuration,
+              items: FilterOptions.durations
+                  .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                  .toList(),
+              onChanged: (value) {
+                _updateDuration(value);
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
   
   String _getDateLabel() {
@@ -264,7 +277,7 @@ class _FilterBarState extends State<FilterBar> {
     }
     return '日期';
   }
-  
+
   void _showTagsSheet(BuildContext context) async {
     final result = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -283,16 +296,15 @@ class _FilterBarState extends State<FilterBar> {
         },
       ),
     );
-    
+
     if (result != null) {
-      setState(() {
-        _selectedTags = Set<String>.from(result['tags'] as List);
-        _broadMatch = result['broad'] as bool;
-      });
-      _notifyFilterChanged();
+      _updateTags(
+        Set<String>.from(result['tags'] as List),
+        result['broad'] as bool,
+      );
     }
   }
-  
+
   void _showDateSheet(BuildContext context) async {
     final result = await showModalBottomSheet<Map<String, String?>>(
       context: context,
@@ -301,13 +313,10 @@ class _FilterBarState extends State<FilterBar> {
         selectedMonth: _selectedMonth,
       ),
     );
-    
+
     if (result != null) {
-      setState(() {
-        _selectedYear = result['year'];
-        _selectedMonth = result['month'];
-      });
-      _notifyFilterChanged();
+      _updateYear(result['year']);
+      // 如果需要同时支持月份，可以在状态管理中添加
     }
   }
 }

@@ -1,74 +1,299 @@
 // 播放历史页
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
+import 'package:hibiscus/src/rust/api/models.dart';
 
-class HistoryPage extends StatelessWidget {
+/// 历史记录状态
+class _HistoryState {
+  final items = signal<List<ApiPlayHistory>>([]);
+  final isLoading = signal(false);
+  final hasMore = signal(true);
+  final error = signal<String?>(null);
+  int _currentPage = 1;
+  static const _pageSize = 20;
+
+  Future<void> load({bool refresh = false}) async {
+    if (isLoading.value && !refresh) return;
+
+    if (refresh) {
+      _currentPage = 1;
+      hasMore.value = true;
+    }
+
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      final result = await user_api.getPlayHistory(
+        page: _currentPage,
+        pageSize: _pageSize,
+      );
+
+      if (refresh) {
+        items.value = result.items;
+      } else {
+        items.value = [...items.value, ...result.items];
+      }
+
+      hasMore.value = result.hasNext;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (isLoading.value || !hasMore.value) return;
+    _currentPage++;
+    await load();
+  }
+
+  Future<void> clearAll() async {
+    try {
+      await user_api.clearPlayHistory();
+      items.value = [];
+    } catch (e) {
+      // 忽略错误
+    }
+  }
+
+  void reset() {
+    items.value = [];
+    isLoading.value = false;
+    hasMore.value = true;
+    error.value = null;
+    _currentPage = 1;
+  }
+}
+
+class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
-  
+
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  final _state = _HistoryState();
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _state.load(refresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _state.reset();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _state.loadMore();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    // Mock 历史记录数据
-    final historyGroups = <_HistoryGroup>[
-      _HistoryGroup(
-        date: '今天',
-        items: List.generate(3, (i) => _mockHistoryItem(i)),
-      ),
-      _HistoryGroup(
-        date: '昨天',
-        items: List.generate(5, (i) => _mockHistoryItem(i + 3)),
-      ),
-      _HistoryGroup(
-        date: '2024年1月15日',
-        items: List.generate(2, (i) => _mockHistoryItem(i + 8)),
-      ),
-    ];
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('播放历史'),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            onPressed: () {
-              _showClearHistoryDialog(context);
-            },
+            onPressed: () => _showClearHistoryDialog(context),
             tooltip: '清除历史',
           ),
         ],
       ),
-      body: historyGroups.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.history,
-                    size: 64,
-                    color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+      body: Watch((context) {
+        final items = _state.items.value;
+        final isLoading = _state.isLoading.value;
+        final error = _state.error.value;
+        final hasMore = _state.hasMore.value;
+
+        if (isLoading && items.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (error != null && items.isEmpty) {
+          return _buildErrorState(context, error);
+        }
+
+        if (items.isEmpty) {
+          return _buildEmptyState(context, theme);
+        }
+
+        return RefreshIndicator(
+          onRefresh: () => _state.load(refresh: true),
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: items.length + (hasMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index >= items.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '暂无播放记录',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: historyGroups.length,
-              itemBuilder: (context, index) {
-                final group = historyGroups[index];
-                return _HistorySection(group: group);
-              },
-            ),
+                );
+              }
+              return _buildHistoryItem(context, items[index]);
+            },
+          ),
+        );
+      }),
     );
   }
-  
+
+  Widget _buildHistoryItem(BuildContext context, ApiPlayHistory item) {
+    final theme = Theme.of(context);
+    final progressPercent = item.duration > 0
+        ? (item.progress / item.duration * 100).clamp(0, 100)
+        : 0.0;
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: SizedBox(
+        width: 120,
+        child: Stack(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: item.coverUrl.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          item.coverUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.video_library_outlined,
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.video_library_outlined),
+              ),
+            ),
+            // 进度条
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+                child: LinearProgressIndicator(
+                  value: progressPercent / 100,
+                  minHeight: 3,
+                  backgroundColor: Colors.black45,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      title: Text(
+        item.title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        '观看了 ${progressPercent.toStringAsFixed(0)}%',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () async {
+          await user_api.deletePlayHistory(videoId: item.videoId);
+          _state.load(refresh: true);
+        },
+      ),
+      onTap: () => context.go('/video/${item.videoId}'),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.history,
+            size: 64,
+            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '暂无播放记录',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String error) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text('加载失败', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => _state.load(refresh: true),
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showClearHistoryDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -83,196 +308,12 @@ class HistoryPage extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: 清除历史
+              _state.clearAll();
             },
             child: const Text('清除'),
           ),
         ],
       ),
     );
-  }
-}
-
-_HistoryItem _mockHistoryItem(int index) {
-  return _HistoryItem(
-    videoId: 'video_$index',
-    title: '视频标题 $index - 这是一个很长的标题用于测试文本溢出效果',
-    coverUrl: '',
-    duration: '12:34',
-    watchedAt: DateTime.now().subtract(Duration(hours: index)),
-    progress: 0.3 + (index * 0.1) % 0.7,
-  );
-}
-
-class _HistoryGroup {
-  final String date;
-  final List<_HistoryItem> items;
-  
-  _HistoryGroup({required this.date, required this.items});
-}
-
-class _HistoryItem {
-  final String videoId;
-  final String title;
-  final String coverUrl;
-  final String duration;
-  final DateTime watchedAt;
-  final double progress; // 0.0 - 1.0
-  
-  _HistoryItem({
-    required this.videoId,
-    required this.title,
-    required this.coverUrl,
-    required this.duration,
-    required this.watchedAt,
-    required this.progress,
-  });
-}
-
-class _HistorySection extends StatelessWidget {
-  final _HistoryGroup group;
-  
-  const _HistorySection({required this.group});
-  
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            group.date,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.primary,
-            ),
-          ),
-        ),
-        ...group.items.map((item) => _HistoryListTile(item: item)),
-      ],
-    );
-  }
-}
-
-class _HistoryListTile extends StatelessWidget {
-  final _HistoryItem item;
-  
-  const _HistoryListTile({required this.item});
-  
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return InkWell(
-      onTap: () {
-        // TODO: 跳转到视频详情
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 缩略图
-            Stack(
-              children: [
-                Container(
-                  width: 120,
-                  height: 68,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.movie_outlined, size: 32),
-                ),
-                // 进度条
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    child: LinearProgressIndicator(
-                      value: item.progress,
-                      minHeight: 3,
-                      backgroundColor: Colors.black26,
-                      valueColor: AlwaysStoppedAnimation(theme.colorScheme.primary),
-                    ),
-                  ),
-                ),
-                // 时长
-                Positioned(
-                  right: 4,
-                  bottom: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: Text(
-                      item.duration,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 12),
-            // 信息
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: theme.textTheme.bodyMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _formatWatchedAt(item.watchedAt),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 删除按钮
-            IconButton(
-              icon: const Icon(Icons.close, size: 20),
-              onPressed: () {
-                // TODO: 删除单条记录
-              },
-              tooltip: '删除',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  String _formatWatchedAt(DateTime dateTime) {
-    final now = DateTime.now();
-    final diff = now.difference(dateTime);
-    
-    if (diff.inMinutes < 1) {
-      return '刚刚';
-    } else if (diff.inHours < 1) {
-      return '${diff.inMinutes} 分钟前';
-    } else if (diff.inDays < 1) {
-      return '${diff.inHours} 小时前';
-    } else {
-      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    }
   }
 }

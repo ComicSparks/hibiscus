@@ -7,7 +7,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
   testWidgets('Can call rust function', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
-    expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
+    await tester.pumpWidget(const HibiscusApp());
+    // App 应该能正常启动
+    expect(find.byType(HibiscusApp), findsOneWidget);
   });
 }

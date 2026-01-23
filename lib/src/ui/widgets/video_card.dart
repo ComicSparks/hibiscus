@@ -1,10 +1,10 @@
 // 视频卡片组件
 
 import 'package:flutter/material.dart';
-import 'package:hibiscus/src/ui/widgets/video_grid.dart';
+import 'package:hibiscus/src/rust/api/models.dart';
 
 class VideoCard extends StatelessWidget {
-  final VideoItem video;
+  final ApiVideoCard video;
   final VoidCallback? onTap;
   
   const VideoCard({
