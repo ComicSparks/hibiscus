@@ -1,0 +1,5835 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'models.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$ApiAppSettings {
+
+ String get defaultQuality; int get downloadConcurrent; String? get proxyUrl; String get themeMode; String get language;
+/// Create a copy of ApiAppSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiAppSettingsCopyWith<ApiAppSettings> get copyWith => _$ApiAppSettingsCopyWithImpl<ApiAppSettings>(this as ApiAppSettings, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiAppSettings&&(identical(other.defaultQuality, defaultQuality) || other.defaultQuality == defaultQuality)&&(identical(other.downloadConcurrent, downloadConcurrent) || other.downloadConcurrent == downloadConcurrent)&&(identical(other.proxyUrl, proxyUrl) || other.proxyUrl == proxyUrl)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.language, language) || other.language == language));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,defaultQuality,downloadConcurrent,proxyUrl,themeMode,language);
+
+@override
+String toString() {
+  return 'ApiAppSettings(defaultQuality: $defaultQuality, downloadConcurrent: $downloadConcurrent, proxyUrl: $proxyUrl, themeMode: $themeMode, language: $language)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiAppSettingsCopyWith<$Res>  {
+  factory $ApiAppSettingsCopyWith(ApiAppSettings value, $Res Function(ApiAppSettings) _then) = _$ApiAppSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String defaultQuality, int downloadConcurrent, String? proxyUrl, String themeMode, String language
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiAppSettingsCopyWithImpl<$Res>
+    implements $ApiAppSettingsCopyWith<$Res> {
+  _$ApiAppSettingsCopyWithImpl(this._self, this._then);
+
+  final ApiAppSettings _self;
+  final $Res Function(ApiAppSettings) _then;
+
+/// Create a copy of ApiAppSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? defaultQuality = null,Object? downloadConcurrent = null,Object? proxyUrl = freezed,Object? themeMode = null,Object? language = null,}) {
+  return _then(_self.copyWith(
+defaultQuality: null == defaultQuality ? _self.defaultQuality : defaultQuality // ignore: cast_nullable_to_non_nullable
+as String,downloadConcurrent: null == downloadConcurrent ? _self.downloadConcurrent : downloadConcurrent // ignore: cast_nullable_to_non_nullable
+as int,proxyUrl: freezed == proxyUrl ? _self.proxyUrl : proxyUrl // ignore: cast_nullable_to_non_nullable
+as String?,themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
+as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiAppSettings].
+extension ApiAppSettingsPatterns on ApiAppSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiAppSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiAppSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiAppSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiAppSettings():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiAppSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiAppSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String defaultQuality,  int downloadConcurrent,  String? proxyUrl,  String themeMode,  String language)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiAppSettings() when $default != null:
+return $default(_that.defaultQuality,_that.downloadConcurrent,_that.proxyUrl,_that.themeMode,_that.language);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String defaultQuality,  int downloadConcurrent,  String? proxyUrl,  String themeMode,  String language)  $default,) {final _that = this;
+switch (_that) {
+case _ApiAppSettings():
+return $default(_that.defaultQuality,_that.downloadConcurrent,_that.proxyUrl,_that.themeMode,_that.language);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String defaultQuality,  int downloadConcurrent,  String? proxyUrl,  String themeMode,  String language)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiAppSettings() when $default != null:
+return $default(_that.defaultQuality,_that.downloadConcurrent,_that.proxyUrl,_that.themeMode,_that.language);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiAppSettings extends ApiAppSettings {
+  const _ApiAppSettings({required this.defaultQuality, required this.downloadConcurrent, this.proxyUrl, required this.themeMode, required this.language}): super._();
+  
+
+@override final  String defaultQuality;
+@override final  int downloadConcurrent;
+@override final  String? proxyUrl;
+@override final  String themeMode;
+@override final  String language;
+
+/// Create a copy of ApiAppSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiAppSettingsCopyWith<_ApiAppSettings> get copyWith => __$ApiAppSettingsCopyWithImpl<_ApiAppSettings>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiAppSettings&&(identical(other.defaultQuality, defaultQuality) || other.defaultQuality == defaultQuality)&&(identical(other.downloadConcurrent, downloadConcurrent) || other.downloadConcurrent == downloadConcurrent)&&(identical(other.proxyUrl, proxyUrl) || other.proxyUrl == proxyUrl)&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.language, language) || other.language == language));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,defaultQuality,downloadConcurrent,proxyUrl,themeMode,language);
+
+@override
+String toString() {
+  return 'ApiAppSettings(defaultQuality: $defaultQuality, downloadConcurrent: $downloadConcurrent, proxyUrl: $proxyUrl, themeMode: $themeMode, language: $language)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiAppSettingsCopyWith<$Res> implements $ApiAppSettingsCopyWith<$Res> {
+  factory _$ApiAppSettingsCopyWith(_ApiAppSettings value, $Res Function(_ApiAppSettings) _then) = __$ApiAppSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String defaultQuality, int downloadConcurrent, String? proxyUrl, String themeMode, String language
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiAppSettingsCopyWithImpl<$Res>
+    implements _$ApiAppSettingsCopyWith<$Res> {
+  __$ApiAppSettingsCopyWithImpl(this._self, this._then);
+
+  final _ApiAppSettings _self;
+  final $Res Function(_ApiAppSettings) _then;
+
+/// Create a copy of ApiAppSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? defaultQuality = null,Object? downloadConcurrent = null,Object? proxyUrl = freezed,Object? themeMode = null,Object? language = null,}) {
+  return _then(_ApiAppSettings(
+defaultQuality: null == defaultQuality ? _self.defaultQuality : defaultQuality // ignore: cast_nullable_to_non_nullable
+as String,downloadConcurrent: null == downloadConcurrent ? _self.downloadConcurrent : downloadConcurrent // ignore: cast_nullable_to_non_nullable
+as int,proxyUrl: freezed == proxyUrl ? _self.proxyUrl : proxyUrl // ignore: cast_nullable_to_non_nullable
+as String?,themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
+as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiAuthorInfo {
+
+ String get id; String get name; String? get avatarUrl; bool get isSubscribed;
+/// Create a copy of ApiAuthorInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiAuthorInfoCopyWith<ApiAuthorInfo> get copyWith => _$ApiAuthorInfoCopyWithImpl<ApiAuthorInfo>(this as ApiAuthorInfo, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiAuthorInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isSubscribed, isSubscribed) || other.isSubscribed == isSubscribed));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,avatarUrl,isSubscribed);
+
+@override
+String toString() {
+  return 'ApiAuthorInfo(id: $id, name: $name, avatarUrl: $avatarUrl, isSubscribed: $isSubscribed)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiAuthorInfoCopyWith<$Res>  {
+  factory $ApiAuthorInfoCopyWith(ApiAuthorInfo value, $Res Function(ApiAuthorInfo) _then) = _$ApiAuthorInfoCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String? avatarUrl, bool isSubscribed
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiAuthorInfoCopyWithImpl<$Res>
+    implements $ApiAuthorInfoCopyWith<$Res> {
+  _$ApiAuthorInfoCopyWithImpl(this._self, this._then);
+
+  final ApiAuthorInfo _self;
+  final $Res Function(ApiAuthorInfo) _then;
+
+/// Create a copy of ApiAuthorInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? avatarUrl = freezed,Object? isSubscribed = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isSubscribed: null == isSubscribed ? _self.isSubscribed : isSubscribed // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiAuthorInfo].
+extension ApiAuthorInfoPatterns on ApiAuthorInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiAuthorInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiAuthorInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiAuthorInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiAuthorInfo():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiAuthorInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiAuthorInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? avatarUrl,  bool isSubscribed)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiAuthorInfo() when $default != null:
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isSubscribed);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? avatarUrl,  bool isSubscribed)  $default,) {final _that = this;
+switch (_that) {
+case _ApiAuthorInfo():
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isSubscribed);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? avatarUrl,  bool isSubscribed)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiAuthorInfo() when $default != null:
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isSubscribed);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiAuthorInfo implements ApiAuthorInfo {
+  const _ApiAuthorInfo({required this.id, required this.name, this.avatarUrl, required this.isSubscribed});
+  
+
+@override final  String id;
+@override final  String name;
+@override final  String? avatarUrl;
+@override final  bool isSubscribed;
+
+/// Create a copy of ApiAuthorInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiAuthorInfoCopyWith<_ApiAuthorInfo> get copyWith => __$ApiAuthorInfoCopyWithImpl<_ApiAuthorInfo>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiAuthorInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isSubscribed, isSubscribed) || other.isSubscribed == isSubscribed));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,avatarUrl,isSubscribed);
+
+@override
+String toString() {
+  return 'ApiAuthorInfo(id: $id, name: $name, avatarUrl: $avatarUrl, isSubscribed: $isSubscribed)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiAuthorInfoCopyWith<$Res> implements $ApiAuthorInfoCopyWith<$Res> {
+  factory _$ApiAuthorInfoCopyWith(_ApiAuthorInfo value, $Res Function(_ApiAuthorInfo) _then) = __$ApiAuthorInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, String? avatarUrl, bool isSubscribed
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiAuthorInfoCopyWithImpl<$Res>
+    implements _$ApiAuthorInfoCopyWith<$Res> {
+  __$ApiAuthorInfoCopyWithImpl(this._self, this._then);
+
+  final _ApiAuthorInfo _self;
+  final $Res Function(_ApiAuthorInfo) _then;
+
+/// Create a copy of ApiAuthorInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? avatarUrl = freezed,Object? isSubscribed = null,}) {
+  return _then(_ApiAuthorInfo(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isSubscribed: null == isSubscribed ? _self.isSubscribed : isSubscribed // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiCloudflareChallenge {
+
+ String get url; String get userAgent;
+/// Create a copy of ApiCloudflareChallenge
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiCloudflareChallengeCopyWith<ApiCloudflareChallenge> get copyWith => _$ApiCloudflareChallengeCopyWithImpl<ApiCloudflareChallenge>(this as ApiCloudflareChallenge, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiCloudflareChallenge&&(identical(other.url, url) || other.url == url)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,url,userAgent);
+
+@override
+String toString() {
+  return 'ApiCloudflareChallenge(url: $url, userAgent: $userAgent)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiCloudflareChallengeCopyWith<$Res>  {
+  factory $ApiCloudflareChallengeCopyWith(ApiCloudflareChallenge value, $Res Function(ApiCloudflareChallenge) _then) = _$ApiCloudflareChallengeCopyWithImpl;
+@useResult
+$Res call({
+ String url, String userAgent
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiCloudflareChallengeCopyWithImpl<$Res>
+    implements $ApiCloudflareChallengeCopyWith<$Res> {
+  _$ApiCloudflareChallengeCopyWithImpl(this._self, this._then);
+
+  final ApiCloudflareChallenge _self;
+  final $Res Function(ApiCloudflareChallenge) _then;
+
+/// Create a copy of ApiCloudflareChallenge
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? userAgent = null,}) {
+  return _then(_self.copyWith(
+url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,userAgent: null == userAgent ? _self.userAgent : userAgent // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiCloudflareChallenge].
+extension ApiCloudflareChallengePatterns on ApiCloudflareChallenge {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiCloudflareChallenge value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiCloudflareChallenge value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiCloudflareChallenge value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url,  String userAgent)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge() when $default != null:
+return $default(_that.url,_that.userAgent);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url,  String userAgent)  $default,) {final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge():
+return $default(_that.url,_that.userAgent);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url,  String userAgent)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiCloudflareChallenge() when $default != null:
+return $default(_that.url,_that.userAgent);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiCloudflareChallenge implements ApiCloudflareChallenge {
+  const _ApiCloudflareChallenge({required this.url, required this.userAgent});
+  
+
+@override final  String url;
+@override final  String userAgent;
+
+/// Create a copy of ApiCloudflareChallenge
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiCloudflareChallengeCopyWith<_ApiCloudflareChallenge> get copyWith => __$ApiCloudflareChallengeCopyWithImpl<_ApiCloudflareChallenge>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiCloudflareChallenge&&(identical(other.url, url) || other.url == url)&&(identical(other.userAgent, userAgent) || other.userAgent == userAgent));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,url,userAgent);
+
+@override
+String toString() {
+  return 'ApiCloudflareChallenge(url: $url, userAgent: $userAgent)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiCloudflareChallengeCopyWith<$Res> implements $ApiCloudflareChallengeCopyWith<$Res> {
+  factory _$ApiCloudflareChallengeCopyWith(_ApiCloudflareChallenge value, $Res Function(_ApiCloudflareChallenge) _then) = __$ApiCloudflareChallengeCopyWithImpl;
+@override @useResult
+$Res call({
+ String url, String userAgent
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiCloudflareChallengeCopyWithImpl<$Res>
+    implements _$ApiCloudflareChallengeCopyWith<$Res> {
+  __$ApiCloudflareChallengeCopyWithImpl(this._self, this._then);
+
+  final _ApiCloudflareChallenge _self;
+  final $Res Function(_ApiCloudflareChallenge) _then;
+
+/// Create a copy of ApiCloudflareChallenge
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? url = null,Object? userAgent = null,}) {
+  return _then(_ApiCloudflareChallenge(
+url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,userAgent: null == userAgent ? _self.userAgent : userAgent // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiComment {
+
+ String get id; String get userName; String? get userAvatar; String get content; String get time; int get likes; int get dislikes; List<ApiComment> get replies; bool get hasMoreReplies;
+/// Create a copy of ApiComment
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiCommentCopyWith<ApiComment> get copyWith => _$ApiCommentCopyWithImpl<ApiComment>(this as ApiComment, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiComment&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.content, content) || other.content == content)&&(identical(other.time, time) || other.time == time)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.dislikes, dislikes) || other.dislikes == dislikes)&&const DeepCollectionEquality().equals(other.replies, replies)&&(identical(other.hasMoreReplies, hasMoreReplies) || other.hasMoreReplies == hasMoreReplies));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,content,time,likes,dislikes,const DeepCollectionEquality().hash(replies),hasMoreReplies);
+
+@override
+String toString() {
+  return 'ApiComment(id: $id, userName: $userName, userAvatar: $userAvatar, content: $content, time: $time, likes: $likes, dislikes: $dislikes, replies: $replies, hasMoreReplies: $hasMoreReplies)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiCommentCopyWith<$Res>  {
+  factory $ApiCommentCopyWith(ApiComment value, $Res Function(ApiComment) _then) = _$ApiCommentCopyWithImpl;
+@useResult
+$Res call({
+ String id, String userName, String? userAvatar, String content, String time, int likes, int dislikes, List<ApiComment> replies, bool hasMoreReplies
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiCommentCopyWithImpl<$Res>
+    implements $ApiCommentCopyWith<$Res> {
+  _$ApiCommentCopyWithImpl(this._self, this._then);
+
+  final ApiComment _self;
+  final $Res Function(ApiComment) _then;
+
+/// Create a copy of ApiComment
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userName = null,Object? userAvatar = freezed,Object? content = null,Object? time = null,Object? likes = null,Object? dislikes = null,Object? replies = null,Object? hasMoreReplies = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userAvatar: freezed == userAvatar ? _self.userAvatar : userAvatar // ignore: cast_nullable_to_non_nullable
+as String?,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
+as String,likes: null == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as int,dislikes: null == dislikes ? _self.dislikes : dislikes // ignore: cast_nullable_to_non_nullable
+as int,replies: null == replies ? _self.replies : replies // ignore: cast_nullable_to_non_nullable
+as List<ApiComment>,hasMoreReplies: null == hasMoreReplies ? _self.hasMoreReplies : hasMoreReplies // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiComment].
+extension ApiCommentPatterns on ApiComment {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiComment value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiComment() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiComment value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiComment():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiComment value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiComment() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userName,  String? userAvatar,  String content,  String time,  int likes,  int dislikes,  List<ApiComment> replies,  bool hasMoreReplies)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiComment() when $default != null:
+return $default(_that.id,_that.userName,_that.userAvatar,_that.content,_that.time,_that.likes,_that.dislikes,_that.replies,_that.hasMoreReplies);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userName,  String? userAvatar,  String content,  String time,  int likes,  int dislikes,  List<ApiComment> replies,  bool hasMoreReplies)  $default,) {final _that = this;
+switch (_that) {
+case _ApiComment():
+return $default(_that.id,_that.userName,_that.userAvatar,_that.content,_that.time,_that.likes,_that.dislikes,_that.replies,_that.hasMoreReplies);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userName,  String? userAvatar,  String content,  String time,  int likes,  int dislikes,  List<ApiComment> replies,  bool hasMoreReplies)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiComment() when $default != null:
+return $default(_that.id,_that.userName,_that.userAvatar,_that.content,_that.time,_that.likes,_that.dislikes,_that.replies,_that.hasMoreReplies);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiComment implements ApiComment {
+  const _ApiComment({required this.id, required this.userName, this.userAvatar, required this.content, required this.time, required this.likes, required this.dislikes, required final  List<ApiComment> replies, required this.hasMoreReplies}): _replies = replies;
+  
+
+@override final  String id;
+@override final  String userName;
+@override final  String? userAvatar;
+@override final  String content;
+@override final  String time;
+@override final  int likes;
+@override final  int dislikes;
+ final  List<ApiComment> _replies;
+@override List<ApiComment> get replies {
+  if (_replies is EqualUnmodifiableListView) return _replies;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_replies);
+}
+
+@override final  bool hasMoreReplies;
+
+/// Create a copy of ApiComment
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiCommentCopyWith<_ApiComment> get copyWith => __$ApiCommentCopyWithImpl<_ApiComment>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiComment&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.content, content) || other.content == content)&&(identical(other.time, time) || other.time == time)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.dislikes, dislikes) || other.dislikes == dislikes)&&const DeepCollectionEquality().equals(other._replies, _replies)&&(identical(other.hasMoreReplies, hasMoreReplies) || other.hasMoreReplies == hasMoreReplies));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,content,time,likes,dislikes,const DeepCollectionEquality().hash(_replies),hasMoreReplies);
+
+@override
+String toString() {
+  return 'ApiComment(id: $id, userName: $userName, userAvatar: $userAvatar, content: $content, time: $time, likes: $likes, dislikes: $dislikes, replies: $replies, hasMoreReplies: $hasMoreReplies)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiCommentCopyWith<$Res> implements $ApiCommentCopyWith<$Res> {
+  factory _$ApiCommentCopyWith(_ApiComment value, $Res Function(_ApiComment) _then) = __$ApiCommentCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String userName, String? userAvatar, String content, String time, int likes, int dislikes, List<ApiComment> replies, bool hasMoreReplies
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiCommentCopyWithImpl<$Res>
+    implements _$ApiCommentCopyWith<$Res> {
+  __$ApiCommentCopyWithImpl(this._self, this._then);
+
+  final _ApiComment _self;
+  final $Res Function(_ApiComment) _then;
+
+/// Create a copy of ApiComment
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userName = null,Object? userAvatar = freezed,Object? content = null,Object? time = null,Object? likes = null,Object? dislikes = null,Object? replies = null,Object? hasMoreReplies = null,}) {
+  return _then(_ApiComment(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userAvatar: freezed == userAvatar ? _self.userAvatar : userAvatar // ignore: cast_nullable_to_non_nullable
+as String?,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
+as String,likes: null == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as int,dislikes: null == dislikes ? _self.dislikes : dislikes // ignore: cast_nullable_to_non_nullable
+as int,replies: null == replies ? _self._replies : replies // ignore: cast_nullable_to_non_nullable
+as List<ApiComment>,hasMoreReplies: null == hasMoreReplies ? _self.hasMoreReplies : hasMoreReplies // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiCommentList {
+
+ List<ApiComment> get comments; int get total; int get page; bool get hasNext;
+/// Create a copy of ApiCommentList
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiCommentListCopyWith<ApiCommentList> get copyWith => _$ApiCommentListCopyWithImpl<ApiCommentList>(this as ApiCommentList, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiCommentList&&const DeepCollectionEquality().equals(other.comments, comments)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(comments),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiCommentList(comments: $comments, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiCommentListCopyWith<$Res>  {
+  factory $ApiCommentListCopyWith(ApiCommentList value, $Res Function(ApiCommentList) _then) = _$ApiCommentListCopyWithImpl;
+@useResult
+$Res call({
+ List<ApiComment> comments, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiCommentListCopyWithImpl<$Res>
+    implements $ApiCommentListCopyWith<$Res> {
+  _$ApiCommentListCopyWithImpl(this._self, this._then);
+
+  final ApiCommentList _self;
+  final $Res Function(ApiCommentList) _then;
+
+/// Create a copy of ApiCommentList
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? comments = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_self.copyWith(
+comments: null == comments ? _self.comments : comments // ignore: cast_nullable_to_non_nullable
+as List<ApiComment>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiCommentList].
+extension ApiCommentListPatterns on ApiCommentList {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiCommentList value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiCommentList() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiCommentList value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiCommentList():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiCommentList value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiCommentList() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ApiComment> comments,  int total,  int page,  bool hasNext)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiCommentList() when $default != null:
+return $default(_that.comments,_that.total,_that.page,_that.hasNext);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ApiComment> comments,  int total,  int page,  bool hasNext)  $default,) {final _that = this;
+switch (_that) {
+case _ApiCommentList():
+return $default(_that.comments,_that.total,_that.page,_that.hasNext);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ApiComment> comments,  int total,  int page,  bool hasNext)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiCommentList() when $default != null:
+return $default(_that.comments,_that.total,_that.page,_that.hasNext);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiCommentList implements ApiCommentList {
+  const _ApiCommentList({required final  List<ApiComment> comments, required this.total, required this.page, required this.hasNext}): _comments = comments;
+  
+
+ final  List<ApiComment> _comments;
+@override List<ApiComment> get comments {
+  if (_comments is EqualUnmodifiableListView) return _comments;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_comments);
+}
+
+@override final  int total;
+@override final  int page;
+@override final  bool hasNext;
+
+/// Create a copy of ApiCommentList
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiCommentListCopyWith<_ApiCommentList> get copyWith => __$ApiCommentListCopyWithImpl<_ApiCommentList>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiCommentList&&const DeepCollectionEquality().equals(other._comments, _comments)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_comments),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiCommentList(comments: $comments, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiCommentListCopyWith<$Res> implements $ApiCommentListCopyWith<$Res> {
+  factory _$ApiCommentListCopyWith(_ApiCommentList value, $Res Function(_ApiCommentList) _then) = __$ApiCommentListCopyWithImpl;
+@override @useResult
+$Res call({
+ List<ApiComment> comments, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiCommentListCopyWithImpl<$Res>
+    implements _$ApiCommentListCopyWith<$Res> {
+  __$ApiCommentListCopyWithImpl(this._self, this._then);
+
+  final _ApiCommentList _self;
+  final $Res Function(_ApiCommentList) _then;
+
+/// Create a copy of ApiCommentList
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? comments = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_ApiCommentList(
+comments: null == comments ? _self._comments : comments // ignore: cast_nullable_to_non_nullable
+as List<ApiComment>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiDownloadStatus {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ApiDownloadStatus()';
+}
+
+
+}
+
+/// @nodoc
+class $ApiDownloadStatusCopyWith<$Res>  {
+$ApiDownloadStatusCopyWith(ApiDownloadStatus _, $Res Function(ApiDownloadStatus) __);
+}
+
+
+/// Adds pattern-matching-related methods to [ApiDownloadStatus].
+extension ApiDownloadStatusPatterns on ApiDownloadStatus {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ApiDownloadStatus_Pending value)?  pending,TResult Function( ApiDownloadStatus_Downloading value)?  downloading,TResult Function( ApiDownloadStatus_Paused value)?  paused,TResult Function( ApiDownloadStatus_Completed value)?  completed,TResult Function( ApiDownloadStatus_Failed value)?  failed,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending() when pending != null:
+return pending(_that);case ApiDownloadStatus_Downloading() when downloading != null:
+return downloading(_that);case ApiDownloadStatus_Paused() when paused != null:
+return paused(_that);case ApiDownloadStatus_Completed() when completed != null:
+return completed(_that);case ApiDownloadStatus_Failed() when failed != null:
+return failed(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ApiDownloadStatus_Pending value)  pending,required TResult Function( ApiDownloadStatus_Downloading value)  downloading,required TResult Function( ApiDownloadStatus_Paused value)  paused,required TResult Function( ApiDownloadStatus_Completed value)  completed,required TResult Function( ApiDownloadStatus_Failed value)  failed,}){
+final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending():
+return pending(_that);case ApiDownloadStatus_Downloading():
+return downloading(_that);case ApiDownloadStatus_Paused():
+return paused(_that);case ApiDownloadStatus_Completed():
+return completed(_that);case ApiDownloadStatus_Failed():
+return failed(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ApiDownloadStatus_Pending value)?  pending,TResult? Function( ApiDownloadStatus_Downloading value)?  downloading,TResult? Function( ApiDownloadStatus_Paused value)?  paused,TResult? Function( ApiDownloadStatus_Completed value)?  completed,TResult? Function( ApiDownloadStatus_Failed value)?  failed,}){
+final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending() when pending != null:
+return pending(_that);case ApiDownloadStatus_Downloading() when downloading != null:
+return downloading(_that);case ApiDownloadStatus_Paused() when paused != null:
+return paused(_that);case ApiDownloadStatus_Completed() when completed != null:
+return completed(_that);case ApiDownloadStatus_Failed() when failed != null:
+return failed(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  pending,TResult Function()?  downloading,TResult Function()?  paused,TResult Function()?  completed,TResult Function( String error)?  failed,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending() when pending != null:
+return pending();case ApiDownloadStatus_Downloading() when downloading != null:
+return downloading();case ApiDownloadStatus_Paused() when paused != null:
+return paused();case ApiDownloadStatus_Completed() when completed != null:
+return completed();case ApiDownloadStatus_Failed() when failed != null:
+return failed(_that.error);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  pending,required TResult Function()  downloading,required TResult Function()  paused,required TResult Function()  completed,required TResult Function( String error)  failed,}) {final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending():
+return pending();case ApiDownloadStatus_Downloading():
+return downloading();case ApiDownloadStatus_Paused():
+return paused();case ApiDownloadStatus_Completed():
+return completed();case ApiDownloadStatus_Failed():
+return failed(_that.error);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  pending,TResult? Function()?  downloading,TResult? Function()?  paused,TResult? Function()?  completed,TResult? Function( String error)?  failed,}) {final _that = this;
+switch (_that) {
+case ApiDownloadStatus_Pending() when pending != null:
+return pending();case ApiDownloadStatus_Downloading() when downloading != null:
+return downloading();case ApiDownloadStatus_Paused() when paused != null:
+return paused();case ApiDownloadStatus_Completed() when completed != null:
+return completed();case ApiDownloadStatus_Failed() when failed != null:
+return failed(_that.error);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class ApiDownloadStatus_Pending extends ApiDownloadStatus {
+  const ApiDownloadStatus_Pending(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus_Pending);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ApiDownloadStatus.pending()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class ApiDownloadStatus_Downloading extends ApiDownloadStatus {
+  const ApiDownloadStatus_Downloading(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus_Downloading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ApiDownloadStatus.downloading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class ApiDownloadStatus_Paused extends ApiDownloadStatus {
+  const ApiDownloadStatus_Paused(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus_Paused);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ApiDownloadStatus.paused()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class ApiDownloadStatus_Completed extends ApiDownloadStatus {
+  const ApiDownloadStatus_Completed(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus_Completed);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ApiDownloadStatus.completed()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class ApiDownloadStatus_Failed extends ApiDownloadStatus {
+  const ApiDownloadStatus_Failed({required this.error}): super._();
+  
+
+ final  String error;
+
+/// Create a copy of ApiDownloadStatus
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiDownloadStatus_FailedCopyWith<ApiDownloadStatus_Failed> get copyWith => _$ApiDownloadStatus_FailedCopyWithImpl<ApiDownloadStatus_Failed>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadStatus_Failed&&(identical(other.error, error) || other.error == error));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,error);
+
+@override
+String toString() {
+  return 'ApiDownloadStatus.failed(error: $error)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiDownloadStatus_FailedCopyWith<$Res> implements $ApiDownloadStatusCopyWith<$Res> {
+  factory $ApiDownloadStatus_FailedCopyWith(ApiDownloadStatus_Failed value, $Res Function(ApiDownloadStatus_Failed) _then) = _$ApiDownloadStatus_FailedCopyWithImpl;
+@useResult
+$Res call({
+ String error
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiDownloadStatus_FailedCopyWithImpl<$Res>
+    implements $ApiDownloadStatus_FailedCopyWith<$Res> {
+  _$ApiDownloadStatus_FailedCopyWithImpl(this._self, this._then);
+
+  final ApiDownloadStatus_Failed _self;
+  final $Res Function(ApiDownloadStatus_Failed) _then;
+
+/// Create a copy of ApiDownloadStatus
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? error = null,}) {
+  return _then(ApiDownloadStatus_Failed(
+error: null == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiDownloadTask {
+
+ String get id; String get videoId; String get title; String get coverUrl; String get quality; ApiDownloadStatus get status; double get progress; BigInt get downloadedBytes; BigInt get totalBytes; BigInt get speed; PlatformInt64 get createdAt; String? get filePath;
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiDownloadTaskCopyWith<ApiDownloadTask> get copyWith => _$ApiDownloadTaskCopyWithImpl<ApiDownloadTask>(this as ApiDownloadTask, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,videoId,title,coverUrl,quality,status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath);
+
+@override
+String toString() {
+  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, quality: $quality, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiDownloadTaskCopyWith<$Res>  {
+  factory $ApiDownloadTaskCopyWith(ApiDownloadTask value, $Res Function(ApiDownloadTask) _then) = _$ApiDownloadTaskCopyWithImpl;
+@useResult
+$Res call({
+ String id, String videoId, String title, String coverUrl, String quality, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath
+});
+
+
+$ApiDownloadStatusCopyWith<$Res> get status;
+
+}
+/// @nodoc
+class _$ApiDownloadTaskCopyWithImpl<$Res>
+    implements $ApiDownloadTaskCopyWith<$Res> {
+  _$ApiDownloadTaskCopyWithImpl(this._self, this._then);
+
+  final ApiDownloadTask _self;
+  final $Res Function(ApiDownloadTask) _then;
+
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? quality = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,quality: null == quality ? _self.quality : quality // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as ApiDownloadStatus,progress: null == progress ? _self.progress : progress // ignore: cast_nullable_to_non_nullable
+as double,downloadedBytes: null == downloadedBytes ? _self.downloadedBytes : downloadedBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,totalBytes: null == totalBytes ? _self.totalBytes : totalBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as BigInt,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,filePath: freezed == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiDownloadStatusCopyWith<$Res> get status {
+  
+  return $ApiDownloadStatusCopyWith<$Res>(_self.status, (value) {
+    return _then(_self.copyWith(status: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [ApiDownloadTask].
+extension ApiDownloadTaskPatterns on ApiDownloadTask {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiDownloadTask value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiDownloadTask() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiDownloadTask value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiDownloadTask():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiDownloadTask value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiDownloadTask() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String quality,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiDownloadTask() when $default != null:
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.quality,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String quality,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)  $default,) {final _that = this;
+switch (_that) {
+case _ApiDownloadTask():
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.quality,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String videoId,  String title,  String coverUrl,  String quality,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiDownloadTask() when $default != null:
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.quality,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiDownloadTask implements ApiDownloadTask {
+  const _ApiDownloadTask({required this.id, required this.videoId, required this.title, required this.coverUrl, required this.quality, required this.status, required this.progress, required this.downloadedBytes, required this.totalBytes, required this.speed, required this.createdAt, this.filePath});
+  
+
+@override final  String id;
+@override final  String videoId;
+@override final  String title;
+@override final  String coverUrl;
+@override final  String quality;
+@override final  ApiDownloadStatus status;
+@override final  double progress;
+@override final  BigInt downloadedBytes;
+@override final  BigInt totalBytes;
+@override final  BigInt speed;
+@override final  PlatformInt64 createdAt;
+@override final  String? filePath;
+
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiDownloadTaskCopyWith<_ApiDownloadTask> get copyWith => __$ApiDownloadTaskCopyWithImpl<_ApiDownloadTask>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,videoId,title,coverUrl,quality,status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath);
+
+@override
+String toString() {
+  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, quality: $quality, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiDownloadTaskCopyWith<$Res> implements $ApiDownloadTaskCopyWith<$Res> {
+  factory _$ApiDownloadTaskCopyWith(_ApiDownloadTask value, $Res Function(_ApiDownloadTask) _then) = __$ApiDownloadTaskCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String videoId, String title, String coverUrl, String quality, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath
+});
+
+
+@override $ApiDownloadStatusCopyWith<$Res> get status;
+
+}
+/// @nodoc
+class __$ApiDownloadTaskCopyWithImpl<$Res>
+    implements _$ApiDownloadTaskCopyWith<$Res> {
+  __$ApiDownloadTaskCopyWithImpl(this._self, this._then);
+
+  final _ApiDownloadTask _self;
+  final $Res Function(_ApiDownloadTask) _then;
+
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? quality = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,}) {
+  return _then(_ApiDownloadTask(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,quality: null == quality ? _self.quality : quality // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as ApiDownloadStatus,progress: null == progress ? _self.progress : progress // ignore: cast_nullable_to_non_nullable
+as double,downloadedBytes: null == downloadedBytes ? _self.downloadedBytes : downloadedBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,totalBytes: null == totalBytes ? _self.totalBytes : totalBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as BigInt,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,filePath: freezed == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+/// Create a copy of ApiDownloadTask
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiDownloadStatusCopyWith<$Res> get status {
+  
+  return $ApiDownloadStatusCopyWith<$Res>(_self.status, (value) {
+    return _then(_self.copyWith(status: value));
+  });
+}
+}
+
+/// @nodoc
+mixin _$ApiFavoriteList {
+
+ List<ApiVideoCard> get videos; int get total; int get page; bool get hasNext;
+/// Create a copy of ApiFavoriteList
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiFavoriteListCopyWith<ApiFavoriteList> get copyWith => _$ApiFavoriteListCopyWithImpl<ApiFavoriteList>(this as ApiFavoriteList, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiFavoriteList&&const DeepCollectionEquality().equals(other.videos, videos)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(videos),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiFavoriteList(videos: $videos, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiFavoriteListCopyWith<$Res>  {
+  factory $ApiFavoriteListCopyWith(ApiFavoriteList value, $Res Function(ApiFavoriteList) _then) = _$ApiFavoriteListCopyWithImpl;
+@useResult
+$Res call({
+ List<ApiVideoCard> videos, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiFavoriteListCopyWithImpl<$Res>
+    implements $ApiFavoriteListCopyWith<$Res> {
+  _$ApiFavoriteListCopyWithImpl(this._self, this._then);
+
+  final ApiFavoriteList _self;
+  final $Res Function(ApiFavoriteList) _then;
+
+/// Create a copy of ApiFavoriteList
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? videos = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_self.copyWith(
+videos: null == videos ? _self.videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiFavoriteList].
+extension ApiFavoriteListPatterns on ApiFavoriteList {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiFavoriteList value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiFavoriteList() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiFavoriteList value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFavoriteList():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiFavoriteList value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFavoriteList() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiFavoriteList() when $default != null:
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)  $default,) {final _that = this;
+switch (_that) {
+case _ApiFavoriteList():
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiFavoriteList() when $default != null:
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiFavoriteList implements ApiFavoriteList {
+  const _ApiFavoriteList({required final  List<ApiVideoCard> videos, required this.total, required this.page, required this.hasNext}): _videos = videos;
+  
+
+ final  List<ApiVideoCard> _videos;
+@override List<ApiVideoCard> get videos {
+  if (_videos is EqualUnmodifiableListView) return _videos;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_videos);
+}
+
+@override final  int total;
+@override final  int page;
+@override final  bool hasNext;
+
+/// Create a copy of ApiFavoriteList
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiFavoriteListCopyWith<_ApiFavoriteList> get copyWith => __$ApiFavoriteListCopyWithImpl<_ApiFavoriteList>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiFavoriteList&&const DeepCollectionEquality().equals(other._videos, _videos)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_videos),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiFavoriteList(videos: $videos, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiFavoriteListCopyWith<$Res> implements $ApiFavoriteListCopyWith<$Res> {
+  factory _$ApiFavoriteListCopyWith(_ApiFavoriteList value, $Res Function(_ApiFavoriteList) _then) = __$ApiFavoriteListCopyWithImpl;
+@override @useResult
+$Res call({
+ List<ApiVideoCard> videos, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiFavoriteListCopyWithImpl<$Res>
+    implements _$ApiFavoriteListCopyWith<$Res> {
+  __$ApiFavoriteListCopyWithImpl(this._self, this._then);
+
+  final _ApiFavoriteList _self;
+  final $Res Function(_ApiFavoriteList) _then;
+
+/// Create a copy of ApiFavoriteList
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? videos = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_ApiFavoriteList(
+videos: null == videos ? _self._videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiFilterOption {
+
+ String get value; String get label;
+/// Create a copy of ApiFilterOption
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiFilterOptionCopyWith<ApiFilterOption> get copyWith => _$ApiFilterOptionCopyWithImpl<ApiFilterOption>(this as ApiFilterOption, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiFilterOption&&(identical(other.value, value) || other.value == value)&&(identical(other.label, label) || other.label == label));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,value,label);
+
+@override
+String toString() {
+  return 'ApiFilterOption(value: $value, label: $label)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiFilterOptionCopyWith<$Res>  {
+  factory $ApiFilterOptionCopyWith(ApiFilterOption value, $Res Function(ApiFilterOption) _then) = _$ApiFilterOptionCopyWithImpl;
+@useResult
+$Res call({
+ String value, String label
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiFilterOptionCopyWithImpl<$Res>
+    implements $ApiFilterOptionCopyWith<$Res> {
+  _$ApiFilterOptionCopyWithImpl(this._self, this._then);
+
+  final ApiFilterOption _self;
+  final $Res Function(ApiFilterOption) _then;
+
+/// Create a copy of ApiFilterOption
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? value = null,Object? label = null,}) {
+  return _then(_self.copyWith(
+value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiFilterOption].
+extension ApiFilterOptionPatterns on ApiFilterOption {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiFilterOption value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiFilterOption() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiFilterOption value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFilterOption():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiFilterOption value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFilterOption() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String value,  String label)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiFilterOption() when $default != null:
+return $default(_that.value,_that.label);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String value,  String label)  $default,) {final _that = this;
+switch (_that) {
+case _ApiFilterOption():
+return $default(_that.value,_that.label);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String value,  String label)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiFilterOption() when $default != null:
+return $default(_that.value,_that.label);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiFilterOption implements ApiFilterOption {
+  const _ApiFilterOption({required this.value, required this.label});
+  
+
+@override final  String value;
+@override final  String label;
+
+/// Create a copy of ApiFilterOption
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiFilterOptionCopyWith<_ApiFilterOption> get copyWith => __$ApiFilterOptionCopyWithImpl<_ApiFilterOption>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiFilterOption&&(identical(other.value, value) || other.value == value)&&(identical(other.label, label) || other.label == label));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,value,label);
+
+@override
+String toString() {
+  return 'ApiFilterOption(value: $value, label: $label)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiFilterOptionCopyWith<$Res> implements $ApiFilterOptionCopyWith<$Res> {
+  factory _$ApiFilterOptionCopyWith(_ApiFilterOption value, $Res Function(_ApiFilterOption) _then) = __$ApiFilterOptionCopyWithImpl;
+@override @useResult
+$Res call({
+ String value, String label
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiFilterOptionCopyWithImpl<$Res>
+    implements _$ApiFilterOptionCopyWith<$Res> {
+  __$ApiFilterOptionCopyWithImpl(this._self, this._then);
+
+  final _ApiFilterOption _self;
+  final $Res Function(_ApiFilterOption) _then;
+
+/// Create a copy of ApiFilterOption
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? value = null,Object? label = null,}) {
+  return _then(_ApiFilterOption(
+value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiFilterOptions {
+
+ List<ApiFilterOption> get genres; List<ApiTagGroup> get tags; List<ApiFilterOption> get sorts; List<ApiFilterOption> get years; List<ApiFilterOption> get durations;
+/// Create a copy of ApiFilterOptions
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiFilterOptionsCopyWith<ApiFilterOptions> get copyWith => _$ApiFilterOptionsCopyWithImpl<ApiFilterOptions>(this as ApiFilterOptions, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiFilterOptions&&const DeepCollectionEquality().equals(other.genres, genres)&&const DeepCollectionEquality().equals(other.tags, tags)&&const DeepCollectionEquality().equals(other.sorts, sorts)&&const DeepCollectionEquality().equals(other.years, years)&&const DeepCollectionEquality().equals(other.durations, durations));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(genres),const DeepCollectionEquality().hash(tags),const DeepCollectionEquality().hash(sorts),const DeepCollectionEquality().hash(years),const DeepCollectionEquality().hash(durations));
+
+@override
+String toString() {
+  return 'ApiFilterOptions(genres: $genres, tags: $tags, sorts: $sorts, years: $years, durations: $durations)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiFilterOptionsCopyWith<$Res>  {
+  factory $ApiFilterOptionsCopyWith(ApiFilterOptions value, $Res Function(ApiFilterOptions) _then) = _$ApiFilterOptionsCopyWithImpl;
+@useResult
+$Res call({
+ List<ApiFilterOption> genres, List<ApiTagGroup> tags, List<ApiFilterOption> sorts, List<ApiFilterOption> years, List<ApiFilterOption> durations
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiFilterOptionsCopyWithImpl<$Res>
+    implements $ApiFilterOptionsCopyWith<$Res> {
+  _$ApiFilterOptionsCopyWithImpl(this._self, this._then);
+
+  final ApiFilterOptions _self;
+  final $Res Function(ApiFilterOptions) _then;
+
+/// Create a copy of ApiFilterOptions
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? genres = null,Object? tags = null,Object? sorts = null,Object? years = null,Object? durations = null,}) {
+  return _then(_self.copyWith(
+genres: null == genres ? _self.genres : genres // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<ApiTagGroup>,sorts: null == sorts ? _self.sorts : sorts // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,years: null == years ? _self.years : years // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,durations: null == durations ? _self.durations : durations // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiFilterOptions].
+extension ApiFilterOptionsPatterns on ApiFilterOptions {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiFilterOptions value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiFilterOptions() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiFilterOptions value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFilterOptions():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiFilterOptions value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiFilterOptions() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ApiFilterOption> genres,  List<ApiTagGroup> tags,  List<ApiFilterOption> sorts,  List<ApiFilterOption> years,  List<ApiFilterOption> durations)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiFilterOptions() when $default != null:
+return $default(_that.genres,_that.tags,_that.sorts,_that.years,_that.durations);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ApiFilterOption> genres,  List<ApiTagGroup> tags,  List<ApiFilterOption> sorts,  List<ApiFilterOption> years,  List<ApiFilterOption> durations)  $default,) {final _that = this;
+switch (_that) {
+case _ApiFilterOptions():
+return $default(_that.genres,_that.tags,_that.sorts,_that.years,_that.durations);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ApiFilterOption> genres,  List<ApiTagGroup> tags,  List<ApiFilterOption> sorts,  List<ApiFilterOption> years,  List<ApiFilterOption> durations)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiFilterOptions() when $default != null:
+return $default(_that.genres,_that.tags,_that.sorts,_that.years,_that.durations);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiFilterOptions implements ApiFilterOptions {
+  const _ApiFilterOptions({required final  List<ApiFilterOption> genres, required final  List<ApiTagGroup> tags, required final  List<ApiFilterOption> sorts, required final  List<ApiFilterOption> years, required final  List<ApiFilterOption> durations}): _genres = genres,_tags = tags,_sorts = sorts,_years = years,_durations = durations;
+  
+
+ final  List<ApiFilterOption> _genres;
+@override List<ApiFilterOption> get genres {
+  if (_genres is EqualUnmodifiableListView) return _genres;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_genres);
+}
+
+ final  List<ApiTagGroup> _tags;
+@override List<ApiTagGroup> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
+ final  List<ApiFilterOption> _sorts;
+@override List<ApiFilterOption> get sorts {
+  if (_sorts is EqualUnmodifiableListView) return _sorts;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_sorts);
+}
+
+ final  List<ApiFilterOption> _years;
+@override List<ApiFilterOption> get years {
+  if (_years is EqualUnmodifiableListView) return _years;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_years);
+}
+
+ final  List<ApiFilterOption> _durations;
+@override List<ApiFilterOption> get durations {
+  if (_durations is EqualUnmodifiableListView) return _durations;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_durations);
+}
+
+
+/// Create a copy of ApiFilterOptions
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiFilterOptionsCopyWith<_ApiFilterOptions> get copyWith => __$ApiFilterOptionsCopyWithImpl<_ApiFilterOptions>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiFilterOptions&&const DeepCollectionEquality().equals(other._genres, _genres)&&const DeepCollectionEquality().equals(other._tags, _tags)&&const DeepCollectionEquality().equals(other._sorts, _sorts)&&const DeepCollectionEquality().equals(other._years, _years)&&const DeepCollectionEquality().equals(other._durations, _durations));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_genres),const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_sorts),const DeepCollectionEquality().hash(_years),const DeepCollectionEquality().hash(_durations));
+
+@override
+String toString() {
+  return 'ApiFilterOptions(genres: $genres, tags: $tags, sorts: $sorts, years: $years, durations: $durations)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiFilterOptionsCopyWith<$Res> implements $ApiFilterOptionsCopyWith<$Res> {
+  factory _$ApiFilterOptionsCopyWith(_ApiFilterOptions value, $Res Function(_ApiFilterOptions) _then) = __$ApiFilterOptionsCopyWithImpl;
+@override @useResult
+$Res call({
+ List<ApiFilterOption> genres, List<ApiTagGroup> tags, List<ApiFilterOption> sorts, List<ApiFilterOption> years, List<ApiFilterOption> durations
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiFilterOptionsCopyWithImpl<$Res>
+    implements _$ApiFilterOptionsCopyWith<$Res> {
+  __$ApiFilterOptionsCopyWithImpl(this._self, this._then);
+
+  final _ApiFilterOptions _self;
+  final $Res Function(_ApiFilterOptions) _then;
+
+/// Create a copy of ApiFilterOptions
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? genres = null,Object? tags = null,Object? sorts = null,Object? years = null,Object? durations = null,}) {
+  return _then(_ApiFilterOptions(
+genres: null == genres ? _self._genres : genres // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<ApiTagGroup>,sorts: null == sorts ? _self._sorts : sorts // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,years: null == years ? _self._years : years // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,durations: null == durations ? _self._durations : durations // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiPlayHistory {
+
+ String get videoId; String get title; String get coverUrl; double get progress; int get duration; PlatformInt64 get lastPlayedAt;
+/// Create a copy of ApiPlayHistory
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiPlayHistoryCopyWith<ApiPlayHistory> get copyWith => _$ApiPlayHistoryCopyWithImpl<ApiPlayHistory>(this as ApiPlayHistory, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiPlayHistory&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.lastPlayedAt, lastPlayedAt) || other.lastPlayedAt == lastPlayedAt));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,videoId,title,coverUrl,progress,duration,lastPlayedAt);
+
+@override
+String toString() {
+  return 'ApiPlayHistory(videoId: $videoId, title: $title, coverUrl: $coverUrl, progress: $progress, duration: $duration, lastPlayedAt: $lastPlayedAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiPlayHistoryCopyWith<$Res>  {
+  factory $ApiPlayHistoryCopyWith(ApiPlayHistory value, $Res Function(ApiPlayHistory) _then) = _$ApiPlayHistoryCopyWithImpl;
+@useResult
+$Res call({
+ String videoId, String title, String coverUrl, double progress, int duration, PlatformInt64 lastPlayedAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiPlayHistoryCopyWithImpl<$Res>
+    implements $ApiPlayHistoryCopyWith<$Res> {
+  _$ApiPlayHistoryCopyWithImpl(this._self, this._then);
+
+  final ApiPlayHistory _self;
+  final $Res Function(ApiPlayHistory) _then;
+
+/// Create a copy of ApiPlayHistory
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? progress = null,Object? duration = null,Object? lastPlayedAt = null,}) {
+  return _then(_self.copyWith(
+videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,progress: null == progress ? _self.progress : progress // ignore: cast_nullable_to_non_nullable
+as double,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as int,lastPlayedAt: null == lastPlayedAt ? _self.lastPlayedAt : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiPlayHistory].
+extension ApiPlayHistoryPatterns on ApiPlayHistory {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiPlayHistory value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistory() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiPlayHistory value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistory():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiPlayHistory value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistory() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String videoId,  String title,  String coverUrl,  double progress,  int duration,  PlatformInt64 lastPlayedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiPlayHistory() when $default != null:
+return $default(_that.videoId,_that.title,_that.coverUrl,_that.progress,_that.duration,_that.lastPlayedAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String videoId,  String title,  String coverUrl,  double progress,  int duration,  PlatformInt64 lastPlayedAt)  $default,) {final _that = this;
+switch (_that) {
+case _ApiPlayHistory():
+return $default(_that.videoId,_that.title,_that.coverUrl,_that.progress,_that.duration,_that.lastPlayedAt);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String videoId,  String title,  String coverUrl,  double progress,  int duration,  PlatformInt64 lastPlayedAt)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiPlayHistory() when $default != null:
+return $default(_that.videoId,_that.title,_that.coverUrl,_that.progress,_that.duration,_that.lastPlayedAt);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiPlayHistory implements ApiPlayHistory {
+  const _ApiPlayHistory({required this.videoId, required this.title, required this.coverUrl, required this.progress, required this.duration, required this.lastPlayedAt});
+  
+
+@override final  String videoId;
+@override final  String title;
+@override final  String coverUrl;
+@override final  double progress;
+@override final  int duration;
+@override final  PlatformInt64 lastPlayedAt;
+
+/// Create a copy of ApiPlayHistory
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiPlayHistoryCopyWith<_ApiPlayHistory> get copyWith => __$ApiPlayHistoryCopyWithImpl<_ApiPlayHistory>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiPlayHistory&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.lastPlayedAt, lastPlayedAt) || other.lastPlayedAt == lastPlayedAt));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,videoId,title,coverUrl,progress,duration,lastPlayedAt);
+
+@override
+String toString() {
+  return 'ApiPlayHistory(videoId: $videoId, title: $title, coverUrl: $coverUrl, progress: $progress, duration: $duration, lastPlayedAt: $lastPlayedAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiPlayHistoryCopyWith<$Res> implements $ApiPlayHistoryCopyWith<$Res> {
+  factory _$ApiPlayHistoryCopyWith(_ApiPlayHistory value, $Res Function(_ApiPlayHistory) _then) = __$ApiPlayHistoryCopyWithImpl;
+@override @useResult
+$Res call({
+ String videoId, String title, String coverUrl, double progress, int duration, PlatformInt64 lastPlayedAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiPlayHistoryCopyWithImpl<$Res>
+    implements _$ApiPlayHistoryCopyWith<$Res> {
+  __$ApiPlayHistoryCopyWithImpl(this._self, this._then);
+
+  final _ApiPlayHistory _self;
+  final $Res Function(_ApiPlayHistory) _then;
+
+/// Create a copy of ApiPlayHistory
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? progress = null,Object? duration = null,Object? lastPlayedAt = null,}) {
+  return _then(_ApiPlayHistory(
+videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,progress: null == progress ? _self.progress : progress // ignore: cast_nullable_to_non_nullable
+as double,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as int,lastPlayedAt: null == lastPlayedAt ? _self.lastPlayedAt : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiPlayHistoryList {
+
+ List<ApiPlayHistory> get items; int get total; int get page; bool get hasNext;
+/// Create a copy of ApiPlayHistoryList
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiPlayHistoryListCopyWith<ApiPlayHistoryList> get copyWith => _$ApiPlayHistoryListCopyWithImpl<ApiPlayHistoryList>(this as ApiPlayHistoryList, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiPlayHistoryList&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiPlayHistoryList(items: $items, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiPlayHistoryListCopyWith<$Res>  {
+  factory $ApiPlayHistoryListCopyWith(ApiPlayHistoryList value, $Res Function(ApiPlayHistoryList) _then) = _$ApiPlayHistoryListCopyWithImpl;
+@useResult
+$Res call({
+ List<ApiPlayHistory> items, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiPlayHistoryListCopyWithImpl<$Res>
+    implements $ApiPlayHistoryListCopyWith<$Res> {
+  _$ApiPlayHistoryListCopyWithImpl(this._self, this._then);
+
+  final ApiPlayHistoryList _self;
+  final $Res Function(ApiPlayHistoryList) _then;
+
+/// Create a copy of ApiPlayHistoryList
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_self.copyWith(
+items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<ApiPlayHistory>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiPlayHistoryList].
+extension ApiPlayHistoryListPatterns on ApiPlayHistoryList {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiPlayHistoryList value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiPlayHistoryList value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiPlayHistoryList value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ApiPlayHistory> items,  int total,  int page,  bool hasNext)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList() when $default != null:
+return $default(_that.items,_that.total,_that.page,_that.hasNext);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ApiPlayHistory> items,  int total,  int page,  bool hasNext)  $default,) {final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList():
+return $default(_that.items,_that.total,_that.page,_that.hasNext);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ApiPlayHistory> items,  int total,  int page,  bool hasNext)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiPlayHistoryList() when $default != null:
+return $default(_that.items,_that.total,_that.page,_that.hasNext);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiPlayHistoryList implements ApiPlayHistoryList {
+  const _ApiPlayHistoryList({required final  List<ApiPlayHistory> items, required this.total, required this.page, required this.hasNext}): _items = items;
+  
+
+ final  List<ApiPlayHistory> _items;
+@override List<ApiPlayHistory> get items {
+  if (_items is EqualUnmodifiableListView) return _items;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_items);
+}
+
+@override final  int total;
+@override final  int page;
+@override final  bool hasNext;
+
+/// Create a copy of ApiPlayHistoryList
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiPlayHistoryListCopyWith<_ApiPlayHistoryList> get copyWith => __$ApiPlayHistoryListCopyWithImpl<_ApiPlayHistoryList>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiPlayHistoryList&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiPlayHistoryList(items: $items, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiPlayHistoryListCopyWith<$Res> implements $ApiPlayHistoryListCopyWith<$Res> {
+  factory _$ApiPlayHistoryListCopyWith(_ApiPlayHistoryList value, $Res Function(_ApiPlayHistoryList) _then) = __$ApiPlayHistoryListCopyWithImpl;
+@override @useResult
+$Res call({
+ List<ApiPlayHistory> items, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiPlayHistoryListCopyWithImpl<$Res>
+    implements _$ApiPlayHistoryListCopyWith<$Res> {
+  __$ApiPlayHistoryListCopyWithImpl(this._self, this._then);
+
+  final _ApiPlayHistoryList _self;
+  final $Res Function(_ApiPlayHistoryList) _then;
+
+/// Create a copy of ApiPlayHistoryList
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? items = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_ApiPlayHistoryList(
+items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<ApiPlayHistory>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiSearchFilters {
+
+ String? get query; String? get genre; List<String> get tags; bool get broadMatch; String? get sort; String? get year; String? get month; String? get date; String? get duration; int get page;
+/// Create a copy of ApiSearchFilters
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiSearchFiltersCopyWith<ApiSearchFilters> get copyWith => _$ApiSearchFiltersCopyWithImpl<ApiSearchFilters>(this as ApiSearchFilters, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiSearchFilters&&(identical(other.query, query) || other.query == query)&&(identical(other.genre, genre) || other.genre == genre)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.broadMatch, broadMatch) || other.broadMatch == broadMatch)&&(identical(other.sort, sort) || other.sort == sort)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.page, page) || other.page == page));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query,genre,const DeepCollectionEquality().hash(tags),broadMatch,sort,year,month,date,duration,page);
+
+@override
+String toString() {
+  return 'ApiSearchFilters(query: $query, genre: $genre, tags: $tags, broadMatch: $broadMatch, sort: $sort, year: $year, month: $month, date: $date, duration: $duration, page: $page)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiSearchFiltersCopyWith<$Res>  {
+  factory $ApiSearchFiltersCopyWith(ApiSearchFilters value, $Res Function(ApiSearchFilters) _then) = _$ApiSearchFiltersCopyWithImpl;
+@useResult
+$Res call({
+ String? query, String? genre, List<String> tags, bool broadMatch, String? sort, String? year, String? month, String? date, String? duration, int page
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiSearchFiltersCopyWithImpl<$Res>
+    implements $ApiSearchFiltersCopyWith<$Res> {
+  _$ApiSearchFiltersCopyWithImpl(this._self, this._then);
+
+  final ApiSearchFilters _self;
+  final $Res Function(ApiSearchFilters) _then;
+
+/// Create a copy of ApiSearchFilters
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? query = freezed,Object? genre = freezed,Object? tags = null,Object? broadMatch = null,Object? sort = freezed,Object? year = freezed,Object? month = freezed,Object? date = freezed,Object? duration = freezed,Object? page = null,}) {
+  return _then(_self.copyWith(
+query: freezed == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String?,genre: freezed == genre ? _self.genre : genre // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,broadMatch: null == broadMatch ? _self.broadMatch : broadMatch // ignore: cast_nullable_to_non_nullable
+as bool,sort: freezed == sort ? _self.sort : sort // ignore: cast_nullable_to_non_nullable
+as String?,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as String?,month: freezed == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as String?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiSearchFilters].
+extension ApiSearchFiltersPatterns on ApiSearchFilters {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiSearchFilters value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiSearchFilters() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiSearchFilters value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSearchFilters():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiSearchFilters value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSearchFilters() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? query,  String? genre,  List<String> tags,  bool broadMatch,  String? sort,  String? year,  String? month,  String? date,  String? duration,  int page)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiSearchFilters() when $default != null:
+return $default(_that.query,_that.genre,_that.tags,_that.broadMatch,_that.sort,_that.year,_that.month,_that.date,_that.duration,_that.page);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? query,  String? genre,  List<String> tags,  bool broadMatch,  String? sort,  String? year,  String? month,  String? date,  String? duration,  int page)  $default,) {final _that = this;
+switch (_that) {
+case _ApiSearchFilters():
+return $default(_that.query,_that.genre,_that.tags,_that.broadMatch,_that.sort,_that.year,_that.month,_that.date,_that.duration,_that.page);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? query,  String? genre,  List<String> tags,  bool broadMatch,  String? sort,  String? year,  String? month,  String? date,  String? duration,  int page)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiSearchFilters() when $default != null:
+return $default(_that.query,_that.genre,_that.tags,_that.broadMatch,_that.sort,_that.year,_that.month,_that.date,_that.duration,_that.page);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiSearchFilters extends ApiSearchFilters {
+  const _ApiSearchFilters({this.query, this.genre, required final  List<String> tags, required this.broadMatch, this.sort, this.year, this.month, this.date, this.duration, required this.page}): _tags = tags,super._();
+  
+
+@override final  String? query;
+@override final  String? genre;
+ final  List<String> _tags;
+@override List<String> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
+@override final  bool broadMatch;
+@override final  String? sort;
+@override final  String? year;
+@override final  String? month;
+@override final  String? date;
+@override final  String? duration;
+@override final  int page;
+
+/// Create a copy of ApiSearchFilters
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiSearchFiltersCopyWith<_ApiSearchFilters> get copyWith => __$ApiSearchFiltersCopyWithImpl<_ApiSearchFilters>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiSearchFilters&&(identical(other.query, query) || other.query == query)&&(identical(other.genre, genre) || other.genre == genre)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.broadMatch, broadMatch) || other.broadMatch == broadMatch)&&(identical(other.sort, sort) || other.sort == sort)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.page, page) || other.page == page));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query,genre,const DeepCollectionEquality().hash(_tags),broadMatch,sort,year,month,date,duration,page);
+
+@override
+String toString() {
+  return 'ApiSearchFilters(query: $query, genre: $genre, tags: $tags, broadMatch: $broadMatch, sort: $sort, year: $year, month: $month, date: $date, duration: $duration, page: $page)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiSearchFiltersCopyWith<$Res> implements $ApiSearchFiltersCopyWith<$Res> {
+  factory _$ApiSearchFiltersCopyWith(_ApiSearchFilters value, $Res Function(_ApiSearchFilters) _then) = __$ApiSearchFiltersCopyWithImpl;
+@override @useResult
+$Res call({
+ String? query, String? genre, List<String> tags, bool broadMatch, String? sort, String? year, String? month, String? date, String? duration, int page
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiSearchFiltersCopyWithImpl<$Res>
+    implements _$ApiSearchFiltersCopyWith<$Res> {
+  __$ApiSearchFiltersCopyWithImpl(this._self, this._then);
+
+  final _ApiSearchFilters _self;
+  final $Res Function(_ApiSearchFilters) _then;
+
+/// Create a copy of ApiSearchFilters
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? query = freezed,Object? genre = freezed,Object? tags = null,Object? broadMatch = null,Object? sort = freezed,Object? year = freezed,Object? month = freezed,Object? date = freezed,Object? duration = freezed,Object? page = null,}) {
+  return _then(_ApiSearchFilters(
+query: freezed == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String?,genre: freezed == genre ? _self.genre : genre // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,broadMatch: null == broadMatch ? _self.broadMatch : broadMatch // ignore: cast_nullable_to_non_nullable
+as bool,sort: freezed == sort ? _self.sort : sort // ignore: cast_nullable_to_non_nullable
+as String?,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as String?,month: freezed == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as String?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiSearchResult {
+
+ List<ApiVideoCard> get videos; int get total; int get page; bool get hasNext;
+/// Create a copy of ApiSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiSearchResultCopyWith<ApiSearchResult> get copyWith => _$ApiSearchResultCopyWithImpl<ApiSearchResult>(this as ApiSearchResult, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiSearchResult&&const DeepCollectionEquality().equals(other.videos, videos)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(videos),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiSearchResult(videos: $videos, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiSearchResultCopyWith<$Res>  {
+  factory $ApiSearchResultCopyWith(ApiSearchResult value, $Res Function(ApiSearchResult) _then) = _$ApiSearchResultCopyWithImpl;
+@useResult
+$Res call({
+ List<ApiVideoCard> videos, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiSearchResultCopyWithImpl<$Res>
+    implements $ApiSearchResultCopyWith<$Res> {
+  _$ApiSearchResultCopyWithImpl(this._self, this._then);
+
+  final ApiSearchResult _self;
+  final $Res Function(ApiSearchResult) _then;
+
+/// Create a copy of ApiSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? videos = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_self.copyWith(
+videos: null == videos ? _self.videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiSearchResult].
+extension ApiSearchResultPatterns on ApiSearchResult {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiSearchResult value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiSearchResult() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiSearchResult value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSearchResult():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiSearchResult value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSearchResult() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiSearchResult() when $default != null:
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)  $default,) {final _that = this;
+switch (_that) {
+case _ApiSearchResult():
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ApiVideoCard> videos,  int total,  int page,  bool hasNext)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiSearchResult() when $default != null:
+return $default(_that.videos,_that.total,_that.page,_that.hasNext);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiSearchResult implements ApiSearchResult {
+  const _ApiSearchResult({required final  List<ApiVideoCard> videos, required this.total, required this.page, required this.hasNext}): _videos = videos;
+  
+
+ final  List<ApiVideoCard> _videos;
+@override List<ApiVideoCard> get videos {
+  if (_videos is EqualUnmodifiableListView) return _videos;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_videos);
+}
+
+@override final  int total;
+@override final  int page;
+@override final  bool hasNext;
+
+/// Create a copy of ApiSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiSearchResultCopyWith<_ApiSearchResult> get copyWith => __$ApiSearchResultCopyWithImpl<_ApiSearchResult>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiSearchResult&&const DeepCollectionEquality().equals(other._videos, _videos)&&(identical(other.total, total) || other.total == total)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_videos),total,page,hasNext);
+
+@override
+String toString() {
+  return 'ApiSearchResult(videos: $videos, total: $total, page: $page, hasNext: $hasNext)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiSearchResultCopyWith<$Res> implements $ApiSearchResultCopyWith<$Res> {
+  factory _$ApiSearchResultCopyWith(_ApiSearchResult value, $Res Function(_ApiSearchResult) _then) = __$ApiSearchResultCopyWithImpl;
+@override @useResult
+$Res call({
+ List<ApiVideoCard> videos, int total, int page, bool hasNext
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiSearchResultCopyWithImpl<$Res>
+    implements _$ApiSearchResultCopyWith<$Res> {
+  __$ApiSearchResultCopyWithImpl(this._self, this._then);
+
+  final _ApiSearchResult _self;
+  final $Res Function(_ApiSearchResult) _then;
+
+/// Create a copy of ApiSearchResult
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? videos = null,Object? total = null,Object? page = null,Object? hasNext = null,}) {
+  return _then(_ApiSearchResult(
+videos: null == videos ? _self._videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiSeriesInfo {
+
+ String get id; String get title; List<ApiSeriesVideo> get videos; int get currentIndex;
+/// Create a copy of ApiSeriesInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiSeriesInfoCopyWith<ApiSeriesInfo> get copyWith => _$ApiSeriesInfoCopyWithImpl<ApiSeriesInfo>(this as ApiSeriesInfo, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiSeriesInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.videos, videos)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(videos),currentIndex);
+
+@override
+String toString() {
+  return 'ApiSeriesInfo(id: $id, title: $title, videos: $videos, currentIndex: $currentIndex)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiSeriesInfoCopyWith<$Res>  {
+  factory $ApiSeriesInfoCopyWith(ApiSeriesInfo value, $Res Function(ApiSeriesInfo) _then) = _$ApiSeriesInfoCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, List<ApiSeriesVideo> videos, int currentIndex
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiSeriesInfoCopyWithImpl<$Res>
+    implements $ApiSeriesInfoCopyWith<$Res> {
+  _$ApiSeriesInfoCopyWithImpl(this._self, this._then);
+
+  final ApiSeriesInfo _self;
+  final $Res Function(ApiSeriesInfo) _then;
+
+/// Create a copy of ApiSeriesInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? videos = null,Object? currentIndex = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,videos: null == videos ? _self.videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiSeriesVideo>,currentIndex: null == currentIndex ? _self.currentIndex : currentIndex // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiSeriesInfo].
+extension ApiSeriesInfoPatterns on ApiSeriesInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiSeriesInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiSeriesInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiSeriesInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSeriesInfo():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiSeriesInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSeriesInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  List<ApiSeriesVideo> videos,  int currentIndex)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiSeriesInfo() when $default != null:
+return $default(_that.id,_that.title,_that.videos,_that.currentIndex);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  List<ApiSeriesVideo> videos,  int currentIndex)  $default,) {final _that = this;
+switch (_that) {
+case _ApiSeriesInfo():
+return $default(_that.id,_that.title,_that.videos,_that.currentIndex);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  List<ApiSeriesVideo> videos,  int currentIndex)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiSeriesInfo() when $default != null:
+return $default(_that.id,_that.title,_that.videos,_that.currentIndex);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiSeriesInfo implements ApiSeriesInfo {
+  const _ApiSeriesInfo({required this.id, required this.title, required final  List<ApiSeriesVideo> videos, required this.currentIndex}): _videos = videos;
+  
+
+@override final  String id;
+@override final  String title;
+ final  List<ApiSeriesVideo> _videos;
+@override List<ApiSeriesVideo> get videos {
+  if (_videos is EqualUnmodifiableListView) return _videos;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_videos);
+}
+
+@override final  int currentIndex;
+
+/// Create a copy of ApiSeriesInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiSeriesInfoCopyWith<_ApiSeriesInfo> get copyWith => __$ApiSeriesInfoCopyWithImpl<_ApiSeriesInfo>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiSeriesInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._videos, _videos)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_videos),currentIndex);
+
+@override
+String toString() {
+  return 'ApiSeriesInfo(id: $id, title: $title, videos: $videos, currentIndex: $currentIndex)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiSeriesInfoCopyWith<$Res> implements $ApiSeriesInfoCopyWith<$Res> {
+  factory _$ApiSeriesInfoCopyWith(_ApiSeriesInfo value, $Res Function(_ApiSeriesInfo) _then) = __$ApiSeriesInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, List<ApiSeriesVideo> videos, int currentIndex
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiSeriesInfoCopyWithImpl<$Res>
+    implements _$ApiSeriesInfoCopyWith<$Res> {
+  __$ApiSeriesInfoCopyWithImpl(this._self, this._then);
+
+  final _ApiSeriesInfo _self;
+  final $Res Function(_ApiSeriesInfo) _then;
+
+/// Create a copy of ApiSeriesInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? videos = null,Object? currentIndex = null,}) {
+  return _then(_ApiSeriesInfo(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,videos: null == videos ? _self._videos : videos // ignore: cast_nullable_to_non_nullable
+as List<ApiSeriesVideo>,currentIndex: null == currentIndex ? _self.currentIndex : currentIndex // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiSeriesVideo {
+
+ String get id; String get title; String get coverUrl; String get episode;
+/// Create a copy of ApiSeriesVideo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiSeriesVideoCopyWith<ApiSeriesVideo> get copyWith => _$ApiSeriesVideoCopyWithImpl<ApiSeriesVideo>(this as ApiSeriesVideo, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiSeriesVideo&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.episode, episode) || other.episode == episode));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,episode);
+
+@override
+String toString() {
+  return 'ApiSeriesVideo(id: $id, title: $title, coverUrl: $coverUrl, episode: $episode)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiSeriesVideoCopyWith<$Res>  {
+  factory $ApiSeriesVideoCopyWith(ApiSeriesVideo value, $Res Function(ApiSeriesVideo) _then) = _$ApiSeriesVideoCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, String coverUrl, String episode
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiSeriesVideoCopyWithImpl<$Res>
+    implements $ApiSeriesVideoCopyWith<$Res> {
+  _$ApiSeriesVideoCopyWithImpl(this._self, this._then);
+
+  final ApiSeriesVideo _self;
+  final $Res Function(ApiSeriesVideo) _then;
+
+/// Create a copy of ApiSeriesVideo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? episode = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,episode: null == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiSeriesVideo].
+extension ApiSeriesVideoPatterns on ApiSeriesVideo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiSeriesVideo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiSeriesVideo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiSeriesVideo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSeriesVideo():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiSeriesVideo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiSeriesVideo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String episode)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiSeriesVideo() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.episode);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String episode)  $default,) {final _that = this;
+switch (_that) {
+case _ApiSeriesVideo():
+return $default(_that.id,_that.title,_that.coverUrl,_that.episode);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String coverUrl,  String episode)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiSeriesVideo() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.episode);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiSeriesVideo implements ApiSeriesVideo {
+  const _ApiSeriesVideo({required this.id, required this.title, required this.coverUrl, required this.episode});
+  
+
+@override final  String id;
+@override final  String title;
+@override final  String coverUrl;
+@override final  String episode;
+
+/// Create a copy of ApiSeriesVideo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiSeriesVideoCopyWith<_ApiSeriesVideo> get copyWith => __$ApiSeriesVideoCopyWithImpl<_ApiSeriesVideo>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiSeriesVideo&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.episode, episode) || other.episode == episode));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,episode);
+
+@override
+String toString() {
+  return 'ApiSeriesVideo(id: $id, title: $title, coverUrl: $coverUrl, episode: $episode)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiSeriesVideoCopyWith<$Res> implements $ApiSeriesVideoCopyWith<$Res> {
+  factory _$ApiSeriesVideoCopyWith(_ApiSeriesVideo value, $Res Function(_ApiSeriesVideo) _then) = __$ApiSeriesVideoCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, String coverUrl, String episode
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiSeriesVideoCopyWithImpl<$Res>
+    implements _$ApiSeriesVideoCopyWith<$Res> {
+  __$ApiSeriesVideoCopyWithImpl(this._self, this._then);
+
+  final _ApiSeriesVideo _self;
+  final $Res Function(_ApiSeriesVideo) _then;
+
+/// Create a copy of ApiSeriesVideo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? episode = null,}) {
+  return _then(_ApiSeriesVideo(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,episode: null == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiTagGroup {
+
+ String get name; List<ApiFilterOption> get tags;
+/// Create a copy of ApiTagGroup
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiTagGroupCopyWith<ApiTagGroup> get copyWith => _$ApiTagGroupCopyWithImpl<ApiTagGroup>(this as ApiTagGroup, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiTagGroup&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.tags, tags));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,name,const DeepCollectionEquality().hash(tags));
+
+@override
+String toString() {
+  return 'ApiTagGroup(name: $name, tags: $tags)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiTagGroupCopyWith<$Res>  {
+  factory $ApiTagGroupCopyWith(ApiTagGroup value, $Res Function(ApiTagGroup) _then) = _$ApiTagGroupCopyWithImpl;
+@useResult
+$Res call({
+ String name, List<ApiFilterOption> tags
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiTagGroupCopyWithImpl<$Res>
+    implements $ApiTagGroupCopyWith<$Res> {
+  _$ApiTagGroupCopyWithImpl(this._self, this._then);
+
+  final ApiTagGroup _self;
+  final $Res Function(ApiTagGroup) _then;
+
+/// Create a copy of ApiTagGroup
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? tags = null,}) {
+  return _then(_self.copyWith(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiTagGroup].
+extension ApiTagGroupPatterns on ApiTagGroup {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiTagGroup value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiTagGroup() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiTagGroup value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiTagGroup():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiTagGroup value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiTagGroup() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  List<ApiFilterOption> tags)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiTagGroup() when $default != null:
+return $default(_that.name,_that.tags);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  List<ApiFilterOption> tags)  $default,) {final _that = this;
+switch (_that) {
+case _ApiTagGroup():
+return $default(_that.name,_that.tags);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  List<ApiFilterOption> tags)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiTagGroup() when $default != null:
+return $default(_that.name,_that.tags);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiTagGroup implements ApiTagGroup {
+  const _ApiTagGroup({required this.name, required final  List<ApiFilterOption> tags}): _tags = tags;
+  
+
+@override final  String name;
+ final  List<ApiFilterOption> _tags;
+@override List<ApiFilterOption> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
+
+/// Create a copy of ApiTagGroup
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiTagGroupCopyWith<_ApiTagGroup> get copyWith => __$ApiTagGroupCopyWithImpl<_ApiTagGroup>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiTagGroup&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other._tags, _tags));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,name,const DeepCollectionEquality().hash(_tags));
+
+@override
+String toString() {
+  return 'ApiTagGroup(name: $name, tags: $tags)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiTagGroupCopyWith<$Res> implements $ApiTagGroupCopyWith<$Res> {
+  factory _$ApiTagGroupCopyWith(_ApiTagGroup value, $Res Function(_ApiTagGroup) _then) = __$ApiTagGroupCopyWithImpl;
+@override @useResult
+$Res call({
+ String name, List<ApiFilterOption> tags
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiTagGroupCopyWithImpl<$Res>
+    implements _$ApiTagGroupCopyWith<$Res> {
+  __$ApiTagGroupCopyWithImpl(this._self, this._then);
+
+  final _ApiTagGroup _self;
+  final $Res Function(_ApiTagGroup) _then;
+
+/// Create a copy of ApiTagGroup
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? tags = null,}) {
+  return _then(_ApiTagGroup(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<ApiFilterOption>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiUserInfo {
+
+ String get id; String get name; String? get avatarUrl; bool get isLoggedIn;
+/// Create a copy of ApiUserInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiUserInfoCopyWith<ApiUserInfo> get copyWith => _$ApiUserInfoCopyWithImpl<ApiUserInfo>(this as ApiUserInfo, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiUserInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,avatarUrl,isLoggedIn);
+
+@override
+String toString() {
+  return 'ApiUserInfo(id: $id, name: $name, avatarUrl: $avatarUrl, isLoggedIn: $isLoggedIn)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiUserInfoCopyWith<$Res>  {
+  factory $ApiUserInfoCopyWith(ApiUserInfo value, $Res Function(ApiUserInfo) _then) = _$ApiUserInfoCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String? avatarUrl, bool isLoggedIn
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiUserInfoCopyWithImpl<$Res>
+    implements $ApiUserInfoCopyWith<$Res> {
+  _$ApiUserInfoCopyWithImpl(this._self, this._then);
+
+  final ApiUserInfo _self;
+  final $Res Function(ApiUserInfo) _then;
+
+/// Create a copy of ApiUserInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? avatarUrl = freezed,Object? isLoggedIn = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiUserInfo].
+extension ApiUserInfoPatterns on ApiUserInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiUserInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiUserInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiUserInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiUserInfo():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiUserInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiUserInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? avatarUrl,  bool isLoggedIn)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiUserInfo() when $default != null:
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isLoggedIn);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? avatarUrl,  bool isLoggedIn)  $default,) {final _that = this;
+switch (_that) {
+case _ApiUserInfo():
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isLoggedIn);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? avatarUrl,  bool isLoggedIn)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiUserInfo() when $default != null:
+return $default(_that.id,_that.name,_that.avatarUrl,_that.isLoggedIn);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiUserInfo implements ApiUserInfo {
+  const _ApiUserInfo({required this.id, required this.name, this.avatarUrl, required this.isLoggedIn});
+  
+
+@override final  String id;
+@override final  String name;
+@override final  String? avatarUrl;
+@override final  bool isLoggedIn;
+
+/// Create a copy of ApiUserInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiUserInfoCopyWith<_ApiUserInfo> get copyWith => __$ApiUserInfoCopyWithImpl<_ApiUserInfo>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiUserInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,avatarUrl,isLoggedIn);
+
+@override
+String toString() {
+  return 'ApiUserInfo(id: $id, name: $name, avatarUrl: $avatarUrl, isLoggedIn: $isLoggedIn)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiUserInfoCopyWith<$Res> implements $ApiUserInfoCopyWith<$Res> {
+  factory _$ApiUserInfoCopyWith(_ApiUserInfo value, $Res Function(_ApiUserInfo) _then) = __$ApiUserInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, String? avatarUrl, bool isLoggedIn
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiUserInfoCopyWithImpl<$Res>
+    implements _$ApiUserInfoCopyWith<$Res> {
+  __$ApiUserInfoCopyWithImpl(this._self, this._then);
+
+  final _ApiUserInfo _self;
+  final $Res Function(_ApiUserInfo) _then;
+
+/// Create a copy of ApiUserInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? avatarUrl = freezed,Object? isLoggedIn = null,}) {
+  return _then(_ApiUserInfo(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiVideoCard {
+
+ String get id; String get title; String get coverUrl; String? get duration; String? get views; String? get uploadDate; List<String> get tags;
+/// Create a copy of ApiVideoCard
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiVideoCardCopyWith<ApiVideoCard> get copyWith => _$ApiVideoCardCopyWithImpl<ApiVideoCard>(this as ApiVideoCard, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&const DeepCollectionEquality().equals(other.tags, tags));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,const DeepCollectionEquality().hash(tags));
+
+@override
+String toString() {
+  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, tags: $tags)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiVideoCardCopyWith<$Res>  {
+  factory $ApiVideoCardCopyWith(ApiVideoCard value, $Res Function(ApiVideoCard) _then) = _$ApiVideoCardCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, List<String> tags
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiVideoCardCopyWithImpl<$Res>
+    implements $ApiVideoCardCopyWith<$Res> {
+  _$ApiVideoCardCopyWithImpl(this._self, this._then);
+
+  final ApiVideoCard _self;
+  final $Res Function(ApiVideoCard) _then;
+
+/// Create a copy of ApiVideoCard
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? tags = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiVideoCard].
+extension ApiVideoCardPatterns on ApiVideoCard {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiVideoCard value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiVideoCard() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiVideoCard value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoCard():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiVideoCard value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoCard() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiVideoCard() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoCard():
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoCard() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiVideoCard implements ApiVideoCard {
+  const _ApiVideoCard({required this.id, required this.title, required this.coverUrl, this.duration, this.views, this.uploadDate, required final  List<String> tags}): _tags = tags;
+  
+
+@override final  String id;
+@override final  String title;
+@override final  String coverUrl;
+@override final  String? duration;
+@override final  String? views;
+@override final  String? uploadDate;
+ final  List<String> _tags;
+@override List<String> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
+
+/// Create a copy of ApiVideoCard
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiVideoCardCopyWith<_ApiVideoCard> get copyWith => __$ApiVideoCardCopyWithImpl<_ApiVideoCard>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&const DeepCollectionEquality().equals(other._tags, _tags));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,const DeepCollectionEquality().hash(_tags));
+
+@override
+String toString() {
+  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, tags: $tags)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiVideoCardCopyWith<$Res> implements $ApiVideoCardCopyWith<$Res> {
+  factory _$ApiVideoCardCopyWith(_ApiVideoCard value, $Res Function(_ApiVideoCard) _then) = __$ApiVideoCardCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, List<String> tags
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiVideoCardCopyWithImpl<$Res>
+    implements _$ApiVideoCardCopyWith<$Res> {
+  __$ApiVideoCardCopyWithImpl(this._self, this._then);
+
+  final _ApiVideoCard _self;
+  final $Res Function(_ApiVideoCard) _then;
+
+/// Create a copy of ApiVideoCard
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? tags = null,}) {
+  return _then(_ApiVideoCard(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$ApiVideoDetail {
+
+ String get id; String get title; String get coverUrl; String? get description; String? get duration; String? get views; String? get likes; String? get uploadDate; ApiAuthorInfo? get author; List<String> get tags; List<ApiVideoQuality> get qualities; ApiSeriesInfo? get series; List<ApiVideoCard> get relatedVideos;
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiVideoDetailCopyWith<ApiVideoDetail> get copyWith => _$ApiVideoDetailCopyWithImpl<ApiVideoDetail>(this as ApiVideoDetail, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiVideoDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other.tags, tags)&&const DeepCollectionEquality().equals(other.qualities, qualities)&&(identical(other.series, series) || other.series == series)&&const DeepCollectionEquality().equals(other.relatedVideos, relatedVideos));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,description,duration,views,likes,uploadDate,author,const DeepCollectionEquality().hash(tags),const DeepCollectionEquality().hash(qualities),series,const DeepCollectionEquality().hash(relatedVideos));
+
+@override
+String toString() {
+  return 'ApiVideoDetail(id: $id, title: $title, coverUrl: $coverUrl, description: $description, duration: $duration, views: $views, likes: $likes, uploadDate: $uploadDate, author: $author, tags: $tags, qualities: $qualities, series: $series, relatedVideos: $relatedVideos)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiVideoDetailCopyWith<$Res>  {
+  factory $ApiVideoDetailCopyWith(ApiVideoDetail value, $Res Function(ApiVideoDetail) _then) = _$ApiVideoDetailCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, String coverUrl, String? description, String? duration, String? views, String? likes, String? uploadDate, ApiAuthorInfo? author, List<String> tags, List<ApiVideoQuality> qualities, ApiSeriesInfo? series, List<ApiVideoCard> relatedVideos
+});
+
+
+$ApiAuthorInfoCopyWith<$Res>? get author;$ApiSeriesInfoCopyWith<$Res>? get series;
+
+}
+/// @nodoc
+class _$ApiVideoDetailCopyWithImpl<$Res>
+    implements $ApiVideoDetailCopyWith<$Res> {
+  _$ApiVideoDetailCopyWithImpl(this._self, this._then);
+
+  final ApiVideoDetail _self;
+  final $Res Function(ApiVideoDetail) _then;
+
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? description = freezed,Object? duration = freezed,Object? views = freezed,Object? likes = freezed,Object? uploadDate = freezed,Object? author = freezed,Object? tags = null,Object? qualities = null,Object? series = freezed,Object? relatedVideos = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as String?,likes: freezed == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,author: freezed == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
+as ApiAuthorInfo?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,qualities: null == qualities ? _self.qualities : qualities // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoQuality>,series: freezed == series ? _self.series : series // ignore: cast_nullable_to_non_nullable
+as ApiSeriesInfo?,relatedVideos: null == relatedVideos ? _self.relatedVideos : relatedVideos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,
+  ));
+}
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiAuthorInfoCopyWith<$Res>? get author {
+    if (_self.author == null) {
+    return null;
+  }
+
+  return $ApiAuthorInfoCopyWith<$Res>(_self.author!, (value) {
+    return _then(_self.copyWith(author: value));
+  });
+}/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiSeriesInfoCopyWith<$Res>? get series {
+    if (_self.series == null) {
+    return null;
+  }
+
+  return $ApiSeriesInfoCopyWith<$Res>(_self.series!, (value) {
+    return _then(_self.copyWith(series: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [ApiVideoDetail].
+extension ApiVideoDetailPatterns on ApiVideoDetail {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiVideoDetail value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiVideoDetail() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiVideoDetail value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoDetail():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiVideoDetail value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoDetail() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? description,  String? duration,  String? views,  String? likes,  String? uploadDate,  ApiAuthorInfo? author,  List<String> tags,  List<ApiVideoQuality> qualities,  ApiSeriesInfo? series,  List<ApiVideoCard> relatedVideos)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiVideoDetail() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.description,_that.duration,_that.views,_that.likes,_that.uploadDate,_that.author,_that.tags,_that.qualities,_that.series,_that.relatedVideos);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? description,  String? duration,  String? views,  String? likes,  String? uploadDate,  ApiAuthorInfo? author,  List<String> tags,  List<ApiVideoQuality> qualities,  ApiSeriesInfo? series,  List<ApiVideoCard> relatedVideos)  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoDetail():
+return $default(_that.id,_that.title,_that.coverUrl,_that.description,_that.duration,_that.views,_that.likes,_that.uploadDate,_that.author,_that.tags,_that.qualities,_that.series,_that.relatedVideos);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String coverUrl,  String? description,  String? duration,  String? views,  String? likes,  String? uploadDate,  ApiAuthorInfo? author,  List<String> tags,  List<ApiVideoQuality> qualities,  ApiSeriesInfo? series,  List<ApiVideoCard> relatedVideos)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoDetail() when $default != null:
+return $default(_that.id,_that.title,_that.coverUrl,_that.description,_that.duration,_that.views,_that.likes,_that.uploadDate,_that.author,_that.tags,_that.qualities,_that.series,_that.relatedVideos);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiVideoDetail implements ApiVideoDetail {
+  const _ApiVideoDetail({required this.id, required this.title, required this.coverUrl, this.description, this.duration, this.views, this.likes, this.uploadDate, this.author, required final  List<String> tags, required final  List<ApiVideoQuality> qualities, this.series, required final  List<ApiVideoCard> relatedVideos}): _tags = tags,_qualities = qualities,_relatedVideos = relatedVideos;
+  
+
+@override final  String id;
+@override final  String title;
+@override final  String coverUrl;
+@override final  String? description;
+@override final  String? duration;
+@override final  String? views;
+@override final  String? likes;
+@override final  String? uploadDate;
+@override final  ApiAuthorInfo? author;
+ final  List<String> _tags;
+@override List<String> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
+ final  List<ApiVideoQuality> _qualities;
+@override List<ApiVideoQuality> get qualities {
+  if (_qualities is EqualUnmodifiableListView) return _qualities;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_qualities);
+}
+
+@override final  ApiSeriesInfo? series;
+ final  List<ApiVideoCard> _relatedVideos;
+@override List<ApiVideoCard> get relatedVideos {
+  if (_relatedVideos is EqualUnmodifiableListView) return _relatedVideos;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_relatedVideos);
+}
+
+
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiVideoDetailCopyWith<_ApiVideoDetail> get copyWith => __$ApiVideoDetailCopyWithImpl<_ApiVideoDetail>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiVideoDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.description, description) || other.description == description)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other._tags, _tags)&&const DeepCollectionEquality().equals(other._qualities, _qualities)&&(identical(other.series, series) || other.series == series)&&const DeepCollectionEquality().equals(other._relatedVideos, _relatedVideos));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,description,duration,views,likes,uploadDate,author,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_qualities),series,const DeepCollectionEquality().hash(_relatedVideos));
+
+@override
+String toString() {
+  return 'ApiVideoDetail(id: $id, title: $title, coverUrl: $coverUrl, description: $description, duration: $duration, views: $views, likes: $likes, uploadDate: $uploadDate, author: $author, tags: $tags, qualities: $qualities, series: $series, relatedVideos: $relatedVideos)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiVideoDetailCopyWith<$Res> implements $ApiVideoDetailCopyWith<$Res> {
+  factory _$ApiVideoDetailCopyWith(_ApiVideoDetail value, $Res Function(_ApiVideoDetail) _then) = __$ApiVideoDetailCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, String coverUrl, String? description, String? duration, String? views, String? likes, String? uploadDate, ApiAuthorInfo? author, List<String> tags, List<ApiVideoQuality> qualities, ApiSeriesInfo? series, List<ApiVideoCard> relatedVideos
+});
+
+
+@override $ApiAuthorInfoCopyWith<$Res>? get author;@override $ApiSeriesInfoCopyWith<$Res>? get series;
+
+}
+/// @nodoc
+class __$ApiVideoDetailCopyWithImpl<$Res>
+    implements _$ApiVideoDetailCopyWith<$Res> {
+  __$ApiVideoDetailCopyWithImpl(this._self, this._then);
+
+  final _ApiVideoDetail _self;
+  final $Res Function(_ApiVideoDetail) _then;
+
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? description = freezed,Object? duration = freezed,Object? views = freezed,Object? likes = freezed,Object? uploadDate = freezed,Object? author = freezed,Object? tags = null,Object? qualities = null,Object? series = freezed,Object? relatedVideos = null,}) {
+  return _then(_ApiVideoDetail(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as String?,likes: freezed == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,author: freezed == author ? _self.author : author // ignore: cast_nullable_to_non_nullable
+as ApiAuthorInfo?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,qualities: null == qualities ? _self._qualities : qualities // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoQuality>,series: freezed == series ? _self.series : series // ignore: cast_nullable_to_non_nullable
+as ApiSeriesInfo?,relatedVideos: null == relatedVideos ? _self._relatedVideos : relatedVideos // ignore: cast_nullable_to_non_nullable
+as List<ApiVideoCard>,
+  ));
+}
+
+/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiAuthorInfoCopyWith<$Res>? get author {
+    if (_self.author == null) {
+    return null;
+  }
+
+  return $ApiAuthorInfoCopyWith<$Res>(_self.author!, (value) {
+    return _then(_self.copyWith(author: value));
+  });
+}/// Create a copy of ApiVideoDetail
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiSeriesInfoCopyWith<$Res>? get series {
+    if (_self.series == null) {
+    return null;
+  }
+
+  return $ApiSeriesInfoCopyWith<$Res>(_self.series!, (value) {
+    return _then(_self.copyWith(series: value));
+  });
+}
+}
+
+/// @nodoc
+mixin _$ApiVideoQuality {
+
+ String get quality; String get url;
+/// Create a copy of ApiVideoQuality
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiVideoQualityCopyWith<ApiVideoQuality> get copyWith => _$ApiVideoQualityCopyWithImpl<ApiVideoQuality>(this as ApiVideoQuality, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiVideoQuality&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.url, url) || other.url == url));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,quality,url);
+
+@override
+String toString() {
+  return 'ApiVideoQuality(quality: $quality, url: $url)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiVideoQualityCopyWith<$Res>  {
+  factory $ApiVideoQualityCopyWith(ApiVideoQuality value, $Res Function(ApiVideoQuality) _then) = _$ApiVideoQualityCopyWithImpl;
+@useResult
+$Res call({
+ String quality, String url
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiVideoQualityCopyWithImpl<$Res>
+    implements $ApiVideoQualityCopyWith<$Res> {
+  _$ApiVideoQualityCopyWithImpl(this._self, this._then);
+
+  final ApiVideoQuality _self;
+  final $Res Function(ApiVideoQuality) _then;
+
+/// Create a copy of ApiVideoQuality
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? quality = null,Object? url = null,}) {
+  return _then(_self.copyWith(
+quality: null == quality ? _self.quality : quality // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiVideoQuality].
+extension ApiVideoQualityPatterns on ApiVideoQuality {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiVideoQuality value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiVideoQuality() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiVideoQuality value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoQuality():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiVideoQuality value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiVideoQuality() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String quality,  String url)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiVideoQuality() when $default != null:
+return $default(_that.quality,_that.url);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String quality,  String url)  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoQuality():
+return $default(_that.quality,_that.url);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String quality,  String url)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiVideoQuality() when $default != null:
+return $default(_that.quality,_that.url);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiVideoQuality implements ApiVideoQuality {
+  const _ApiVideoQuality({required this.quality, required this.url});
+  
+
+@override final  String quality;
+@override final  String url;
+
+/// Create a copy of ApiVideoQuality
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiVideoQualityCopyWith<_ApiVideoQuality> get copyWith => __$ApiVideoQualityCopyWithImpl<_ApiVideoQuality>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiVideoQuality&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.url, url) || other.url == url));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,quality,url);
+
+@override
+String toString() {
+  return 'ApiVideoQuality(quality: $quality, url: $url)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiVideoQualityCopyWith<$Res> implements $ApiVideoQualityCopyWith<$Res> {
+  factory _$ApiVideoQualityCopyWith(_ApiVideoQuality value, $Res Function(_ApiVideoQuality) _then) = __$ApiVideoQualityCopyWithImpl;
+@override @useResult
+$Res call({
+ String quality, String url
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiVideoQualityCopyWithImpl<$Res>
+    implements _$ApiVideoQualityCopyWith<$Res> {
+  __$ApiVideoQualityCopyWithImpl(this._self, this._then);
+
+  final _ApiVideoQuality _self;
+  final $Res Function(_ApiVideoQuality) _then;
+
+/// Create a copy of ApiVideoQuality
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? quality = null,Object? url = null,}) {
+  return _then(_ApiVideoQuality(
+quality: null == quality ? _self.quality : quality // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+// dart format on

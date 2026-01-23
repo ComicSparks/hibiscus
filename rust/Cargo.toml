@@ -1,0 +1,50 @@
+[package]
+name = "rust_lib_hibiscus"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+# Flutter Rust Bridge
+flutter_rust_bridge = "=2.11.1"
+
+# Async Runtime
+tokio = { version = "1", features = ["full"] }
+
+# HTTP Client
+reqwest = { version = "0.12", features = ["cookies", "json", "stream"] }
+reqwest_cookie_store = "0.8"
+
+# HTML Parsing
+scraper = "0.22"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+refinery = { version = "0.8", features = ["rusqlite"] }
+
+# Error Handling
+anyhow = "1"
+thiserror = "2"
+
+# Utilities
+chrono = { version = "0.4", features = ["serde"] }
+url = "2"
+urlencoding = "2"
+uuid = { version = "1", features = ["v4"] }
+log = "0.4"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+env_logger = "0.11"
+once_cell = "1"
+parking_lot = "0.12"
+regex = "1"
+futures-util = "0.3"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
