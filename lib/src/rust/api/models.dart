@@ -9,7 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'models.freezed.dart';
 
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `ApiResult`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// 应用设置
 @freezed
@@ -35,6 +35,17 @@ sealed class ApiAuthorInfo with _$ApiAuthorInfo {
     String? avatarUrl,
     required bool isSubscribed,
   }) = _ApiAuthorInfo;
+}
+
+/// Banner 信息
+@freezed
+sealed class ApiBanner with _$ApiBanner {
+  const factory ApiBanner({
+    required String title,
+    String? description,
+    required String picUrl,
+    String? videoCode,
+  }) = _ApiBanner;
 }
 
 /// Cloudflare 验证请求
@@ -136,6 +147,48 @@ sealed class ApiFilterOptions with _$ApiFilterOptions {
   }) = _ApiFilterOptions;
 }
 
+/// 首页数据
+@freezed
+sealed class ApiHomePage with _$ApiHomePage {
+  const factory ApiHomePage({
+    String? csrfToken,
+    String? avatarUrl,
+    String? username,
+    ApiBanner? banner,
+    required List<ApiVideoCard> latestRelease,
+    required List<ApiVideoCard> latestUpload,
+    required List<ApiHomeSection> sections,
+  }) = _ApiHomePage;
+}
+
+/// 首页分区
+@freezed
+sealed class ApiHomeSection with _$ApiHomeSection {
+  const factory ApiHomeSection({
+    required String name,
+    required List<ApiVideoCard> videos,
+  }) = _ApiHomeSection;
+}
+
+/// 我的列表信息（收藏、稍后观看等）
+@freezed
+sealed class ApiMyListInfo with _$ApiMyListInfo {
+  const factory ApiMyListInfo({
+    required bool isWatchLater,
+    required List<ApiMyListItem> items,
+  }) = _ApiMyListInfo;
+}
+
+/// 我的列表项
+@freezed
+sealed class ApiMyListItem with _$ApiMyListItem {
+  const factory ApiMyListItem({
+    required String code,
+    required String title,
+    required bool isSelected,
+  }) = _ApiMyListItem;
+}
+
 /// 播放历史记录
 @freezed
 sealed class ApiPlayHistory with _$ApiPlayHistory {
@@ -158,6 +211,15 @@ sealed class ApiPlayHistoryList with _$ApiPlayHistoryList {
     required int page,
     required bool hasNext,
   }) = _ApiPlayHistoryList;
+}
+
+/// 播放列表信息
+@freezed
+sealed class ApiPlaylistInfo with _$ApiPlaylistInfo {
+  const factory ApiPlaylistInfo({
+    String? name,
+    required List<ApiVideoCard> videos,
+  }) = _ApiPlaylistInfo;
 }
 
 /// 搜索过滤条件
@@ -253,6 +315,7 @@ sealed class ApiVideoDetail with _$ApiVideoDetail {
   const factory ApiVideoDetail({
     required String id,
     required String title,
+    String? chineseTitle,
     required String coverUrl,
     String? description,
     String? duration,
@@ -264,6 +327,12 @@ sealed class ApiVideoDetail with _$ApiVideoDetail {
     required List<ApiVideoQuality> qualities,
     ApiSeriesInfo? series,
     required List<ApiVideoCard> relatedVideos,
+    String? csrfToken,
+    String? currentUserId,
+    required bool isFav,
+    int? favTimes,
+    ApiPlaylistInfo? playlist,
+    ApiMyListInfo? myList,
   }) = _ApiVideoDetail;
 }
 

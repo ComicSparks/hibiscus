@@ -20,3 +20,7 @@ Future<ApiFilterOptions> getFilterOptions() =>
 /// 获取首页推荐（默认搜索结果）
 Future<ApiSearchResult> getHomeVideos({required int page}) =>
     RustLib.instance.api.crateApiSearchGetHomeVideos(page: page);
+
+/// 获取首页数据（包含各分区）
+Future<ApiHomePage> getHomepage() =>
+    RustLib.instance.api.crateApiSearchGetHomepage();

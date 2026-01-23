@@ -124,7 +124,9 @@ class SearchState {
     error.value = null;
 
     try {
+      debugPrint('Loading home videos, page: $_currentPage');
       final result = await search_api.getHomeVideos(page: _currentPage);
+      debugPrint('Got ${result.videos.length} videos');
 
       if (refresh) {
         videos.value = result.videos;
@@ -134,6 +136,7 @@ class SearchState {
 
       hasMore.value = result.hasNext;
     } catch (e) {
+      debugPrint('Load home videos error: $e');
       final errorStr = e.toString();
       if (errorStr.contains('CLOUDFLARE_CHALLENGE')) {
         needsCloudflare.value = true;

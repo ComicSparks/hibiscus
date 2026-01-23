@@ -184,7 +184,7 @@ class SubscriptionsState {
     error.value = null;
 
     try {
-      final result = await user_api.getSubscribedAuthors();
+      final result = await user_api.getSubscribedAuthors(page: 1);
       authors.value = result;
     } catch (e) {
       error.value = e.toString();
@@ -194,9 +194,14 @@ class SubscriptionsState {
   }
 
   /// 订阅
-  Future<bool> subscribe(String authorId) async {
+  /// Note: This requires csrfToken and userId which should come from login state
+  Future<bool> subscribe(String authorId, {String csrfToken = '', String userId = ''}) async {
     try {
-      await user_api.subscribeAuthor(authorId: authorId);
+      await user_api.subscribeAuthor(
+        artistId: authorId, 
+        userId: userId,
+        csrfToken: csrfToken,
+      );
       await load();
       return true;
     } catch (e) {
@@ -205,9 +210,14 @@ class SubscriptionsState {
   }
 
   /// 取消订阅
-  Future<bool> unsubscribe(String authorId) async {
+  /// Note: This requires csrfToken and userId which should come from login state
+  Future<bool> unsubscribe(String authorId, {String csrfToken = '', String userId = ''}) async {
     try {
-      await user_api.unsubscribeAuthor(authorId: authorId);
+      await user_api.unsubscribeAuthor(
+        artistId: authorId,
+        userId: userId,
+        csrfToken: csrfToken,
+      );
       authors.value = authors.value.where((a) => a.id != authorId).toList();
       return true;
     } catch (e) {

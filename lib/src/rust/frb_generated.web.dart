@@ -45,6 +45,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiAuthorInfo dco_decode_api_author_info(dynamic raw);
 
   @protected
+  ApiBanner dco_decode_api_banner(dynamic raw);
+
+  @protected
   ApiCloudflareChallenge dco_decode_api_cloudflare_challenge(dynamic raw);
 
   @protected
@@ -69,10 +72,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiFilterOptions dco_decode_api_filter_options(dynamic raw);
 
   @protected
+  ApiHomePage dco_decode_api_home_page(dynamic raw);
+
+  @protected
+  ApiHomeSection dco_decode_api_home_section(dynamic raw);
+
+  @protected
+  ApiMyListInfo dco_decode_api_my_list_info(dynamic raw);
+
+  @protected
+  ApiMyListItem dco_decode_api_my_list_item(dynamic raw);
+
+  @protected
   ApiPlayHistory dco_decode_api_play_history(dynamic raw);
 
   @protected
   ApiPlayHistoryList dco_decode_api_play_history_list(dynamic raw);
+
+  @protected
+  ApiPlaylistInfo dco_decode_api_playlist_info(dynamic raw);
 
   @protected
   ApiSearchFilters dco_decode_api_search_filters(dynamic raw);
@@ -111,12 +129,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiAuthorInfo dco_decode_box_autoadd_api_author_info(dynamic raw);
 
   @protected
+  ApiBanner dco_decode_box_autoadd_api_banner(dynamic raw);
+
+  @protected
   ApiCloudflareChallenge dco_decode_box_autoadd_api_cloudflare_challenge(
     dynamic raw,
   );
 
   @protected
+  ApiMyListInfo dco_decode_box_autoadd_api_my_list_info(dynamic raw);
+
+  @protected
   ApiPlayHistory dco_decode_box_autoadd_api_play_history(dynamic raw);
+
+  @protected
+  ApiPlaylistInfo dco_decode_box_autoadd_api_playlist_info(dynamic raw);
 
   @protected
   ApiSearchFilters dco_decode_box_autoadd_api_search_filters(dynamic raw);
@@ -128,10 +155,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiUserInfo dco_decode_box_autoadd_api_user_info(dynamic raw);
 
   @protected
+  int dco_decode_box_autoadd_i_32(dynamic raw);
+
+  @protected
   CacheInfo dco_decode_cache_info(dynamic raw);
 
   @protected
   double dco_decode_f_32(dynamic raw);
+
+  @protected
+  int dco_decode_i_32(dynamic raw);
 
   @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
@@ -150,6 +183,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ApiFilterOption> dco_decode_list_api_filter_option(dynamic raw);
+
+  @protected
+  List<ApiHomeSection> dco_decode_list_api_home_section(dynamic raw);
+
+  @protected
+  List<ApiMyListItem> dco_decode_list_api_my_list_item(dynamic raw);
 
   @protected
   List<ApiPlayHistory> dco_decode_list_api_play_history(dynamic raw);
@@ -179,18 +218,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiAuthorInfo? dco_decode_opt_box_autoadd_api_author_info(dynamic raw);
 
   @protected
+  ApiBanner? dco_decode_opt_box_autoadd_api_banner(dynamic raw);
+
+  @protected
   ApiCloudflareChallenge? dco_decode_opt_box_autoadd_api_cloudflare_challenge(
     dynamic raw,
   );
 
   @protected
+  ApiMyListInfo? dco_decode_opt_box_autoadd_api_my_list_info(dynamic raw);
+
+  @protected
   ApiPlayHistory? dco_decode_opt_box_autoadd_api_play_history(dynamic raw);
+
+  @protected
+  ApiPlaylistInfo? dco_decode_opt_box_autoadd_api_playlist_info(dynamic raw);
 
   @protected
   ApiSeriesInfo? dco_decode_opt_box_autoadd_api_series_info(dynamic raw);
 
   @protected
   ApiUserInfo? dco_decode_opt_box_autoadd_api_user_info(dynamic raw);
+
+  @protected
+  int? dco_decode_opt_box_autoadd_i_32(dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -225,6 +276,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiAuthorInfo sse_decode_api_author_info(SseDeserializer deserializer);
 
   @protected
+  ApiBanner sse_decode_api_banner(SseDeserializer deserializer);
+
+  @protected
   ApiCloudflareChallenge sse_decode_api_cloudflare_challenge(
     SseDeserializer deserializer,
   );
@@ -253,12 +307,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiFilterOptions sse_decode_api_filter_options(SseDeserializer deserializer);
 
   @protected
+  ApiHomePage sse_decode_api_home_page(SseDeserializer deserializer);
+
+  @protected
+  ApiHomeSection sse_decode_api_home_section(SseDeserializer deserializer);
+
+  @protected
+  ApiMyListInfo sse_decode_api_my_list_info(SseDeserializer deserializer);
+
+  @protected
+  ApiMyListItem sse_decode_api_my_list_item(SseDeserializer deserializer);
+
+  @protected
   ApiPlayHistory sse_decode_api_play_history(SseDeserializer deserializer);
 
   @protected
   ApiPlayHistoryList sse_decode_api_play_history_list(
     SseDeserializer deserializer,
   );
+
+  @protected
+  ApiPlaylistInfo sse_decode_api_playlist_info(SseDeserializer deserializer);
 
   @protected
   ApiSearchFilters sse_decode_api_search_filters(SseDeserializer deserializer);
@@ -301,12 +370,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ApiBanner sse_decode_box_autoadd_api_banner(SseDeserializer deserializer);
+
+  @protected
   ApiCloudflareChallenge sse_decode_box_autoadd_api_cloudflare_challenge(
     SseDeserializer deserializer,
   );
 
   @protected
+  ApiMyListInfo sse_decode_box_autoadd_api_my_list_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ApiPlayHistory sse_decode_box_autoadd_api_play_history(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ApiPlaylistInfo sse_decode_box_autoadd_api_playlist_info(
     SseDeserializer deserializer,
   );
 
@@ -326,10 +408,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  int sse_decode_box_autoadd_i_32(SseDeserializer deserializer);
+
+  @protected
   CacheInfo sse_decode_cache_info(SseDeserializer deserializer);
 
   @protected
   double sse_decode_f_32(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
@@ -352,6 +440,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ApiFilterOption> sse_decode_list_api_filter_option(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ApiHomeSection> sse_decode_list_api_home_section(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ApiMyListItem> sse_decode_list_api_my_list_item(
     SseDeserializer deserializer,
   );
 
@@ -395,12 +493,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ApiBanner? sse_decode_opt_box_autoadd_api_banner(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ApiCloudflareChallenge? sse_decode_opt_box_autoadd_api_cloudflare_challenge(
     SseDeserializer deserializer,
   );
 
   @protected
+  ApiMyListInfo? sse_decode_opt_box_autoadd_api_my_list_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ApiPlayHistory? sse_decode_opt_box_autoadd_api_play_history(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ApiPlaylistInfo? sse_decode_opt_box_autoadd_api_playlist_info(
     SseDeserializer deserializer,
   );
 
@@ -413,6 +526,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ApiUserInfo? sse_decode_opt_box_autoadd_api_user_info(
     SseDeserializer deserializer,
   );
+
+  @protected
+  int? sse_decode_opt_box_autoadd_i_32(SseDeserializer deserializer);
 
   @protected
   (String, String) sse_decode_record_string_string(
@@ -430,9 +546,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
-
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   void sse_encode_AnyhowException(
@@ -457,6 +570,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_api_author_info(ApiAuthorInfo self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_api_banner(ApiBanner self, SseSerializer serializer);
 
   @protected
   void sse_encode_api_cloudflare_challenge(
@@ -504,6 +620,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_api_home_page(ApiHomePage self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_api_home_section(
+    ApiHomeSection self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_api_my_list_info(
+    ApiMyListInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_api_my_list_item(
+    ApiMyListItem self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_api_play_history(
     ApiPlayHistory self,
     SseSerializer serializer,
@@ -512,6 +649,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_api_play_history_list(
     ApiPlayHistoryList self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_api_playlist_info(
+    ApiPlaylistInfo self,
     SseSerializer serializer,
   );
 
@@ -573,14 +716,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_api_banner(
+    ApiBanner self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_api_cloudflare_challenge(
     ApiCloudflareChallenge self,
     SseSerializer serializer,
   );
 
   @protected
+  void sse_encode_box_autoadd_api_my_list_info(
+    ApiMyListInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_api_play_history(
     ApiPlayHistory self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_api_playlist_info(
+    ApiPlaylistInfo self,
     SseSerializer serializer,
   );
 
@@ -603,10 +764,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_i_32(int self, SseSerializer serializer);
+
+  @protected
   void sse_encode_cache_info(CacheInfo self, SseSerializer serializer);
 
   @protected
   void sse_encode_f_32(double self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
@@ -635,6 +802,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_api_filter_option(
     List<ApiFilterOption> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_api_home_section(
+    List<ApiHomeSection> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_api_my_list_item(
+    List<ApiMyListItem> self,
     SseSerializer serializer,
   );
 
@@ -690,14 +869,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_api_banner(
+    ApiBanner? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_api_cloudflare_challenge(
     ApiCloudflareChallenge? self,
     SseSerializer serializer,
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_api_my_list_info(
+    ApiMyListInfo? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_api_play_history(
     ApiPlayHistory? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_api_playlist_info(
+    ApiPlaylistInfo? self,
     SseSerializer serializer,
   );
 
@@ -712,6 +909,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     ApiUserInfo? self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_32(int? self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(
@@ -730,9 +930,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer);
 }
 
 // Section: wire_class

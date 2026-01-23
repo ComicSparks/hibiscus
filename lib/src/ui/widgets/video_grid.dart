@@ -36,12 +36,15 @@ class VideoGrid extends StatelessWidget {
     
     return GridView.builder(
       controller: controller,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: columns,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 0.65, // 封面 16:9 + 标题区域
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        // 宽高比 = 宽度/高度，越大高度越小
+        // 16:9 封面需要 height = width * 9/16
+        // 标题区约 60-70px
+        childAspectRatio: 0.78,
       ),
       itemCount: videos.length + (hasMore ? 1 : 0),
       itemBuilder: (context, index) {

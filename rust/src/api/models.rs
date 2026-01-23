@@ -27,6 +27,7 @@ pub struct ApiVideoCard {
 pub struct ApiVideoDetail {
     pub id: String,
     pub title: String,
+    pub chinese_title: Option<String>,
     pub cover_url: String,
     pub description: Option<String>,
     pub duration: Option<String>,
@@ -38,6 +39,12 @@ pub struct ApiVideoDetail {
     pub qualities: Vec<ApiVideoQuality>,
     pub series: Option<ApiSeriesInfo>,
     pub related_videos: Vec<ApiVideoCard>,
+    pub csrf_token: Option<String>,
+    pub current_user_id: Option<String>,
+    pub is_fav: bool,
+    pub fav_times: Option<i32>,
+    pub playlist: Option<ApiPlaylistInfo>,
+    pub my_list: Option<ApiMyListInfo>,
 }
 
 /// 视频清晰度
@@ -76,6 +83,66 @@ pub struct ApiSeriesVideo {
     pub title: String,
     pub cover_url: String,
     pub episode: String,
+}
+
+/// 播放列表信息
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiPlaylistInfo {
+    pub name: Option<String>,
+    pub videos: Vec<ApiVideoCard>,
+}
+
+/// 我的列表信息（收藏、稍后观看等）
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiMyListInfo {
+    pub is_watch_later: bool,
+    pub items: Vec<ApiMyListItem>,
+}
+
+/// 我的列表项
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiMyListItem {
+    pub code: String,
+    pub title: String,
+    pub is_selected: bool,
+}
+
+// ============================================================================
+// 首页相关模型
+// ============================================================================
+
+/// 首页数据
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiHomePage {
+    pub csrf_token: Option<String>,
+    pub avatar_url: Option<String>,
+    pub username: Option<String>,
+    pub banner: Option<ApiBanner>,
+    pub latest_release: Vec<ApiVideoCard>,
+    pub latest_upload: Vec<ApiVideoCard>,
+    pub sections: Vec<ApiHomeSection>,
+}
+
+/// Banner 信息
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiBanner {
+    pub title: String,
+    pub description: Option<String>,
+    pub pic_url: String,
+    pub video_code: Option<String>,
+}
+
+/// 首页分区
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiHomeSection {
+    pub name: String,
+    pub videos: Vec<ApiVideoCard>,
 }
 
 // ============================================================================

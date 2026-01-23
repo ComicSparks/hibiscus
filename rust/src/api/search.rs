@@ -2,7 +2,10 @@
 
 use flutter_rust_bridge::frb;
 use chrono::Datelike;
-use crate::api::models::{ApiSearchResult, ApiSearchFilters, ApiFilterOptions, ApiVideoCard, ApiFilterOption, ApiTagGroup};
+use crate::api::models::{
+    ApiSearchResult, ApiSearchFilters, ApiFilterOptions, ApiVideoCard, 
+    ApiFilterOption, ApiTagGroup, ApiHomePage, ApiHomeSection, ApiBanner
+};
 use crate::core::network;
 use crate::core::parser;
 
@@ -110,43 +113,9 @@ pub async fn search(filters: ApiSearchFilters) -> anyhow::Result<ApiSearchResult
                 return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
             }
             
-            // 其他错误，返回模拟数据用于开发
-            tracing::warn!("Network error, returning mock data: {}", err_str);
-            
-            Ok(ApiSearchResult {
-                videos: vec![
-                    ApiVideoCard {
-                        id: "1".to_string(),
-                        title: "示例视频 1 - 这是一个很长的标题用于测试文本溢出效果".to_string(),
-                        cover_url: "".to_string(),
-                        duration: Some("24:30".to_string()),
-                        views: Some("12.3K".to_string()),
-                        upload_date: Some("2024-01-15".to_string()),
-                        tags: vec!["無碼".to_string(), "中文字幕".to_string()],
-                    },
-                    ApiVideoCard {
-                        id: "2".to_string(),
-                        title: "示例视频 2".to_string(),
-                        cover_url: "".to_string(),
-                        duration: Some("18:45".to_string()),
-                        views: Some("8.7K".to_string()),
-                        upload_date: Some("2024-01-10".to_string()),
-                        tags: vec!["JK".to_string()],
-                    },
-                    ApiVideoCard {
-                        id: "3".to_string(),
-                        title: "示例视频 3".to_string(),
-                        cover_url: "".to_string(),
-                        duration: Some("32:15".to_string()),
-                        views: Some("15.2K".to_string()),
-                        upload_date: Some("2024-01-08".to_string()),
-                        tags: vec!["純愛".to_string(), "巨乳".to_string()],
-                    },
-                ],
-                total: 100,
-                page: filters.page,
-                has_next: filters.page < 10,
-            })
+            // 返回实际错误
+            tracing::error!("Search network error: {}", err_str);
+            Err(e)
         }
     }
 }
@@ -242,4 +211,69 @@ pub async fn get_home_videos(page: u32) -> anyhow::Result<ApiSearchResult> {
         page,
         ..Default::default()
     }).await
+}
+
+/// 获取首页数据（包含各分区）
+#[frb]
+pub async fn get_homepage() -> anyhow::Result<ApiHomePage> {
+    let url = format!("{}/", BASE_URL);
+    tracing::info!("Getting homepage: {}", url);
+    
+    match network::get(&url).await {
+        Ok(html) => {
+            let result = parser::parse_homepage(&html)?;
+            
+            // 转换为 API 模型
+            let convert_videos = |videos: Vec<parser::VideoCard>| -> Vec<ApiVideoCard> {
+                videos.into_iter().map(|v| ApiVideoCard {
+                    id: v.id,
+                    title: v.title,
+                    cover_url: v.cover_url,
+                    duration: Some(v.duration).filter(|s| !s.is_empty()),
+                    views: Some(v.views).filter(|s| !s.is_empty()),
+                    upload_date: v.upload_date,
+                    tags: v.tags,
+                }).collect()
+            };
+            
+            let sections: Vec<ApiHomeSection> = result.sections.into_iter()
+                .map(|(name, videos)| ApiHomeSection {
+                    name,
+                    videos: convert_videos(videos),
+                })
+                .collect();
+            
+            Ok(ApiHomePage {
+                csrf_token: result.csrf_token,
+                avatar_url: result.avatar_url,
+                username: result.username,
+                banner: result.banner.map(|b| ApiBanner {
+                    title: b.title,
+                    description: b.description,
+                    pic_url: b.pic_url,
+                    video_code: b.video_code,
+                }),
+                latest_release: convert_videos(result.latest_release),
+                latest_upload: convert_videos(result.latest_upload),
+                sections,
+            })
+        }
+        Err(e) => {
+            let err_str = e.to_string();
+            if err_str.contains("CLOUDFLARE_CHALLENGE") {
+                return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
+            }
+            
+            // 返回模拟数据
+            Ok(ApiHomePage {
+                csrf_token: None,
+                avatar_url: None,
+                username: None,
+                banner: None,
+                latest_release: vec![],
+                latest_upload: vec![],
+                sections: vec![],
+            })
+        }
+    }
 }

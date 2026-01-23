@@ -35,19 +35,18 @@ class _VideoDetailState {
     }
   }
 
-  Future<void> loadVideoUrl(String videoId) async {
-    final quality = selectedQuality.value;
-    if (quality == null) return;
-
-    try {
-      final url = await video_api.getVideoUrl(
-        videoId: videoId,
-        quality: quality,
-      );
-      videoUrl.value = url;
-    } catch (e) {
-      error.value = e.toString();
+  /// 从已加载的 qualities 中获取视频 URL
+  String? getVideoUrlForQuality(String? quality) {
+    final detail = videoDetail.value;
+    if (detail == null || quality == null) return null;
+    
+    for (final q in detail.qualities) {
+      if (q.quality == quality) {
+        return q.url;
+      }
     }
+    // 如果找不到对应清晰度，返回第一个
+    return detail.qualities.isNotEmpty ? detail.qualities.first.url : null;
   }
 
   Future<void> toggleFavorite(String videoId) async {
@@ -114,7 +113,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
@@ -276,8 +275,23 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
           Center(
             child: IconButton.filled(
               onPressed: () {
-                // TODO: 实现视频播放
-                _state.loadVideoUrl(widget.videoId);
+                // 直接从 qualities 获取视频 URL
+                final url = _state.getVideoUrlForQuality(_state.selectedQuality.value);
+                if (url != null && url.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('视频播放器开发中...\\n视频URL: ${url.length > 60 ? "${url.substring(0, 60)}..." : url}'),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('无法获取视频链接'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.play_arrow, size: 48),
               style: IconButton.styleFrom(

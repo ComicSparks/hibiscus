@@ -1,7 +1,10 @@
 // 视频详情相关 API
 
 use flutter_rust_bridge::frb;
-use crate::api::models::{ApiVideoDetail, ApiVideoQuality, ApiAuthorInfo, ApiCommentList, ApiComment, ApiVideoCard};
+use crate::api::models::{
+    ApiVideoDetail, ApiVideoQuality, ApiAuthorInfo, ApiCommentList, 
+    ApiComment, ApiVideoCard, ApiPlaylistInfo, ApiMyListInfo, ApiMyListItem
+};
 use crate::core::network;
 use crate::core::parser;
 
@@ -21,6 +24,7 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
             Ok(ApiVideoDetail {
                 id: detail.id,
                 title: detail.title,
+                chinese_title: detail.chinese_title,
                 cover_url: detail.cover_url,
                 description: Some(detail.description).filter(|s| !s.is_empty()),
                 duration: None, // 从页面解析
@@ -48,6 +52,30 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                     upload_date: v.upload_date,
                     tags: v.tags,
                 }).collect(),
+                csrf_token: detail.csrf_token,
+                current_user_id: detail.current_user_id,
+                is_fav: detail.is_fav,
+                fav_times: detail.fav_times,
+                playlist: detail.playlist.map(|p| ApiPlaylistInfo {
+                    name: p.name,
+                    videos: p.videos.into_iter().map(|v| ApiVideoCard {
+                        id: v.id,
+                        title: v.title,
+                        cover_url: v.cover_url,
+                        duration: Some(v.duration).filter(|s| !s.is_empty()),
+                        views: Some(v.views).filter(|s| !s.is_empty()),
+                        upload_date: v.upload_date,
+                        tags: v.tags,
+                    }).collect(),
+                }),
+                my_list: detail.my_list.map(|m| ApiMyListInfo {
+                    is_watch_later: m.is_watch_later,
+                    items: m.items.into_iter().map(|i| ApiMyListItem {
+                        code: i.code,
+                        title: i.title,
+                        is_selected: i.is_selected,
+                    }).collect(),
+                }),
             })
         }
         Err(e) => {
@@ -58,38 +86,9 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                 return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
             }
             
-            // 其他错误，返回模拟数据
-            tracing::warn!("Network error, returning mock data: {}", err_str);
-            
-            Ok(ApiVideoDetail {
-                id: video_id.clone(),
-                title: "示例视频标题".to_string(),
-                cover_url: "https://via.placeholder.com/640x360".to_string(),
-                description: Some("这是视频的详细描述内容...".to_string()),
-                duration: Some("24:30".to_string()),
-                views: Some("12.3K".to_string()),
-                likes: Some("1.2K".to_string()),
-                upload_date: Some("2024-01-15".to_string()),
-                author: Some(ApiAuthorInfo {
-                    id: "author1".to_string(),
-                    name: "示例作者".to_string(),
-                    avatar_url: Some("https://via.placeholder.com/100x100".to_string()),
-                    is_subscribed: false,
-                }),
-                tags: vec!["标签1".to_string(), "标签2".to_string(), "标签3".to_string()],
-                qualities: vec![
-                    ApiVideoQuality {
-                        quality: "1080p".to_string(),
-                        url: "https://example.com/video_1080p.m3u8".to_string(),
-                    },
-                    ApiVideoQuality {
-                        quality: "720p".to_string(),
-                        url: "https://example.com/video_720p.m3u8".to_string(),
-                    },
-                ],
-                series: None,
-                related_videos: vec![],
-            })
+            // 返回真实错误
+            tracing::error!("Video detail error: {}", err_str);
+            Err(e)
         }
     }
 }
