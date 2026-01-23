@@ -1,16 +1,8 @@
 // Flutter 路由配置
-// 使用 go_router 实现声明式路由
+// 使用原生 Navigator (MaterialPageRoute)
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hibiscus/src/ui/pages/home_page.dart';
 import 'package:hibiscus/src/ui/pages/video_detail_page.dart';
-import 'package:hibiscus/src/ui/pages/downloads_page.dart';
-import 'package:hibiscus/src/ui/pages/history_page.dart';
-import 'package:hibiscus/src/ui/pages/favorites_page.dart';
-import 'package:hibiscus/src/ui/pages/watch_later_page.dart';
-import 'package:hibiscus/src/ui/pages/subscriptions_page.dart';
-import 'package:hibiscus/src/ui/pages/settings_page.dart';
 import 'package:hibiscus/src/ui/shell/app_shell.dart';
 
 /// 路由路径常量
@@ -26,110 +18,56 @@ class AppRoutes {
   static const String settings = '/settings';
 }
 
-/// 创建路由配置
-GoRouter createRouter() {
-  return GoRouter(
-    initialLocation: AppRoutes.home,
-    debugLogDiagnostics: true,
-    routes: [
-      // 带侧栏的 Shell 路由
-      ShellRoute(
-        builder: (context, state, child) => AppShell(child: child),
-        routes: [
-          GoRoute(
-            path: AppRoutes.home,
-            name: 'home',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const HomePage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.downloads,
-            name: 'downloads',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const DownloadsPage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.history,
-            name: 'history',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const HistoryPage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.favorites,
-            name: 'favorites',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const FavoritesPage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.watchLater,
-            name: 'watchLater',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const WatchLaterPage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.subscriptions,
-            name: 'subscriptions',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const SubscriptionsPage(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.settings,
-            name: 'settings',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const SettingsPage(),
-            ),
-          ),
-        ],
-      ),
-      // 视频详情页（全屏，不带侧栏）
-      GoRoute(
-        path: AppRoutes.videoDetail,
-        name: 'videoDetail',
-        builder: (context, state) {
-          final videoId = state.pathParameters['id'] ?? '';
-          return VideoDetailPage(videoId: videoId);
-        },
-      ),
-    ],
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('页面不存在: ${state.uri}'),
-      ),
-    ),
+/// 路由构建
+Route<dynamic> onGenerateRoute(RouteSettings settings) {
+  final name = settings.name ?? AppRoutes.home;
+
+  int initialIndex = 0;
+  switch (name) {
+    case AppRoutes.home:
+      initialIndex = 0;
+      break;
+    case AppRoutes.downloads:
+      initialIndex = 4;
+      break;
+    case AppRoutes.history:
+      initialIndex = 3;
+      break;
+    case AppRoutes.favorites:
+      initialIndex = 1;
+      break;
+    case AppRoutes.watchLater:
+      initialIndex = 2;
+      break;
+    case AppRoutes.subscriptions:
+      initialIndex = 5;
+      break;
+    case AppRoutes.settings:
+      initialIndex = 6;
+      break;
+    default:
+      initialIndex = 0;
+  }
+
+  return MaterialPageRoute(
+    settings: RouteSettings(name: name),
+    builder: (context) => AppShell(initialIndex: initialIndex),
   );
 }
 
 /// 路由扩展方法
-extension GoRouterExtension on BuildContext {
+extension NavigatorExtension on BuildContext {
   /// 导航到视频详情页
-  void goToVideo(String videoId) {
-    go('/video/$videoId');
+  void pushVideo(String videoId) {
+    Navigator.of(this).push(
+      MaterialPageRoute(
+        builder: (context) => VideoDetailPage(videoId: videoId),
+      ),
+    );
   }
 
-  /// 导航到搜索（带查询参数）
-  void goToSearch({String? query, String? tag}) {
-    final params = <String, String>{};
-    if (query != null) params['q'] = query;
-    if (tag != null) params['tag'] = tag;
-    
-    if (params.isEmpty) {
-      go(AppRoutes.home);
-    } else {
-      final queryString = params.entries.map((e) => '${e.key}=${e.value}').join('&');
-      go('${AppRoutes.home}?$queryString');
-    }
+  /// 导航到首页（并重置为首页）
+  void goHome() {
+    Navigator.of(this).pushReplacementNamed(AppRoutes.home);
   }
 }

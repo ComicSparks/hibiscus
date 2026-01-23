@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:hibiscus/src/rust/frb_generated.dart';
+import 'package:hibiscus/src/rust/api/init.dart' as init_api;
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // 初始化 Rust 库
   await RustLib.init();
+  final appSupportDir = await getApplicationSupportDirectory();
+  print('App Support Directory: ${appSupportDir.path}');
+  await init_api.initApp(dataPath: appSupportDir.path);
   
-  // TODO: 初始化 MediaKit
-  // MediaKit.ensureInitialized();
+  MediaKit.ensureInitialized();
   
   runApp(const HibiscusApp());
 }
@@ -20,9 +25,7 @@ class HibiscusApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = createRouter();
-    
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Hibiscus',
       debugShowCheckedModeBanner: false,
       
@@ -30,9 +33,8 @@ class HibiscusApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      
-      // 路由配置
-      routerConfig: router,
+      initialRoute: AppRoutes.home,
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }

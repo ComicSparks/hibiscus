@@ -73,7 +73,7 @@ class VideoCard extends StatelessWidget {
                   Text(
                     video.title,
                     style: theme.textTheme.bodyMedium,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),

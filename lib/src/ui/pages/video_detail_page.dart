@@ -1,11 +1,16 @@
 // 视频详情页
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/rust/api/video.dart' as video_api;
+import 'package:hibiscus/src/rust/api/download.dart' as download_api;
 import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/state/search_state.dart';
+import 'package:hibiscus/src/state/settings_state.dart';
+import 'package:hibiscus/src/state/download_state.dart';
 
 /// 视频详情状态
 class _VideoDetailState {
@@ -14,6 +19,7 @@ class _VideoDetailState {
   final error = signal<String?>(null);
   final isFavorite = signal(false);
   final selectedQuality = signal<String?>(null);
+  final downloadQuality = signal<String?>(null);
   final videoUrl = signal<String?>(null);
 
   Future<void> loadVideoDetail(String videoId) async {
@@ -24,10 +30,6 @@ class _VideoDetailState {
       final detail = await video_api.getVideoDetail(videoId: videoId);
       videoDetail.value = detail;
       
-      // 默认选择第一个清晰度
-      if (detail.qualities.isNotEmpty) {
-        selectedQuality.value = detail.qualities.first.quality;
-      }
     } catch (e) {
       error.value = e.toString();
     } finally {
@@ -77,6 +79,7 @@ class _VideoDetailState {
     error.value = null;
     isFavorite.value = false;
     selectedQuality.value = null;
+    downloadQuality.value = null;
     videoUrl.value = null;
   }
 }
@@ -92,17 +95,89 @@ class VideoDetailPage extends StatefulWidget {
 
 class _VideoDetailPageState extends State<VideoDetailPage> {
   final _state = _VideoDetailState();
+  late final Player _player;
+  late final VideoController _controller;
+  bool _hasOpened = false;
+
+  static const Map<String, String> _kDefaultHeaders = {
+    'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Referer': 'https://hanime1.me/',
+  };
 
   @override
   void initState() {
     super.initState();
-    _state.loadVideoDetail(widget.videoId);
+    _player = Player();
+    _controller = VideoController(_player);
+    _loadDetail(autoPlay: settingsState.settings.value.autoPlay);
   }
 
   @override
   void dispose() {
     _state.reset();
+    _player.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadDetail({bool autoPlay = false}) async {
+    await _state.loadVideoDetail(widget.videoId);
+    final detail = _state.videoDetail.value;
+    if (detail == null || detail.qualities.isEmpty) return;
+
+    final playDefault = _pickQuality(
+      detail.qualities,
+      settingsState.settings.value.defaultPlayQuality,
+    );
+    final downloadDefault = _pickQuality(
+      detail.qualities,
+      settingsState.settings.value.defaultDownloadQuality,
+    );
+
+    _state.selectedQuality.value ??= playDefault;
+    _state.downloadQuality.value ??= downloadDefault;
+
+    if (autoPlay) {
+      await _playSelectedQuality(detail);
+    }
+  }
+
+  String _pickQuality(List<ApiVideoQuality> qualities, String preferred) {
+    String normalize(String value) => value.replaceAll(RegExp(r'[^0-9]'), '');
+    final preferredNorm = normalize(preferred);
+    for (final q in qualities) {
+      if (normalize(q.quality) == preferredNorm && preferredNorm.isNotEmpty) {
+        return q.quality;
+      }
+    }
+    return qualities.first.quality;
+  }
+
+  Future<void> _openUrl(String url) async {
+    if (_state.videoUrl.value == url) {
+      await _player.play();
+      return;
+    }
+    _state.videoUrl.value = url;
+    _hasOpened = true;
+    await _player.open(
+      Media(url, httpHeaders: _kDefaultHeaders),
+      play: true,
+    );
+  }
+
+  Future<void> _playSelectedQuality(ApiVideoDetail detail) async {
+    final url = _state.getVideoUrlForQuality(_state.selectedQuality.value);
+    if (url == null || url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('无法获取视频链接'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    await _openUrl(url);
   }
 
   @override
@@ -113,9 +188,17 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            final navigator = Navigator.of(context);
+            if (navigator.canPop()) {
+              navigator.pop();
+            } else {
+              navigator.pushReplacementNamed(AppRoutes.home);
+            }
+          },
         ),
         actions: [
+          _buildQualityAction(),
           IconButton(
             icon: const Icon(Icons.download_outlined),
             onPressed: () => _showDownloadDialog(context),
@@ -171,7 +254,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => _state.loadVideoDetail(widget.videoId),
+              onPressed: () => _loadDetail(autoPlay: settingsState.settings.value.autoPlay),
               icon: const Icon(Icons.refresh),
               label: const Text('重试'),
             ),
@@ -260,45 +343,41 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 封面或视频
+          // 视频区域
           Container(
             color: Colors.black,
-            child: detail.coverUrl.isNotEmpty
-                ? Image.network(
-                    detail.coverUrl,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => const SizedBox(),
-                  )
-                : null,
+            child: Video(controller: _controller),
           ),
-          // 播放按钮
-          Center(
-            child: IconButton.filled(
-              onPressed: () {
-                // 直接从 qualities 获取视频 URL
-                final url = _state.getVideoUrlForQuality(_state.selectedQuality.value);
-                if (url != null && url.isNotEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('视频播放器开发中...\\n视频URL: ${url.length > 60 ? "${url.substring(0, 60)}..." : url}'),
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('无法获取视频链接'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.play_arrow, size: 48),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.9),
-                foregroundColor: Colors.black,
-              ),
-            ),
+          // 封面占位
+          StreamBuilder<bool>(
+            stream: _player.stream.playing,
+            builder: (context, snapshot) {
+              final isPlaying = snapshot.data ?? false;
+              if (_hasOpened || isPlaying || detail.coverUrl.isEmpty) {
+                return const SizedBox();
+              }
+              return GestureDetector(
+                onTap: () async {
+                  await _playSelectedQuality(detail);
+                },
+                child: Stack(children: [                
+                Positioned.fill(
+                  child: Image.network(
+                    detail.coverUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox(),
+                  ),
+                ),
+                Center(
+                  child: Icon(
+                          isPlaying ? Icons.pause : Icons.play_arrow,
+                          size: 48,
+                          color: Colors.white.withOpacity(0.9),
+                        ),      
+                                  ),
+              ])
+              );
+            },
           ),
           // 时长
           if (detail.duration != null)
@@ -393,7 +472,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
           onPressed: () {
             // 用标签搜索
             searchState.toggleTag(tag);
-            context.go('/');
+            context.goHome();
           },
         );
       }).toList(),
@@ -421,7 +500,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
               return GestureDetector(
                 onTap: isCurrent
                     ? null
-                    : () => context.go('/video/${video.id}'),
+                  : () => context.pushVideo(video.id),
                 child: SizedBox(
                   width: 160,
                   child: Column(
@@ -503,42 +582,110 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(video.views ?? ''),
-          onTap: () => context.go('/video/${video.id}'),
+          onTap: () => context.pushVideo(video.id),
         );
       }).toList(),
     );
+  }
+
+  Widget _buildQualityAction() {
+    return Watch((context) {
+      final detail = _state.videoDetail.value;
+      if (detail == null || detail.qualities.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return PopupMenuButton<String>(
+        tooltip: '清晰度',
+        onSelected: (value) async {
+          _state.selectedQuality.value = value;
+          settingsState.setDefaultPlayQuality(value);
+          await _playSelectedQuality(detail);
+        },
+        itemBuilder: (context) {
+          return detail.qualities
+              .map(
+                (quality) => PopupMenuItem<String>(
+                  value: quality.quality,
+                  child: Text(quality.quality),
+                ),
+              )
+              .toList();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              const Icon(Icons.hd_outlined),
+              const SizedBox(width: 4),
+              Text(_state.selectedQuality.value ?? 'auto'),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   void _showDownloadDialog(BuildContext context) {
     final detail = _state.videoDetail.value;
     if (detail == null) return;
 
+    String selected = _state.downloadQuality.value ?? detail.qualities.first.quality;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('选择清晰度'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: detail.qualities.map((quality) {
-            return ListTile(
-              title: Text(quality.quality),
-              leading: const Icon(Icons.hd),
-              onTap: () {
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('选择清晰度'),
+          content: DropdownButton<String>(
+            value: selected,
+            isExpanded: true,
+            items: detail.qualities
+                .map(
+                  (quality) => DropdownMenuItem<String>(
+                    value: quality.quality,
+                    child: Text(quality.quality),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => selected = value);
+              _state.downloadQuality.value = value;
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () async {
                 Navigator.pop(context);
-                // TODO: 添加下载任务
+                final url = _state.getVideoUrlForQuality(selected);
+                if (url == null || url.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('无法获取视频链接')),
+                  );
+                  return;
+                }
+                await download_api.addDownload(
+                  videoId: detail.id,
+                  title: detail.title,
+                  coverUrl: detail.coverUrl,
+                  quality: selected,
+                  url: url,
+                );
+                downloadState.refreshTick.value++;
+                await settingsState.setDefaultDownloadQuality(selected);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('已添加下载: ${quality.quality}')),
+                  SnackBar(content: Text('已添加下载: $selected')),
                 );
               },
-            );
-          }).toList(),
+              child: const Text('添加'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-        ],
       ),
     );
   }

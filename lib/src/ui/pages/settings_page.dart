@@ -1,6 +1,8 @@
 // 设置页
 
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/state/settings_state.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -11,12 +13,8 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   // 设置状态
-  bool _darkMode = false;
-  bool _autoPlay = true;
   bool _wifiOnlyDownload = true;
-  String _defaultQuality = '1080p';
   int _maxConcurrentDownloads = 3;
-  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -25,146 +23,148 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text('设置'),
       ),
-      body: ListView(
-        children: [
-          // 外观设置
-          _SectionHeader(title: '外观'),
-          SwitchListTile(
-            title: const Text('深色模式'),
-            subtitle: const Text('跟随系统或手动切换'),
-            value: _darkMode,
-            onChanged: (value) {
-              setState(() => _darkMode = value);
-              // TODO: 应用主题
-            },
-          ),
+      body: Watch((context) {
+        final settings = settingsState.settings.value;
+        final isDark = settings.themeMode == ThemeMode.dark;
+
+        return ListView(
+          children: [
+            // 外观设置
+            _SectionHeader(title: '外观'),
+            SwitchListTile(
+              title: const Text('深色模式'),
+              subtitle: const Text('跟随系统或手动切换'),
+              value: isDark,
+              onChanged: (value) {
+                settingsState.setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+              },
+            ),
+            
+            const Divider(),
+            
+            // 播放设置
+            _SectionHeader(title: '播放'),
+            SwitchListTile(
+              title: const Text('自动播放'),
+              subtitle: const Text('打开视频后自动开始播放'),
+              value: settings.autoPlay,
+              onChanged: (value) => settingsState.setAutoPlay(value),
+            ),
+            ListTile(
+              title: const Text('默认画质'),
+              subtitle: Text(settings.defaultPlayQuality),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showQualityPicker(context, settings.defaultPlayQuality),
+            ),
           
-          const Divider(),
+            const Divider(),
           
-          // 播放设置
-          _SectionHeader(title: '播放'),
-          SwitchListTile(
-            title: const Text('自动播放'),
-            subtitle: const Text('打开视频后自动开始播放'),
-            value: _autoPlay,
-            onChanged: (value) {
-              setState(() => _autoPlay = value);
-            },
-          ),
-          ListTile(
-            title: const Text('默认画质'),
-            subtitle: Text(_defaultQuality),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showQualityPicker(context),
-          ),
+            // 下载设置
+            _SectionHeader(title: '下载'),
+            SwitchListTile(
+              title: const Text('仅 Wi-Fi 下载'),
+              subtitle: const Text('移动网络下暂停下载'),
+              value: _wifiOnlyDownload,
+              onChanged: (value) {
+                setState(() => _wifiOnlyDownload = value);
+              },
+            ),
+            ListTile(
+              title: const Text('最大并发下载数'),
+              subtitle: Text('$_maxConcurrentDownloads'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showConcurrentPicker(context),
+            ),
+            ListTile(
+              title: const Text('下载路径'),
+              subtitle: const Text('/storage/emulated/0/Download/Hibiscus'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                // TODO: 选择下载路径
+              },
+            ),
           
-          const Divider(),
+            const Divider(),
           
-          // 下载设置
-          _SectionHeader(title: '下载'),
-          SwitchListTile(
-            title: const Text('仅 Wi-Fi 下载'),
-            subtitle: const Text('移动网络下暂停下载'),
-            value: _wifiOnlyDownload,
-            onChanged: (value) {
-              setState(() => _wifiOnlyDownload = value);
-            },
-          ),
-          ListTile(
-            title: const Text('最大并发下载数'),
-            subtitle: Text('$_maxConcurrentDownloads'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showConcurrentPicker(context),
-          ),
-          ListTile(
-            title: const Text('下载路径'),
-            subtitle: const Text('/storage/emulated/0/Download/Hibiscus'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: 选择下载路径
-            },
-          ),
+            // 缓存设置
+            _SectionHeader(title: '存储'),
+            ListTile(
+              title: const Text('清除缓存'),
+              subtitle: const Text('图片缓存、临时文件等'),
+              trailing: Text(
+                '128 MB',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              onTap: () => _showClearCacheDialog(context),
+            ),
+            ListTile(
+              title: const Text('清除播放历史'),
+              subtitle: const Text('删除所有播放记录'),
+              onTap: () => _showClearHistoryDialog(context),
+            ),
           
-          const Divider(),
+            const Divider(),
           
-          // 缓存设置
-          _SectionHeader(title: '存储'),
-          ListTile(
-            title: const Text('清除缓存'),
-            subtitle: const Text('图片缓存、临时文件等'),
-            trailing: Text(
-              '128 MB',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+            // 账号设置
+            _SectionHeader(title: '账号'),
+            ListTile(
+              title: const Text('登录状态'),
+              subtitle: const Text('未登录'),
+              trailing: FilledButton.tonal(
+                onPressed: () {
+                  // TODO: 跳转到登录
+                },
+                child: const Text('登录'),
               ),
             ),
-            onTap: () => _showClearCacheDialog(context),
-          ),
-          ListTile(
-            title: const Text('清除播放历史'),
-            subtitle: const Text('删除所有播放记录'),
-            onTap: () => _showClearHistoryDialog(context),
-          ),
           
-          const Divider(),
+            const Divider(),
           
-          // 账号设置
-          _SectionHeader(title: '账号'),
-          ListTile(
-            title: const Text('登录状态'),
-            subtitle: const Text('未登录'),
-            trailing: FilledButton.tonal(
-              onPressed: () {
-                // TODO: 跳转到登录
-              },
-              child: const Text('登录'),
+            // 关于
+            _SectionHeader(title: '关于'),
+            ListTile(
+              title: const Text('版本'),
+              subtitle: const Text('1.0.0 (1)'),
             ),
-          ),
-          
-          const Divider(),
-          
-          // 关于
-          _SectionHeader(title: '关于'),
-          ListTile(
-            title: const Text('版本'),
-            subtitle: const Text('1.0.0 (1)'),
-          ),
-          ListTile(
-            title: const Text('开源许可'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              showLicensePage(context: context);
-            },
-          ),
-          ListTile(
-            title: const Text('GitHub'),
-            subtitle: const Text('查看源代码'),
-            trailing: const Icon(Icons.open_in_new),
-            onTap: () {
-              // TODO: 打开 GitHub 页面
-            },
-          ),
-          
-          const SizedBox(height: 32),
-        ],
-      ),
+            ListTile(
+              title: const Text('开源许可'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                showLicensePage(context: context);
+              },
+            ),
+            ListTile(
+              title: const Text('GitHub'),
+              subtitle: const Text('查看源代码'),
+              trailing: const Icon(Icons.open_in_new),
+              onTap: () {
+                // TODO: 打开 GitHub 页面
+              },
+            ),
+            
+            const SizedBox(height: 32),
+          ],
+        );
+      }),
     );
   }
   
-  void _showQualityPicker(BuildContext context) {
+  void _showQualityPicker(BuildContext context, String current) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('默认画质'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: ['1080p', '720p', '480p', '360p'].map((quality) {
+          children: ['1080P', '720P', '480P', '360P'].map((quality) {
             return RadioListTile<String>(
               title: Text(quality),
               value: quality,
-              groupValue: _defaultQuality,
+              groupValue: current,
               onChanged: (value) {
-                setState(() => _defaultQuality = value!);
+                settingsState.setDefaultPlayQuality(value!);
                 Navigator.pop(context);
               },
             );

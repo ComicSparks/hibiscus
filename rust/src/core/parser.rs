@@ -437,6 +437,7 @@ pub fn parse_video_detail(html: &str) -> Result<VideoDetail> {
     })
 }
 
+
 /// 解析视频详情信息
 fn parse_video_details(wrapper: &ElementRef) -> (Option<String>, String, String, String) {
     let caption_selector = Selector::parse("div[class^=video-caption-text]").unwrap();
@@ -934,4 +935,77 @@ mod tests {
         assert_eq!(make_absolute_url("//example.com/img.jpg"), "https://example.com/img.jpg");
         assert_eq!(make_absolute_url("/img.jpg"), "https://hanime1.me/img.jpg");
     }
+
+        #[test]
+        fn parse_video_sources_from_video_tag() {
+                let html = r#"
+                <html>
+                    <body>
+                        <video id="player">
+                            <source size="720" type="video/mp4" src="https://cdn.example.com/video720.mp4" />
+                        </video>
+                    </body>
+                </html>
+                "#;
+
+                let doc = Html::parse_document(html);
+                let sources = parse_video_sources(&doc, html);
+                assert_eq!(sources.len(), 1);
+                assert_eq!(sources[0].quality, "720P");
+                assert_eq!(sources[0].url, "https://cdn.example.com/video720.mp4");
+                assert_eq!(sources[0].format, "mp4");
+        }
+
+        #[test]
+        fn parse_video_sources_from_script() {
+                let html = r#"
+                <html>
+                    <body>
+                        <script>const source = 'https://cdn.example.com/master.m3u8'</script>
+                    </body>
+                </html>
+                "#;
+
+                let doc = Html::parse_document(html);
+                let sources = parse_video_sources(&doc, html);
+                assert_eq!(sources.len(), 1);
+                assert_eq!(sources[0].quality, "auto");
+                assert_eq!(sources[0].url, "https://cdn.example.com/master.m3u8");
+                assert_eq!(sources[0].format, "m3u8");
+        }
+
+        #[test]
+        fn parse_video_detail_basic() {
+                let html = r#"
+                <html>
+                    <head>
+                        <meta property="og:image" content="https://cdn.example.com/cover.jpg" />
+                        <meta property="og:url" content="https://hanime1.me/watch?v=123456" />
+                    </head>
+                    <body>
+                        <input name="_token" value="csrf123" />
+                        <input name="like-user-id" value="100" />
+                        <input name="like-status" value="1" />
+                        <input name="likes-count" value="42" />
+                        <div id="shareBtn-title">Test Title</div>
+                        <div class="video-details-wrapper">
+                            <div><div><div>觀看次數：123次 2024-01-01</div></div></div>
+                            <div class="video-caption-text">Test Description</div>
+                        </div>
+                        <div class="single-video-tag"><a>#tag1</a></div>
+                        <video id="player">
+                            <source size="1080" type="video/mp4" src="https://cdn.example.com/video1080.mp4" />
+                        </video>
+                    </body>
+                </html>
+                "#;
+
+                let detail = parse_video_detail(html).expect("parse_video_detail failed");
+                assert_eq!(detail.id, "123456");
+                assert_eq!(detail.title, "Test Title");
+                assert_eq!(detail.cover_url, "https://cdn.example.com/cover.jpg");
+                assert_eq!(detail.tags, vec!["tag1".to_string()]);
+                assert_eq!(detail.video_sources.len(), 1);
+                assert_eq!(detail.video_sources[0].quality, "1080P");
+        }
 }

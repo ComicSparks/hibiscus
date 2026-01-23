@@ -1,7 +1,7 @@
 // 播放历史页
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:hibiscus/src/router/router.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 import 'package:hibiscus/src/rust/api/models.dart';
@@ -232,7 +232,7 @@ class _HistoryPageState extends State<HistoryPage> {
           _state.load(refresh: true);
         },
       ),
-      onTap: () => context.go('/video/${item.videoId}'),
+      onTap: () => context.pushVideo(item.videoId),
     );
   }
 

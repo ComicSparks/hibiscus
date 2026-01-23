@@ -1,7 +1,7 @@
 // 视频网格组件
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
 import 'package:hibiscus/src/ui/widgets/video_card.dart';
@@ -44,7 +44,7 @@ class VideoGrid extends StatelessWidget {
         // 宽高比 = 宽度/高度，越大高度越小
         // 16:9 封面需要 height = width * 9/16
         // 标题区约 60-70px
-        childAspectRatio: 0.78,
+        childAspectRatio: 1.2,
       ),
       itemCount: videos.length + (hasMore ? 1 : 0),
       itemBuilder: (context, index) {
@@ -56,7 +56,7 @@ class VideoGrid extends StatelessWidget {
         final video = videos[index];
         return VideoCard(
           video: video,
-          onTap: () => context.go('/video/${video.id}'),
+          onTap: () => context.pushVideo(video.id),
         );
       },
     );

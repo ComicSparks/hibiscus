@@ -4,9 +4,15 @@
 // 桌面：常驻侧栏 (NavigationDrawer)
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
+import 'package:hibiscus/src/ui/pages/home_page.dart';
+import 'package:hibiscus/src/ui/pages/favorites_page.dart';
+import 'package:hibiscus/src/ui/pages/watch_later_page.dart';
+import 'package:hibiscus/src/ui/pages/history_page.dart';
+import 'package:hibiscus/src/ui/pages/downloads_page.dart';
+import 'package:hibiscus/src/ui/pages/subscriptions_page.dart';
+import 'package:hibiscus/src/ui/pages/settings_page.dart';
 
 /// 导航项配置
 class _NavDestination {
@@ -104,15 +110,39 @@ const _allDestinations = [
 ];
 
 class AppShell extends StatefulWidget {
-  final Widget child;
-  
-  const AppShell({super.key, required this.child});
+  final int initialIndex;
+
+  const AppShell({super.key, this.initialIndex = 0});
   
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
 class _AppShellState extends State<AppShell> {
+  late final PageController _pageController;
+  late int _pageIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: _pageIndex);
+  }
+
+  @override
+  void didUpdateWidget(covariant AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialIndex != widget.initialIndex) {
+      _pageIndex = widget.initialIndex;
+      _pageController.jumpToPage(_pageIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
   
   int _getSelectedIndex(String location, List<_NavDestination> destinations) {
     for (int i = 0; i < destinations.length; i++) {
@@ -123,16 +153,35 @@ class _AppShellState extends State<AppShell> {
     }
     return 0;
   }
+
+  int _getPrimaryIndexFromAll(int allIndex) {
+    switch (_allDestinations[allIndex].route) {
+      case AppRoutes.home:
+        return 0;
+      case AppRoutes.favorites:
+        return 1;
+      case AppRoutes.history:
+        return 2;
+      case AppRoutes.downloads:
+        return 3;
+      case AppRoutes.settings:
+        return 4;
+      default:
+        return 0;
+    }
+  }
   
   void _onDestinationSelected(int index, List<_NavDestination> destinations) {
-    context.go(destinations[index].route);
+    final targetIndex = _getSelectedIndex(destinations[index].route, _allDestinations);
+    setState(() => _pageIndex = targetIndex);
+    _pageController.jumpToPage(targetIndex);
   }
   
   @override
   Widget build(BuildContext context) {
     final isDesktop = Breakpoints.isDesktop(context);
     final isTablet = Breakpoints.isTablet(context);
-    final location = GoRouterState.of(context).uri.path;
+    final location = _allDestinations[_pageIndex].route;
     
     // 桌面端：常驻侧栏 (NavigationDrawer 样式)
     if (isDesktop) {
@@ -216,7 +265,7 @@ class _AppShellState extends State<AppShell> {
         ),
         const VerticalDivider(width: 1, thickness: 1),
         // 主内容
-        Expanded(child: widget.child),
+        Expanded(child: _buildPageView()),
       ],
     );
   }
@@ -279,17 +328,17 @@ class _AppShellState extends State<AppShell> {
           }).toList(),
         ),
         const VerticalDivider(width: 1, thickness: 1),
-        Expanded(child: widget.child),
+        Expanded(child: _buildPageView()),
       ],
     );
   }
   
   /// 手机布局：底部导航栏
   Widget _buildMobileLayout(String location) {
-    final selectedIndex = _getSelectedIndex(location, _primaryDestinations);
+    final selectedIndex = _getPrimaryIndexFromAll(_pageIndex);
     
     return Scaffold(
-      body: widget.child,
+      body: _buildPageView(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) => _onDestinationSelected(index, _primaryDestinations),
@@ -301,6 +350,22 @@ class _AppShellState extends State<AppShell> {
           );
         }).toList(),
       ),
+    );
+  }
+
+  Widget _buildPageView() {
+    return PageView(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: const [
+        HomePage(),
+        FavoritesPage(),
+        WatchLaterPage(),
+        HistoryPage(),
+        DownloadsPage(),
+        SubscriptionsPage(),
+        SettingsPage(),
+      ],
     );
   }
 }

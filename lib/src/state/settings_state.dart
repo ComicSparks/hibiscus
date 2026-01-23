@@ -11,6 +11,8 @@ class AppSettings {
   final bool autoPlay;
   final double defaultVolume;
   final bool hardwareAcceleration;
+  final String defaultPlayQuality;
+  final String defaultDownloadQuality;
   final String? proxyUrl;
   final bool enableProxy;
   
@@ -21,6 +23,8 @@ class AppSettings {
     this.autoPlay = true,
     this.defaultVolume = 1.0,
     this.hardwareAcceleration = true,
+    this.defaultPlayQuality = '1080P',
+    this.defaultDownloadQuality = '1080P',
     this.proxyUrl,
     this.enableProxy = false,
   });
@@ -32,6 +36,8 @@ class AppSettings {
     bool? autoPlay,
     double? defaultVolume,
     bool? hardwareAcceleration,
+    String? defaultPlayQuality,
+    String? defaultDownloadQuality,
     String? proxyUrl,
     bool? enableProxy,
   }) {
@@ -42,6 +48,8 @@ class AppSettings {
       autoPlay: autoPlay ?? this.autoPlay,
       defaultVolume: defaultVolume ?? this.defaultVolume,
       hardwareAcceleration: hardwareAcceleration ?? this.hardwareAcceleration,
+      defaultPlayQuality: defaultPlayQuality ?? this.defaultPlayQuality,
+      defaultDownloadQuality: defaultDownloadQuality ?? this.defaultDownloadQuality,
       proxyUrl: proxyUrl ?? this.proxyUrl,
       enableProxy: enableProxy ?? this.enableProxy,
     );
@@ -54,6 +62,8 @@ class AppSettings {
     'autoPlay': autoPlay,
     'defaultVolume': defaultVolume,
     'hardwareAcceleration': hardwareAcceleration,
+    'defaultPlayQuality': defaultPlayQuality,
+    'defaultDownloadQuality': defaultDownloadQuality,
     'proxyUrl': proxyUrl,
     'enableProxy': enableProxy,
   };
@@ -66,6 +76,8 @@ class AppSettings {
       autoPlay: json['autoPlay'] ?? true,
       defaultVolume: (json['defaultVolume'] ?? 1.0).toDouble(),
       hardwareAcceleration: json['hardwareAcceleration'] ?? true,
+      defaultPlayQuality: json['defaultPlayQuality'] ?? '1080P',
+      defaultDownloadQuality: json['defaultDownloadQuality'] ?? '1080P',
       proxyUrl: json['proxyUrl'],
       enableProxy: json['enableProxy'] ?? false,
     );
@@ -141,6 +153,18 @@ class SettingsState {
   /// 设置自动播放
   Future<void> setAutoPlay(bool autoPlay) async {
     settings.value = settings.value.copyWith(autoPlay: autoPlay);
+    await _save();
+  }
+
+  /// 设置默认播放清晰度
+  Future<void> setDefaultPlayQuality(String quality) async {
+    settings.value = settings.value.copyWith(defaultPlayQuality: quality);
+    await _save();
+  }
+
+  /// 设置默认下载清晰度
+  Future<void> setDefaultDownloadQuality(String quality) async {
+    settings.value = settings.value.copyWith(defaultDownloadQuality: quality);
     await _save();
   }
   

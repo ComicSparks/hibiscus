@@ -95,6 +95,9 @@ class DownloadState {
   
   // 所有下载任务
   final tasks = signal<List<DownloadTask>>([]);
+
+  // 刷新信号（跨页面通知）
+  final refreshTick = signal(0);
   
   // 最大并发下载数
   final maxConcurrent = signal(3);
@@ -132,6 +135,7 @@ class DownloadState {
     );
     
     tasks.value = [...tasks.value, task];
+    refreshTick.value++;
     
     // TODO: 保存到数据库
     // TODO: 开始下载
@@ -149,6 +153,7 @@ class DownloadState {
     
     // TODO: 通知 Rust 暂停下载
     _processQueue();
+    refreshTick.value++;
   }
   
   /// 恢复任务
@@ -161,11 +166,13 @@ class DownloadState {
     }).toList();
     
     _processQueue();
+    refreshTick.value++;
   }
   
   /// 删除任务
   void removeTask(String taskId) {
     tasks.value = tasks.value.where((t) => t.id != taskId).toList();
+    refreshTick.value++;
     
     // TODO: 从数据库删除
     // TODO: 删除已下载的文件
@@ -185,6 +192,7 @@ class DownloadState {
     }).toList();
     
     _processQueue();
+    refreshTick.value++;
   }
   
   /// 暂停所有
@@ -196,6 +204,7 @@ class DownloadState {
       }
       return t;
     }).toList();
+    refreshTick.value++;
   }
   
   /// 恢复所有
@@ -208,6 +217,7 @@ class DownloadState {
     }).toList();
     
     _processQueue();
+    refreshTick.value++;
   }
   
   /// 清除已完成
@@ -215,6 +225,7 @@ class DownloadState {
     tasks.value = tasks.value
         .where((t) => t.status != DownloadTaskStatus.completed)
         .toList();
+    refreshTick.value++;
   }
   
   /// 更新任务进度

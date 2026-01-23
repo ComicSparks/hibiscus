@@ -8,6 +8,7 @@ use std::sync::Mutex;
 
 /// 数据库连接
 static DB: OnceLock<Mutex<Connection>> = OnceLock::new();
+static DATA_DIR: OnceLock<PathBuf> = OnceLock::new();
 
 /// 获取数据库路径
 fn get_db_path() -> PathBuf {
@@ -25,6 +26,7 @@ pub fn init_db(db_path: Option<&str>) -> Result<()> {
     // 确保目录存在
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
+        let _ = DATA_DIR.set(parent.to_path_buf());
     }
     
     let conn = Connection::open(&path)?;
@@ -55,6 +57,7 @@ pub fn init_db(db_path: Option<&str>) -> Result<()> {
             title TEXT NOT NULL,
             cover_url TEXT,
             video_url TEXT NOT NULL,
+            quality TEXT,
             save_path TEXT,
             total_bytes INTEGER DEFAULT 0,
             downloaded_bytes INTEGER DEFAULT 0,
@@ -96,9 +99,18 @@ pub fn init_db(db_path: Option<&str>) -> Result<()> {
         "#
     )?;
     
+    let _ = ensure_download_columns(&conn);
     DB.get_or_init(|| Mutex::new(conn));
     
     Ok(())
+}
+
+/// 获取应用数据目录
+pub fn get_data_dir() -> Result<PathBuf> {
+    DATA_DIR
+        .get()
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("Data dir not initialized"))
 }
 
 /// 获取数据库连接
@@ -107,6 +119,18 @@ fn get_db() -> Result<std::sync::MutexGuard<'static, Connection>> {
         .ok_or_else(|| anyhow::anyhow!("Database not initialized"))?
         .lock()
         .map_err(|e| anyhow::anyhow!("Failed to lock database: {}", e))
+}
+
+fn ensure_download_columns(conn: &Connection) -> Result<()> {
+    let mut stmt = conn.prepare("PRAGMA table_info(downloads)")?;
+    let columns = stmt
+        .query_map([], |row| Ok(row.get::<_, String>(1)?))?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    if !columns.iter().any(|c| c == "quality") {
+        let _ = conn.execute("ALTER TABLE downloads ADD COLUMN quality TEXT", []);
+    }
+    Ok(())
 }
 
 // ========== 历史记录 ==========
@@ -199,11 +223,11 @@ pub fn clear_history() -> Result<()> {
 
 // ========== 下载任务 ==========
 
-/// 下载任务状态（内部使用）
+/// 下载任务状态（内部使用，持久化）
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum DownloadStatus {
-    Pending = 0,
+    Queued = 0,
     Downloading = 1,
     Paused = 2,
     Completed = 3,
@@ -213,12 +237,12 @@ pub(crate) enum DownloadStatus {
 impl From<i32> for DownloadStatus {
     fn from(v: i32) -> Self {
         match v {
-            0 => DownloadStatus::Pending,
+            0 => DownloadStatus::Queued,
             1 => DownloadStatus::Downloading,
             2 => DownloadStatus::Paused,
             3 => DownloadStatus::Completed,
             4 => DownloadStatus::Failed,
-            _ => DownloadStatus::Pending,
+            _ => DownloadStatus::Queued,
         }
     }
 }
@@ -231,6 +255,7 @@ pub(crate) struct DownloadRecord {
     pub title: String,
     pub cover_url: String,
     pub video_url: String,
+    pub quality: Option<String>,
     pub save_path: Option<String>,
     pub total_bytes: i64,
     pub downloaded_bytes: i64,
@@ -246,19 +271,61 @@ pub fn add_download(
     title: &str,
     cover_url: &str,
     video_url: &str,
+    quality: &str,
 ) -> Result<i64> {
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
     
     db.execute(
         r#"
-        INSERT OR IGNORE INTO downloads (video_id, title, cover_url, video_url, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5)
+        INSERT OR IGNORE INTO downloads (video_id, title, cover_url, video_url, quality, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         "#,
-        params![video_id, title, cover_url, video_url, now],
+        params![video_id, title, cover_url, video_url, quality, now],
     )?;
     
     Ok(db.last_insert_rowid())
+}
+
+/// 获取单个下载任务（按 video_id）
+pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>> {
+    let db = get_db()?;
+    let mut stmt = db.prepare(
+        "SELECT id, video_id, title, cover_url, video_url, quality, save_path, 
+                total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
+         FROM downloads WHERE video_id = ?1 LIMIT 1"
+    )?;
+
+    let mut rows = stmt.query(params![video_id])?;
+    if let Some(row) = rows.next()? {
+        Ok(Some(DownloadRecord {
+            id: row.get(0)?,
+            video_id: row.get(1)?,
+            title: row.get(2)?,
+            cover_url: row.get(3)?,
+            video_url: row.get(4)?,
+            quality: row.get(5)?,
+            save_path: row.get(6)?,
+            total_bytes: row.get(7)?,
+            downloaded_bytes: row.get(8)?,
+            status: DownloadStatus::from(row.get::<_, i32>(9)?),
+            error_message: row.get(10)?,
+            created_at: row.get(11)?,
+            completed_at: row.get(12)?,
+        }))
+    } else {
+        Ok(None)
+    }
+}
+
+/// 更新下载保存路径
+pub fn update_download_save_path(video_id: &str, save_path: &str) -> Result<()> {
+    let db = get_db()?;
+    db.execute(
+        "UPDATE downloads SET save_path = ?1 WHERE video_id = ?2",
+        params![save_path, video_id],
+    )?;
+    Ok(())
 }
 
 /// 更新下载进度
@@ -291,8 +358,8 @@ pub fn update_download_status(video_id: &str, status: DownloadStatus, error: Opt
 pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-        "SELECT id, video_id, title, cover_url, video_url, save_path, 
-                total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
+    "SELECT id, video_id, title, cover_url, video_url, quality, save_path, 
+        total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads ORDER BY created_at DESC"
     )?;
     
@@ -303,13 +370,14 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
             title: row.get(2)?,
             cover_url: row.get(3)?,
             video_url: row.get(4)?,
-            save_path: row.get(5)?,
-            total_bytes: row.get(6)?,
-            downloaded_bytes: row.get(7)?,
-            status: DownloadStatus::from(row.get::<_, i32>(8)?),
-            error_message: row.get(9)?,
-            created_at: row.get(10)?,
-            completed_at: row.get(11)?,
+            quality: row.get(5)?,
+            save_path: row.get(6)?,
+            total_bytes: row.get(7)?,
+            downloaded_bytes: row.get(8)?,
+            status: DownloadStatus::from(row.get::<_, i32>(9)?),
+            error_message: row.get(10)?,
+            created_at: row.get(11)?,
+            completed_at: row.get(12)?,
         })
     })?;
     
@@ -319,6 +387,16 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     }
     
     Ok(result)
+}
+
+/// 应用启动时修正状态（崩溃恢复）
+pub fn reset_running_downloads() -> Result<()> {
+    let db = get_db()?;
+    db.execute(
+        "UPDATE downloads SET status = ?1 WHERE status = ?2",
+        params![DownloadStatus::Queued as i32, DownloadStatus::Downloading as i32],
+    )?;
+    Ok(())
 }
 
 /// 删除下载任务

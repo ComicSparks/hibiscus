@@ -2,20 +2,32 @@
 
 use flutter_rust_bridge::frb;
 use crate::core::{network, storage};
+use crate::api::download;
+use std::sync::{Mutex, OnceLock};
+
+static INIT_GUARD: OnceLock<Mutex<bool>> = OnceLock::new();
 
 /// 初始化应用（在 Flutter 启动时调用）
 #[frb]
 pub async fn init_app(data_path: String) -> anyhow::Result<()> {
-    // 初始化日志
-    tracing_subscriber::fmt::init();
+    let guard = INIT_GUARD.get_or_init(|| Mutex::new(false));
+    if *guard.lock().unwrap() {
+        return Ok(());
+    }
+
+    // 不需要初始化日志
+    // let _ = tracing_subscriber::fmt::try_init();
     
     // 初始化数据库
     let db_path = format!("{}/data.db", data_path);
     storage::init_db(Some(&db_path))?;
+    storage::reset_running_downloads()?;
+    download::resume_queued_downloads().await?;
     
     // 加载保存的 Cookies
     load_saved_cookies().await?;
     
+    *guard.lock().unwrap() = true;
     tracing::info!("App initialized with data path: {}", data_path);
     Ok(())
 }
@@ -45,19 +57,37 @@ pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
     network::set_cookies(&cookie_string)?;
     
     // 解析并保存到数据库
+    let mut last_expires: Option<i64> = None;
+
     for part in cookie_string.split(';') {
         let trimmed = part.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+
+        let lower = trimmed.to_ascii_lowercase();
+        if lower.starts_with("expires=") {
+            let value = trimmed[8..].trim();
+            if let Ok(time) = chrono::DateTime::parse_from_rfc2822(value) {
+                last_expires = Some(time.timestamp());
+            }
+            continue;
+        }
+        if lower.starts_with("max-age=") {
+            if let Ok(age) = trimmed[8..].trim().parse::<i64>() {
+                last_expires = Some(chrono::Utc::now().timestamp() + age);
+            }
+            continue;
+        }
+        if lower.starts_with("path=") || lower.starts_with("domain=") || lower == "httponly" || lower == "secure" {
+            continue;
+        }
+
         if let Some(idx) = trimmed.find('=') {
-            let name = &trimmed[..idx].trim();
-            let value = &trimmed[idx + 1..].trim();
-            
-            storage::save_cookie(
-                "hanime1.me",
-                name,
-                value,
-                "/",
-                None, // TODO: 解析过期时间
-            )?;
+            let name = trimmed[..idx].trim();
+            let value = trimmed[idx + 1..].trim();
+            storage::save_cookie("hanime1.me", name, value, "/", last_expires)?;
+            last_expires = None;
         }
     }
     
