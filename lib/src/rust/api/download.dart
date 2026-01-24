@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'models.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `build_download_path`, `current_download_concurrency`, `download_author_avatar`, `download_cover`, `download_semaphore`, `map_record`, `progress_sender`, `resume_queued_downloads`, `run_download`, `spawn_download`, `task_controls`
+// These functions are ignored because they are not marked as `pub`: `build_download_path`, `copy_file_with_progress`, `current_download_concurrency`, `download_author_avatar`, `download_cover`, `download_semaphore`, `map_record`, `progress_sender`, `resume_queued_downloads`, `run_download`, `sanitize_filename`, `spawn_download`, `task_controls`, `uniquify_path`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DownloadControl`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `eq`, `fmt`
 
@@ -51,6 +51,18 @@ Future<bool> deleteDownload({
 }) => RustLib.instance.api.crateApiDownloadDeleteDownload(
   taskId: taskId,
   deleteFile: deleteFile,
+);
+
+/// 导出下载文件到指定目录（通过 StreamSink 发送进度）
+///
+/// - 仅导出已下载完成且存在本地文件的任务
+/// - 文件名格式：`[{作者}]{标题}.{ext}`，非法字符替换为 `_`
+Stream<ApiExportProgress> exportDownloadsToDir({
+  required List<String> taskIds,
+  required String destDir,
+}) => RustLib.instance.api.crateApiDownloadExportDownloadsToDir(
+  taskIds: taskIds,
+  destDir: destDir,
 );
 
 /// 批量暂停下载

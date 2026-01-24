@@ -317,6 +317,23 @@ pub struct ApiDownloadTask {
     pub file_path: Option<String>,
 }
 
+// ============================================================================
+// 导出相关模型
+// ============================================================================
+
+/// 导出进度
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiExportProgress {
+    pub total_files: u32,
+    pub done_files: u32,
+    pub current_file: Option<String>,
+    pub current_bytes: u64,
+    pub current_total_bytes: u64,
+    pub done: bool,
+    pub error: Option<String>,
+}
+
 /// 下载状态
 #[derive(Debug, Clone)]
 pub enum ApiDownloadStatus {

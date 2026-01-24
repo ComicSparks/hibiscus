@@ -4,12 +4,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/rust/api/download.dart' as download_api;
 import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/state/download_state.dart';
 import 'package:hibiscus/src/router/router.dart';
+import 'package:hibiscus/src/platform/gallery_export.dart';
 
 class DownloadsPage extends StatefulWidget {
   const DownloadsPage({super.key});
@@ -166,6 +170,250 @@ class _DownloadsPageState extends State<DownloadsPage> {
     }
   }
 
+  Future<void> _exportSelectedToFiles() async {
+    if (kIsWeb) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Web 暂不支持导出')),
+      );
+      return;
+    }
+
+    final ids = _selectedIds.value.toList();
+    if (ids.isEmpty) return;
+
+    final completedIds = _items.value
+        .where((e) => _selectedIds.value.contains(e.id) && e.status is ApiDownloadStatus_Completed)
+        .map((e) => e.id)
+        .toList();
+    if (completedIds.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请选择已完成的下载任务')),
+      );
+      return;
+    }
+
+    String? destDir;
+    if (Platform.isIOS) {
+      final base = await getApplicationDocumentsDirectory();
+      destDir = Directory('${base.path}/Hibiscus').path;
+    } else {
+      destDir = await FilePicker.platform.getDirectoryPath(dialogTitle: '选择导出文件夹');
+    }
+    if (destDir == null || destDir.isEmpty) return;
+
+    ApiExportProgress? latest;
+    int errorCount = 0;
+    StreamSubscription<ApiExportProgress>? sub;
+    void Function(void Function())? dialogSetState;
+    BuildContext? dialogContext;
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        dialogContext = context;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            dialogSetState ??= setState;
+          final p = latest;
+          final overall = (p == null || p.totalFiles == 0) ? null : (p.doneFiles / p.totalFiles).clamp(0.0, 1.0);
+          final curTotal = p?.currentTotalBytes ?? BigInt.zero;
+          final curDone = p?.currentBytes ?? BigInt.zero;
+          final current = (p == null || curTotal == BigInt.zero)
+              ? null
+              : (curDone.toDouble() / curTotal.toDouble()).clamp(0.0, 1.0);
+
+            return AlertDialog(
+              title: const Text('导出到文件'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LinearProgressIndicator(value: overall),
+                  const SizedBox(height: 12),
+                  if (p != null) ...[
+                    Text('进度：${p.doneFiles}/${p.totalFiles}  错误：$errorCount'),
+                    if ((p.currentFile ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        p.currentFile!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    LinearProgressIndicator(value: current),
+                  ] else ...[
+                    const Text('准备中…'),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await sub?.cancel();
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                  child: const Text('取消'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    sub = download_api
+        .exportDownloadsToDir(taskIds: completedIds, destDir: destDir)
+        .listen((event) {
+      latest = event;
+      if (event.error != null) {
+        errorCount++;
+      }
+      dialogSetState?.call(() {});
+      if (event.done) {
+        final dc = dialogContext;
+        if (dc != null && Navigator.of(dc).canPop()) {
+          Navigator.of(dc).pop();
+        }
+      }
+    }, onError: (e) {
+      if (!mounted) return;
+      final dc = dialogContext;
+      if (dc != null && Navigator.of(dc).canPop()) {
+        Navigator.of(dc).pop();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('导出失败：$e')),
+      );
+    });
+
+    await sub.asFuture<void>().catchError((_) {});
+    await sub.cancel();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('导出完成：${completedIds.length} 个任务（错误：$errorCount）')),
+    );
+    _exitSelectionMode();
+  }
+
+  String _sanitizeFilename(String input) {
+    final buf = StringBuffer();
+    for (final ch in input.runes) {
+      final c = String.fromCharCode(ch);
+      final invalid = c == '<' ||
+          c == '>' ||
+          c == ':' ||
+          c == '"' ||
+          c == '/' ||
+          c == '\\' ||
+          c == '|' ||
+          c == '?' ||
+          c == '*' ||
+          ch < 32;
+      buf.write(invalid ? '_' : c);
+    }
+    final out = buf.toString().trim().replaceAll(RegExp(r'^[. ]+|[. ]+$'), '');
+    return out.isEmpty ? '_' : out;
+  }
+
+  Future<void> _exportSelectedToAlbum() async {
+    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('当前平台不支持导出到相册')),
+      );
+      return;
+    }
+
+    final selected = _items.value
+        .where((e) => _selectedIds.value.contains(e.id))
+        .where((e) => e.status is ApiDownloadStatus_Completed)
+        .where((e) => e.filePath != null && e.filePath!.isNotEmpty && File(e.filePath!).existsSync())
+        .toList();
+    if (selected.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请选择已完成的下载任务')),
+      );
+      return;
+    }
+
+    int done = 0;
+    int ok = 0;
+    bool canceled = false;
+    void Function(void Function())? dialogSetState;
+    BuildContext? dialogContext;
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        dialogContext = context;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            dialogSetState ??= setState;
+          final progress = (done / selected.length).clamp(0.0, 1.0);
+          return AlertDialog(
+            title: const Text('导出到相册'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LinearProgressIndicator(value: progress),
+                const SizedBox(height: 12),
+                Text('已处理：$done/${selected.length} · 成功：$ok'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  canceled = true;
+                  Navigator.of(context).pop();
+                },
+                child: const Text('取消'),
+              ),
+            ],
+          );
+        },
+        );
+      },
+    );
+
+    for (final item in selected) {
+      if (canceled) break;
+      final path = item.filePath!;
+      final ext = path.split('.').last.toLowerCase();
+      if (ext == 'm3u8') {
+        done++;
+        continue;
+      }
+      final author = (item.authorName ?? '').trim().isEmpty ? 'Unknown' : item.authorName!.trim();
+      final name = '[${_sanitizeFilename(author)}]${_sanitizeFilename(item.title)}.$ext';
+      try {
+        await GalleryExport.saveVideoToGallery(path: path, name: name);
+        ok++;
+      } catch (_) {
+        // ignore per item
+      }
+      done++;
+      dialogSetState?.call(() {});
+    }
+
+    if (!mounted) return;
+    final dc = dialogContext;
+    if (dc != null && Navigator.of(dc).canPop()) {
+      Navigator.of(dc).pop();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('已导出到相册：$ok/$done')),
+    );
+    _exitSelectionMode();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -189,6 +437,17 @@ class _DownloadsPageState extends State<DownloadsPage> {
                     icon: const Icon(Icons.select_all),
                     onPressed: _selectAllVisible,
                   ),
+                  IconButton(
+                    tooltip: Platform.isIOS ? '导出到文件（Documents）' : '导出到文件',
+                    icon: const Icon(Icons.drive_folder_upload),
+                    onPressed: _selectedIds.value.isEmpty ? null : _exportSelectedToFiles,
+                  ),
+                  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
+                    IconButton(
+                      tooltip: '导出到相册',
+                      icon: const Icon(Icons.photo_library_outlined),
+                      onPressed: _selectedIds.value.isEmpty ? null : _exportSelectedToAlbum,
+                    ),
                   IconButton(
                     tooltip: '删除',
                     icon: const Icon(Icons.delete_outline),

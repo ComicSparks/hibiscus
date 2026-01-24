@@ -2297,6 +2297,275 @@ $ApiDownloadStatusCopyWith<$Res> get status {
 }
 
 /// @nodoc
+mixin _$ApiExportProgress {
+
+ int get totalFiles; int get doneFiles; String? get currentFile; BigInt get currentBytes; BigInt get currentTotalBytes; bool get done; String? get error;
+/// Create a copy of ApiExportProgress
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiExportProgressCopyWith<ApiExportProgress> get copyWith => _$ApiExportProgressCopyWithImpl<ApiExportProgress>(this as ApiExportProgress, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiExportProgress&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.doneFiles, doneFiles) || other.doneFiles == doneFiles)&&(identical(other.currentFile, currentFile) || other.currentFile == currentFile)&&(identical(other.currentBytes, currentBytes) || other.currentBytes == currentBytes)&&(identical(other.currentTotalBytes, currentTotalBytes) || other.currentTotalBytes == currentTotalBytes)&&(identical(other.done, done) || other.done == done)&&(identical(other.error, error) || other.error == error));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,totalFiles,doneFiles,currentFile,currentBytes,currentTotalBytes,done,error);
+
+@override
+String toString() {
+  return 'ApiExportProgress(totalFiles: $totalFiles, doneFiles: $doneFiles, currentFile: $currentFile, currentBytes: $currentBytes, currentTotalBytes: $currentTotalBytes, done: $done, error: $error)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiExportProgressCopyWith<$Res>  {
+  factory $ApiExportProgressCopyWith(ApiExportProgress value, $Res Function(ApiExportProgress) _then) = _$ApiExportProgressCopyWithImpl;
+@useResult
+$Res call({
+ int totalFiles, int doneFiles, String? currentFile, BigInt currentBytes, BigInt currentTotalBytes, bool done, String? error
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiExportProgressCopyWithImpl<$Res>
+    implements $ApiExportProgressCopyWith<$Res> {
+  _$ApiExportProgressCopyWithImpl(this._self, this._then);
+
+  final ApiExportProgress _self;
+  final $Res Function(ApiExportProgress) _then;
+
+/// Create a copy of ApiExportProgress
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? totalFiles = null,Object? doneFiles = null,Object? currentFile = freezed,Object? currentBytes = null,Object? currentTotalBytes = null,Object? done = null,Object? error = freezed,}) {
+  return _then(_self.copyWith(
+totalFiles: null == totalFiles ? _self.totalFiles : totalFiles // ignore: cast_nullable_to_non_nullable
+as int,doneFiles: null == doneFiles ? _self.doneFiles : doneFiles // ignore: cast_nullable_to_non_nullable
+as int,currentFile: freezed == currentFile ? _self.currentFile : currentFile // ignore: cast_nullable_to_non_nullable
+as String?,currentBytes: null == currentBytes ? _self.currentBytes : currentBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,currentTotalBytes: null == currentTotalBytes ? _self.currentTotalBytes : currentTotalBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,done: null == done ? _self.done : done // ignore: cast_nullable_to_non_nullable
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiExportProgress].
+extension ApiExportProgressPatterns on ApiExportProgress {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiExportProgress value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiExportProgress() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiExportProgress value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiExportProgress():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiExportProgress value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiExportProgress() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalFiles,  int doneFiles,  String? currentFile,  BigInt currentBytes,  BigInt currentTotalBytes,  bool done,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiExportProgress() when $default != null:
+return $default(_that.totalFiles,_that.doneFiles,_that.currentFile,_that.currentBytes,_that.currentTotalBytes,_that.done,_that.error);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalFiles,  int doneFiles,  String? currentFile,  BigInt currentBytes,  BigInt currentTotalBytes,  bool done,  String? error)  $default,) {final _that = this;
+switch (_that) {
+case _ApiExportProgress():
+return $default(_that.totalFiles,_that.doneFiles,_that.currentFile,_that.currentBytes,_that.currentTotalBytes,_that.done,_that.error);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalFiles,  int doneFiles,  String? currentFile,  BigInt currentBytes,  BigInt currentTotalBytes,  bool done,  String? error)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiExportProgress() when $default != null:
+return $default(_that.totalFiles,_that.doneFiles,_that.currentFile,_that.currentBytes,_that.currentTotalBytes,_that.done,_that.error);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiExportProgress implements ApiExportProgress {
+  const _ApiExportProgress({required this.totalFiles, required this.doneFiles, this.currentFile, required this.currentBytes, required this.currentTotalBytes, required this.done, this.error});
+  
+
+@override final  int totalFiles;
+@override final  int doneFiles;
+@override final  String? currentFile;
+@override final  BigInt currentBytes;
+@override final  BigInt currentTotalBytes;
+@override final  bool done;
+@override final  String? error;
+
+/// Create a copy of ApiExportProgress
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiExportProgressCopyWith<_ApiExportProgress> get copyWith => __$ApiExportProgressCopyWithImpl<_ApiExportProgress>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiExportProgress&&(identical(other.totalFiles, totalFiles) || other.totalFiles == totalFiles)&&(identical(other.doneFiles, doneFiles) || other.doneFiles == doneFiles)&&(identical(other.currentFile, currentFile) || other.currentFile == currentFile)&&(identical(other.currentBytes, currentBytes) || other.currentBytes == currentBytes)&&(identical(other.currentTotalBytes, currentTotalBytes) || other.currentTotalBytes == currentTotalBytes)&&(identical(other.done, done) || other.done == done)&&(identical(other.error, error) || other.error == error));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,totalFiles,doneFiles,currentFile,currentBytes,currentTotalBytes,done,error);
+
+@override
+String toString() {
+  return 'ApiExportProgress(totalFiles: $totalFiles, doneFiles: $doneFiles, currentFile: $currentFile, currentBytes: $currentBytes, currentTotalBytes: $currentTotalBytes, done: $done, error: $error)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiExportProgressCopyWith<$Res> implements $ApiExportProgressCopyWith<$Res> {
+  factory _$ApiExportProgressCopyWith(_ApiExportProgress value, $Res Function(_ApiExportProgress) _then) = __$ApiExportProgressCopyWithImpl;
+@override @useResult
+$Res call({
+ int totalFiles, int doneFiles, String? currentFile, BigInt currentBytes, BigInt currentTotalBytes, bool done, String? error
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiExportProgressCopyWithImpl<$Res>
+    implements _$ApiExportProgressCopyWith<$Res> {
+  __$ApiExportProgressCopyWithImpl(this._self, this._then);
+
+  final _ApiExportProgress _self;
+  final $Res Function(_ApiExportProgress) _then;
+
+/// Create a copy of ApiExportProgress
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? totalFiles = null,Object? doneFiles = null,Object? currentFile = freezed,Object? currentBytes = null,Object? currentTotalBytes = null,Object? done = null,Object? error = freezed,}) {
+  return _then(_ApiExportProgress(
+totalFiles: null == totalFiles ? _self.totalFiles : totalFiles // ignore: cast_nullable_to_non_nullable
+as int,doneFiles: null == doneFiles ? _self.doneFiles : doneFiles // ignore: cast_nullable_to_non_nullable
+as int,currentFile: freezed == currentFile ? _self.currentFile : currentFile // ignore: cast_nullable_to_non_nullable
+as String?,currentBytes: null == currentBytes ? _self.currentBytes : currentBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,currentTotalBytes: null == currentTotalBytes ? _self.currentTotalBytes : currentTotalBytes // ignore: cast_nullable_to_non_nullable
+as BigInt,done: null == done ? _self.done : done // ignore: cast_nullable_to_non_nullable
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$ApiFavoriteList {
 
  List<ApiVideoCard> get videos; int get total; int get page; bool get hasNext;

@@ -87,15 +87,14 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          final progress = ids.isEmpty ? 0.0 : (done / ids.length).clamp(0.0, 1.0);
           return AlertDialog(
             title: const Text('加入下载'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LinearProgressIndicator(value: progress),
-                const SizedBox(height: 12),
-                Text('已处理：$done/${ids.length} · 成功：$ok'),
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text('正在加入 ${ids.length} 个视频…'),
               ],
             ),
             actions: [
@@ -133,6 +132,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         // ignore per-item failure
       }
       done++;
+      if (!mounted) break;
     }
 
     if (!mounted) return;

@@ -2,7 +2,7 @@
 
 use flutter_rust_bridge::frb;
 use crate::frb_generated::StreamSink;
-use crate::api::models::{ApiDownloadTask, ApiDownloadStatus};
+use crate::api::models::{ApiDownloadTask, ApiDownloadStatus, ApiExportProgress};
 use crate::core::{storage, network, parser, runtime};
 use std::path::PathBuf;
 use std::sync::OnceLock;
@@ -182,6 +182,177 @@ pub async fn delete_download(task_id: String, delete_file: bool) -> anyhow::Resu
     }
     storage::delete_download(&task_id)?;
     Ok(true)
+}
+
+/// 导出下载文件到指定目录（通过 StreamSink 发送进度）
+///
+/// - 仅导出已下载完成且存在本地文件的任务
+/// - 文件名格式：`[{作者}]{标题}.{ext}`，非法字符替换为 `_`
+#[frb]
+pub fn export_downloads_to_dir(task_ids: Vec<String>, dest_dir: String, sink: StreamSink<ApiExportProgress>) {
+    runtime::spawn(async move {
+        let total_files = task_ids.len() as u32;
+        let mut done_files: u32 = 0;
+
+        let dest_dir = PathBuf::from(dest_dir);
+        if let Err(e) = tokio::fs::create_dir_all(&dest_dir).await {
+            let _ = sink.add(ApiExportProgress {
+                total_files,
+                done_files,
+                current_file: None,
+                current_bytes: 0,
+                current_total_bytes: 0,
+                done: true,
+                error: Some(format!("Create dir failed: {e}")),
+            });
+            return;
+        }
+
+        for task_id in task_ids {
+            let record = match storage::get_download_by_video_id(&task_id) {
+                Ok(Some(r)) => r,
+                _ => {
+                    done_files += 1;
+                    let _ = sink.add(ApiExportProgress {
+                        total_files,
+                        done_files,
+                        current_file: Some(task_id),
+                        current_bytes: 0,
+                        current_total_bytes: 0,
+                        done: false,
+                        error: Some("Download record not found".to_string()),
+                    });
+                    continue;
+                }
+            };
+
+            if record.status != storage::DownloadStatus::Completed {
+                done_files += 1;
+                let _ = sink.add(ApiExportProgress {
+                    total_files,
+                    done_files,
+                    current_file: Some(record.title),
+                    current_bytes: 0,
+                    current_total_bytes: 0,
+                    done: false,
+                    error: Some("Not completed".to_string()),
+                });
+                continue;
+            }
+
+            let Some(src_path) = record.save_path.clone() else {
+                done_files += 1;
+                let _ = sink.add(ApiExportProgress {
+                    total_files,
+                    done_files,
+                    current_file: Some(record.title),
+                    current_bytes: 0,
+                    current_total_bytes: 0,
+                    done: false,
+                    error: Some("Missing local file".to_string()),
+                });
+                continue;
+            };
+            let src_path = PathBuf::from(src_path);
+            let meta = match tokio::fs::metadata(&src_path).await {
+                Ok(m) => m,
+                Err(e) => {
+                    done_files += 1;
+                    let _ = sink.add(ApiExportProgress {
+                        total_files,
+                        done_files,
+                        current_file: Some(record.title),
+                        current_bytes: 0,
+                        current_total_bytes: 0,
+                        done: false,
+                        error: Some(format!("Stat failed: {e}")),
+                    });
+                    continue;
+                }
+            };
+            let total_bytes = meta.len();
+
+            let ext = src_path
+                .extension()
+                .and_then(|s| s.to_str())
+                .unwrap_or("mp4");
+
+            let author = record.author_name.clone().unwrap_or_else(|| "Unknown".to_string());
+            let filename = format!(
+                "[{}]{}.{}",
+                sanitize_filename(&author),
+                sanitize_filename(&record.title),
+                sanitize_filename(ext),
+            );
+            let mut dst_path = dest_dir.join(filename);
+            dst_path = uniquify_path(dst_path);
+
+            let display_name = dst_path
+                .file_name()
+                .and_then(|s| s.to_str())
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| record.title.clone());
+
+            let _ = sink.add(ApiExportProgress {
+                total_files,
+                done_files,
+                current_file: Some(display_name.clone()),
+                current_bytes: 0,
+                current_total_bytes: total_bytes,
+                done: false,
+                error: None,
+            });
+
+            match copy_file_with_progress(&src_path, &dst_path, total_bytes, |copied| {
+                let _ = sink.add(ApiExportProgress {
+                    total_files,
+                    done_files,
+                    current_file: Some(display_name.clone()),
+                    current_bytes: copied,
+                    current_total_bytes: total_bytes,
+                    done: false,
+                    error: None,
+                });
+            })
+            .await
+            {
+                Ok(_) => {
+                    done_files += 1;
+                    let _ = sink.add(ApiExportProgress {
+                        total_files,
+                        done_files,
+                        current_file: Some(display_name),
+                        current_bytes: total_bytes,
+                        current_total_bytes: total_bytes,
+                        done: false,
+                        error: None,
+                    });
+                }
+                Err(e) => {
+                    done_files += 1;
+                    let _ = sink.add(ApiExportProgress {
+                        total_files,
+                        done_files,
+                        current_file: Some(display_name),
+                        current_bytes: 0,
+                        current_total_bytes: total_bytes,
+                        done: false,
+                        error: Some(e.to_string()),
+                    });
+                }
+            }
+        }
+
+        let _ = sink.add(ApiExportProgress {
+            total_files,
+            done_files,
+            current_file: None,
+            current_bytes: 0,
+            current_total_bytes: 0,
+            done: true,
+            error: None,
+        });
+    });
 }
 
 /// 批量暂停下载
@@ -575,4 +746,74 @@ fn progress_sender() -> &'static broadcast::Sender<ApiDownloadTask> {
         let (tx, _) = broadcast::channel(100);
         tx
     })
+}
+
+fn sanitize_filename(input: &str) -> String {
+    // Windows + common filesystem forbidden: <>:"/\|?* and control chars
+    let mut out = String::with_capacity(input.len());
+    for ch in input.chars() {
+        let invalid = matches!(
+            ch,
+            '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*' 
+        ) || ch.is_control();
+        if invalid {
+            out.push('_');
+        } else {
+            out.push(ch);
+        }
+    }
+    let out = out.trim().trim_matches('.').trim().to_string();
+    if out.is_empty() { "_".to_string() } else { out }
+}
+
+fn uniquify_path(mut path: PathBuf) -> PathBuf {
+    if !path.exists() {
+        return path;
+    }
+    let stem = path
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("file")
+        .to_string();
+    let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
+    let dir = path.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| PathBuf::new());
+
+    for i in 1..10_000 {
+        let name = if ext.is_empty() {
+            format!("{stem} ({i})")
+        } else {
+            format!("{stem} ({i}).{ext}")
+        };
+        let candidate = dir.join(name);
+        if !candidate.exists() {
+            return candidate;
+        }
+    }
+    path
+}
+
+async fn copy_file_with_progress(
+    src: &PathBuf,
+    dst: &PathBuf,
+    total: u64,
+    mut on_progress: impl FnMut(u64),
+) -> anyhow::Result<()> {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    let mut in_f = tokio::fs::File::open(src).await?;
+    let mut out_f = tokio::fs::File::create(dst).await?;
+    let mut buf = vec![0u8; 1024 * 1024];
+    let mut copied: u64 = 0;
+    loop {
+        let n = in_f.read(&mut buf).await?;
+        if n == 0 {
+            break;
+        }
+        out_f.write_all(&buf[..n]).await?;
+        copied += n as u64;
+        if total == 0 || copied == total || (copied % (4 * 1024 * 1024) < n as u64) {
+            on_progress(copied);
+        }
+    }
+    out_f.flush().await?;
+    Ok(())
 }
