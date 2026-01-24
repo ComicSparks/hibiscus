@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'models.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `build_download_path`, `download_cover`, `map_record`, `progress_sender`, `resolve_video_url`, `resume_queued_downloads`, `run_download`, `spawn_download`, `task_controls`
+// These functions are ignored because they are not marked as `pub`: `build_download_path`, `current_download_concurrency`, `download_author_avatar`, `download_cover`, `download_semaphore`, `map_record`, `progress_sender`, `resume_queued_downloads`, `run_download`, `spawn_download`, `task_controls`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DownloadControl`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `eq`, `fmt`
 

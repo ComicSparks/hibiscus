@@ -143,7 +143,7 @@ class VideoGrid extends StatelessWidget {
       showViews: showViews,
       sizeScale: sizeScale,
     );
-    final itemHeight = coverHeight + infoHeight + 4 * sizeScale;
+    final itemHeight = coverHeight + infoHeight + 5.0 * sizeScale;
 
     return itemWidth / itemHeight;
   }

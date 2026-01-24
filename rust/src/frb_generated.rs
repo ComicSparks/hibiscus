@@ -2658,6 +2658,10 @@ impl SseDecode for crate::api::models::ApiDownloadTask {
         let mut var_title = <String>::sse_decode(deserializer);
         let mut var_coverUrl = <String>::sse_decode(deserializer);
         let mut var_coverPath = <Option<String>>::sse_decode(deserializer);
+        let mut var_authorId = <Option<String>>::sse_decode(deserializer);
+        let mut var_authorName = <Option<String>>::sse_decode(deserializer);
+        let mut var_authorAvatarUrl = <Option<String>>::sse_decode(deserializer);
+        let mut var_authorAvatarPath = <Option<String>>::sse_decode(deserializer);
         let mut var_quality = <String>::sse_decode(deserializer);
         let mut var_description = <Option<String>>::sse_decode(deserializer);
         let mut var_tags = <Vec<String>>::sse_decode(deserializer);
@@ -2674,6 +2678,10 @@ impl SseDecode for crate::api::models::ApiDownloadTask {
             title: var_title,
             cover_url: var_coverUrl,
             cover_path: var_coverPath,
+            author_id: var_authorId,
+            author_name: var_authorName,
+            author_avatar_url: var_authorAvatarUrl,
+            author_avatar_path: var_authorAvatarPath,
             quality: var_quality,
             description: var_description,
             tags: var_tags,
@@ -3751,6 +3759,10 @@ impl flutter_rust_bridge::IntoDart for crate::api::models::ApiDownloadTask {
             self.title.into_into_dart().into_dart(),
             self.cover_url.into_into_dart().into_dart(),
             self.cover_path.into_into_dart().into_dart(),
+            self.author_id.into_into_dart().into_dart(),
+            self.author_name.into_into_dart().into_dart(),
+            self.author_avatar_url.into_into_dart().into_dart(),
+            self.author_avatar_path.into_into_dart().into_dart(),
             self.quality.into_into_dart().into_dart(),
             self.description.into_into_dart().into_dart(),
             self.tags.into_into_dart().into_dart(),
@@ -4402,6 +4414,10 @@ impl SseEncode for crate::api::models::ApiDownloadTask {
         <String>::sse_encode(self.title, serializer);
         <String>::sse_encode(self.cover_url, serializer);
         <Option<String>>::sse_encode(self.cover_path, serializer);
+        <Option<String>>::sse_encode(self.author_id, serializer);
+        <Option<String>>::sse_encode(self.author_name, serializer);
+        <Option<String>>::sse_encode(self.author_avatar_url, serializer);
+        <Option<String>>::sse_encode(self.author_avatar_path, serializer);
         <String>::sse_encode(self.quality, serializer);
         <Option<String>>::sse_encode(self.description, serializer);
         <Vec<String>>::sse_encode(self.tags, serializer);

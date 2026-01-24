@@ -9,6 +9,7 @@ use std::sync::OnceLock;
 use std::collections::HashMap;
 use tokio::sync::broadcast;
 use tokio::sync::{watch, Mutex};
+use tokio::sync::Semaphore;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum DownloadControl {
@@ -20,6 +21,23 @@ enum DownloadControl {
 fn task_controls() -> &'static Mutex<HashMap<String, watch::Sender<DownloadControl>>> {
     static MAP: OnceLock<Mutex<HashMap<String, watch::Sender<DownloadControl>>>> = OnceLock::new();
     MAP.get_or_init(|| Mutex::new(HashMap::new()))
+}
+
+fn download_semaphore() -> &'static Semaphore {
+    static SEM: OnceLock<Semaphore> = OnceLock::new();
+    SEM.get_or_init(|| {
+        // 固定 2 个 permit，通过 acquire_many 实现 1/2 并发动态切换
+        Semaphore::new(2)
+    })
+}
+
+fn current_download_concurrency() -> u32 {
+    storage::get_setting("download_concurrent")
+        .ok()
+        .flatten()
+        .and_then(|v| v.parse::<u32>().ok())
+        .unwrap_or(1)
+        .clamp(1, 2)
 }
 
 /// 添加下载任务
@@ -42,7 +60,7 @@ pub async fn add_download(
         let task = map_record(record.clone());
         if matches!(record.status, storage::DownloadStatus::Queued | storage::DownloadStatus::Failed | storage::DownloadStatus::Paused) {
             if let Some(save_path) = record.save_path.clone() {
-                storage::update_download_status(&record.video_id, storage::DownloadStatus::Downloading, None)?;
+                storage::update_download_status(&record.video_id, storage::DownloadStatus::Queued, None)?;
                 spawn_download(record.video_id, PathBuf::from(save_path));
             }
         }
@@ -60,8 +78,12 @@ pub async fn add_download(
         description.as_deref(),
         &tags,
         cover_path.as_deref(),
+        None,
+        None,
+        None,
+        None,
     )?;
-    storage::update_download_status(&video_id, storage::DownloadStatus::Downloading, None)?;
+    storage::update_download_status(&video_id, storage::DownloadStatus::Queued, None)?;
 
     spawn_download(video_id.clone(), PathBuf::new());
 
@@ -71,10 +93,14 @@ pub async fn add_download(
         title,
         cover_url,
         cover_path,
+        author_id: None,
+        author_name: None,
+        author_avatar_url: None,
+        author_avatar_path: None,
         quality,
         description,
         tags,
-        status: ApiDownloadStatus::Downloading,
+        status: ApiDownloadStatus::Pending,
         progress: 0.0,
         downloaded_bytes: 0,
         total_bytes: 0,
@@ -124,7 +150,7 @@ pub async fn pause_download(task_id: String) -> anyhow::Result<bool> {
 /// 继续下载
 #[frb]
 pub async fn resume_download(task_id: String) -> anyhow::Result<bool> {
-    storage::update_download_status(&task_id, storage::DownloadStatus::Downloading, None)?;
+    storage::update_download_status(&task_id, storage::DownloadStatus::Queued, None)?;
     if let Ok(Some(record)) = storage::get_download_by_video_id(&task_id) {
         if let Some(save_path) = record.save_path.clone() {
             spawn_download(record.video_id, PathBuf::from(save_path));
@@ -147,6 +173,9 @@ pub async fn delete_download(task_id: String, delete_file: bool) -> anyhow::Resu
                 let _ = std::fs::remove_file(path);
             }
             if let Some(path) = record.cover_path {
+                let _ = std::fs::remove_file(path);
+            }
+            if let Some(path) = record.author_avatar_path {
                 let _ = std::fs::remove_file(path);
             }
         }
@@ -176,7 +205,7 @@ pub async fn resume_all_downloads() -> anyhow::Result<bool> {
     let records = storage::get_downloads()?;
     for record in records {
         if matches!(record.status, storage::DownloadStatus::Paused) {
-            storage::update_download_status(&record.video_id, storage::DownloadStatus::Downloading, None)?;
+            storage::update_download_status(&record.video_id, storage::DownloadStatus::Queued, None)?;
             if let Some(save_path) = record.save_path.clone() {
                 spawn_download(record.video_id, PathBuf::from(save_path));
             } else {
@@ -226,7 +255,6 @@ pub(crate) async fn resume_queued_downloads() -> anyhow::Result<()> {
             continue;
         }
 
-        storage::update_download_status(&record.video_id, storage::DownloadStatus::Downloading, None)?;
         if let Some(path) = record.save_path.clone() {
             spawn_download(record.video_id, PathBuf::from(path));
         } else {
@@ -257,6 +285,10 @@ fn map_record(record: storage::DownloadRecord) -> ApiDownloadTask {
         title: record.title,
         cover_url: record.cover_url,
         cover_path: record.cover_path,
+        author_id: record.author_id,
+        author_name: record.author_name,
+        author_avatar_url: record.author_avatar_url,
+        author_avatar_path: record.author_avatar_path,
         quality: record.quality.unwrap_or_else(|| "1080P".to_string()),
         description: record.description,
         tags: record.tags,
@@ -280,16 +312,36 @@ fn build_download_path(video_id: &str, quality: &str, ext: &str) -> anyhow::Resu
     Ok(base)
 }
 
-async fn resolve_video_url(video_id: &str, quality: &str) -> anyhow::Result<(String, String)> {
-    let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
-    let html = network::get(&watch_url).await?;
-    let detail = parser::parse_video_detail(&html)?;
-    let q_norm = quality.to_ascii_lowercase();
-    let pick = detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == q_norm)
-        .or_else(|| detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == "auto"))
-        .or_else(|| detail.video_sources.first())
-        .ok_or_else(|| anyhow::anyhow!("No playable source"))?;
-    Ok((pick.url.clone(), pick.format.clone()))
+async fn download_author_avatar(author_id: &str, avatar_url: &str) -> anyhow::Result<Option<String>> {
+    if avatar_url.trim().is_empty() || author_id.trim().is_empty() {
+        return Ok(None);
+    }
+    let mut dir = storage::get_data_dir()?;
+    dir.push("download_avatars");
+    std::fs::create_dir_all(&dir)?;
+
+    let ext = {
+        let cleaned = avatar_url
+            .split(['?', '#'])
+            .next()
+            .unwrap_or(avatar_url)
+            .trim();
+        let ext = cleaned
+            .rsplit_once('.')
+            .map(|(_, e)| e.to_ascii_lowercase())
+            .unwrap_or_else(|| "jpg".to_string());
+        match ext.as_str() {
+            "jpg" | "jpeg" | "png" | "webp" => ext,
+            _ => "jpg".to_string(),
+        }
+    };
+    let mut file_path = dir;
+    file_path.push(format!("{}.{}", author_id, ext));
+
+    let client = network::get_client();
+    let bytes = client.get(avatar_url).send().await?.bytes().await?;
+    tokio::fs::write(&file_path, &bytes).await?;
+    Ok(Some(file_path.to_string_lossy().to_string()))
 }
 
 async fn download_cover(video_id: &str, cover_url: &str) -> anyhow::Result<Option<String>> {
@@ -326,8 +378,16 @@ async fn download_cover(video_id: &str, cover_url: &str) -> anyhow::Result<Optio
 
 fn spawn_download(video_id: String, save_path_hint: PathBuf) {
     runtime::spawn(async move {
+        // 全局并发控制（最多同时下载不同视频）
+        let permits_needed = if current_download_concurrency() <= 1 { 2 } else { 1 };
+        let permit = match download_semaphore().acquire_many(permits_needed).await {
+            Ok(p) => p,
+            Err(_) => return,
+        };
+
         let mut map = task_controls().lock().await;
         if map.contains_key(&video_id) {
+            drop(permit);
             return;
         }
         let (tx, rx) = watch::channel(DownloadControl::Running);
@@ -336,6 +396,7 @@ fn spawn_download(video_id: String, save_path_hint: PathBuf) {
 
         let result = run_download(video_id.clone(), save_path_hint, rx).await;
         let _ = task_controls().lock().await.remove(&video_id);
+        drop(permit);
 
         if let Ok(Some(record)) = storage::get_download_by_video_id(&video_id) {
             let task = map_record(record);
@@ -360,9 +421,51 @@ async fn run_download(
         return Ok(());
     };
 
+    // 如果在开始前已经被暂停（例如排队中立即点击暂停），则不要继续下载。
+    if record.status == storage::DownloadStatus::Paused {
+        return Ok(());
+    }
+
     let quality = record.quality.clone().unwrap_or_else(|| "1080P".to_string());
 
-    let (url, format) = resolve_video_url(&video_id, &quality).await?;
+    // 模拟播放：访问 watch 页获取链接 + 元数据
+    let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+    let html = network::get(&watch_url).await?;
+    let detail = parser::parse_video_detail(&html)?;
+
+    if record.description.as_deref().unwrap_or("").trim().is_empty() && !detail.description.trim().is_empty() {
+        let _ = storage::update_download_description_and_tags(&video_id, Some(detail.description.trim()), None);
+    }
+    if record.tags.is_empty() && !detail.tags.is_empty() {
+        let _ = storage::update_download_description_and_tags(&video_id, None, Some(&detail.tags));
+    }
+
+    // 尝试补齐作者信息（用于离线展示）
+    if let Some(creator) = detail.creator.clone() {
+        let avatar_path = if record.author_avatar_path.is_none() {
+            download_author_avatar(&creator.id, creator.avatar_url.as_deref().unwrap_or("")).await.ok().flatten()
+        } else {
+            record.author_avatar_path.clone()
+        };
+        let _ = storage::update_download_author(
+            &video_id,
+            Some(&creator.id),
+            Some(&creator.name),
+            creator.avatar_url.as_deref(),
+            avatar_path.as_deref(),
+        );
+        if let Ok(Some(updated)) = storage::get_download_by_video_id(&video_id) {
+            let _ = progress_sender().send(map_record(updated));
+        }
+    }
+
+    let q_norm = quality.to_ascii_lowercase();
+    let pick = detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == q_norm)
+        .or_else(|| detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == "auto"))
+        .or_else(|| detail.video_sources.first())
+        .ok_or_else(|| anyhow::anyhow!("No playable source"))?;
+    let url = pick.url.clone();
+    let format = pick.format.clone();
     let ext = if format.to_ascii_lowercase().contains("m3u8") || url.contains(".m3u8") {
         "m3u8"
     } else {
@@ -376,6 +479,8 @@ async fn run_download(
     } else {
         save_path_hint
     };
+
+    storage::update_download_status(&video_id, storage::DownloadStatus::Downloading, None)?;
 
     let mut downloaded: u64 = if save_path.exists() {
         std::fs::metadata(&save_path).map(|m| m.len()).unwrap_or(0)

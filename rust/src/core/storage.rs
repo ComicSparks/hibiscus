@@ -217,6 +217,10 @@ pub(crate) struct DownloadRecord {
     pub description: Option<String>,
     pub tags: Vec<String>,
     pub cover_path: Option<String>,
+    pub author_id: Option<String>,
+    pub author_name: Option<String>,
+    pub author_avatar_url: Option<String>,
+    pub author_avatar_path: Option<String>,
     pub save_path: Option<String>,
     pub total_bytes: i64,
     pub downloaded_bytes: i64,
@@ -236,6 +240,10 @@ pub fn add_download(
     description: Option<&str>,
     tags: &[String],
     cover_path: Option<&str>,
+    author_id: Option<&str>,
+    author_name: Option<&str>,
+    author_avatar_url: Option<&str>,
+    author_avatar_path: Option<&str>,
 ) -> Result<i64> {
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
@@ -243,10 +251,28 @@ pub fn add_download(
     
     db.execute(
         r#"
-        INSERT OR IGNORE INTO downloads (video_id, title, cover_url, video_url, quality, description, tags, cover_path, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+        INSERT OR IGNORE INTO downloads (
+            video_id, title, cover_url, video_url, quality, description, tags, cover_path,
+            author_id, author_name, author_avatar_url, author_avatar_path,
+            created_at
+        )
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
         "#,
-        params![video_id, title, cover_url, video_url, quality, description, tags_json, cover_path, now],
+        params![
+            video_id,
+            title,
+            cover_url,
+            video_url,
+            quality,
+            description,
+            tags_json,
+            cover_path,
+            author_id,
+            author_name,
+            author_avatar_url,
+            author_avatar_path,
+            now
+        ],
     )?;
     
     Ok(db.last_insert_rowid())
@@ -256,8 +282,9 @@ pub fn add_download(
 pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-        "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path, save_path,
-                total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
+        "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
+                author_id, author_name, author_avatar_url, author_avatar_path,
+                save_path, total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads WHERE video_id = ?1 LIMIT 1"
     )?;
 
@@ -278,13 +305,17 @@ pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>
             description: row.get(6)?,
             tags,
             cover_path: row.get(8)?,
-            save_path: row.get(9)?,
-            total_bytes: row.get(10)?,
-            downloaded_bytes: row.get(11)?,
-            status: DownloadStatus::from(row.get::<_, i32>(12)?),
-            error_message: row.get(13)?,
-            created_at: row.get(14)?,
-            completed_at: row.get(15)?,
+            author_id: row.get(9)?,
+            author_name: row.get(10)?,
+            author_avatar_url: row.get(11)?,
+            author_avatar_path: row.get(12)?,
+            save_path: row.get(13)?,
+            total_bytes: row.get(14)?,
+            downloaded_bytes: row.get(15)?,
+            status: DownloadStatus::from(row.get::<_, i32>(16)?),
+            error_message: row.get(17)?,
+            created_at: row.get(18)?,
+            completed_at: row.get(19)?,
         }))
     } else {
         Ok(None)
@@ -307,6 +338,22 @@ pub fn update_download_cover_path(video_id: &str, cover_path: &str) -> Result<()
     db.execute(
         "UPDATE downloads SET cover_path = ?1 WHERE video_id = ?2",
         params![cover_path, video_id],
+    )?;
+    Ok(())
+}
+
+/// 更新下载作者信息
+pub fn update_download_author(
+    video_id: &str,
+    author_id: Option<&str>,
+    author_name: Option<&str>,
+    author_avatar_url: Option<&str>,
+    author_avatar_path: Option<&str>,
+) -> Result<()> {
+    let db = get_db()?;
+    db.execute(
+        "UPDATE downloads SET author_id = ?1, author_name = ?2, author_avatar_url = ?3, author_avatar_path = ?4 WHERE video_id = ?5",
+        params![author_id, author_name, author_avatar_url, author_avatar_path, video_id],
     )?;
     Ok(())
 }
@@ -337,12 +384,28 @@ pub fn update_download_status(video_id: &str, status: DownloadStatus, error: Opt
     Ok(())
 }
 
+pub fn update_download_description_and_tags(
+    video_id: &str,
+    description: Option<&str>,
+    tags: Option<&[String]>,
+) -> Result<()> {
+    let db = get_db()?;
+    let tags_json = tags
+        .map(|t| serde_json::to_string(t).unwrap_or_else(|_| "[]".to_string()));
+    db.execute(
+        "UPDATE downloads SET description = COALESCE(?1, description), tags = COALESCE(?2, tags) WHERE video_id = ?3",
+        params![description, tags_json, video_id],
+    )?;
+    Ok(())
+}
+
 /// 获取下载列表
 pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-    "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path, save_path,
-        total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
+    "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
+        author_id, author_name, author_avatar_url, author_avatar_path,
+        save_path, total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads ORDER BY created_at DESC"
     )?;
     
@@ -362,13 +425,17 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
             description: row.get(6)?,
             tags,
             cover_path: row.get(8)?,
-            save_path: row.get(9)?,
-            total_bytes: row.get(10)?,
-            downloaded_bytes: row.get(11)?,
-            status: DownloadStatus::from(row.get::<_, i32>(12)?),
-            error_message: row.get(13)?,
-            created_at: row.get(14)?,
-            completed_at: row.get(15)?,
+            author_id: row.get(9)?,
+            author_name: row.get(10)?,
+            author_avatar_url: row.get(11)?,
+            author_avatar_path: row.get(12)?,
+            save_path: row.get(13)?,
+            total_bytes: row.get(14)?,
+            downloaded_bytes: row.get(15)?,
+            status: DownloadStatus::from(row.get::<_, i32>(16)?),
+            error_message: row.get(17)?,
+            created_at: row.get(18)?,
+            completed_at: row.get(19)?,
         })
     })?;
     

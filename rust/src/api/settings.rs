@@ -83,9 +83,10 @@ pub async fn save_flutter_settings(json: String) -> anyhow::Result<bool> {
 #[frb]
 pub async fn get_cache_size() -> anyhow::Result<CacheInfo> {
     let cover_cache_size = dir_size(storage::get_data_dir()?.join("download_covers"));
-    let total_size = cover_cache_size;
+    let avatar_cache_size = dir_size(storage::get_data_dir()?.join("download_avatars"));
+    let total_size = cover_cache_size.saturating_add(avatar_cache_size);
     Ok(CacheInfo {
-        cover_cache_size,
+        cover_cache_size: cover_cache_size.saturating_add(avatar_cache_size),
         video_cache_size: 0,
         total_size,
     })
@@ -97,6 +98,9 @@ pub async fn clear_cover_cache() -> anyhow::Result<bool> {
     let dir = storage::get_data_dir()?.join("download_covers");
     let _ = std::fs::remove_dir_all(&dir);
     let _ = std::fs::create_dir_all(&dir);
+    let avatar = storage::get_data_dir()?.join("download_avatars");
+    let _ = std::fs::remove_dir_all(&avatar);
+    let _ = std::fs::create_dir_all(&avatar);
     Ok(true)
 }
 

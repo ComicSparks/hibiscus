@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/rust/api/models.dart';
-import 'package:hibiscus/src/rust/api/video.dart' as video_api;
+import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -22,6 +24,7 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
 
   bool _hasOpened = false;
   String? _error;
+  Orientation _lastOrientation = Orientation.portrait;
 
   @override
   void initState() {
@@ -47,19 +50,9 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
         if (mounted) setState(() {});
         return;
       }
-
-      final detail = await video_api.getVideoDetail(videoId: widget.task.videoId);
-      final picked = detail.qualities
-          .where((q) => q.quality.toLowerCase() == widget.task.quality.toLowerCase())
-          .cast<ApiVideoQuality?>()
-          .firstOrNull ??
-          detail.qualities.firstOrNull;
-      final url = picked?.url;
-      if (url == null || url.isEmpty) {
-        throw Exception('无法获取播放链接');
-      }
-      await _player.open(Media(url), play: true);
-      _hasOpened = true;
+      _error = widget.task.status is ApiDownloadStatus_Completed
+          ? '本地文件不存在'
+          : '下载未完成，无法播放本地文件';
       if (mounted) setState(() {});
     } catch (e) {
       _error = e.toString();
@@ -71,6 +64,7 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final task = widget.task;
+    _lastOrientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,16 +84,17 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Container(color: Colors.black, child: Video(controller: _controller)),
+                Container(
+                  color: Colors.black,
+                  child: Video(
+                    controller: _controller,
+                    onEnterFullscreen: _enterFullscreen,
+                    onExitFullscreen: _exitFullscreen,
+                  ),
+                ),
                 if (!_hasOpened)
                   Positioned.fill(
-                    child: task.coverUrl.isEmpty
-                        ? const SizedBox()
-                        : Image.network(
-                            task.coverUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const SizedBox(),
-                          ),
+                    child: _buildCover(task),
                   ),
                 if (_error != null)
                   Center(
@@ -120,6 +115,10 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if ((task.authorName ?? '').trim().isNotEmpty) ...[
+                  _buildAuthor(task, theme),
+                  const SizedBox(height: 12),
+                ],
                 Text(task.title, style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Text(
@@ -145,8 +144,134 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
       ),
     );
   }
-}
 
-extension<T> on Iterable<T> {
-  T? get firstOrNull => isEmpty ? null : first;
+  Future<void> _enterFullscreen() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return defaultEnterNativeFullscreen();
+    }
+
+    final mode = settingsState.settings.value.fullscreenOrientationMode;
+    final isPortrait = _lastOrientation == Orientation.portrait;
+    final w = _player.state.width ?? 0;
+    final h = _player.state.height ?? 0;
+    final isLandscapeVideo = w > 0 && h > 0 && w >= h;
+
+    final orientations = switch (mode) {
+      FullscreenOrientationMode.keepCurrent => isPortrait
+          ? <DeviceOrientation>[DeviceOrientation.portraitUp]
+          : <DeviceOrientation>[
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ],
+      FullscreenOrientationMode.portrait => <DeviceOrientation>[
+          DeviceOrientation.portraitUp,
+        ],
+      FullscreenOrientationMode.landscape => <DeviceOrientation>[
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+      FullscreenOrientationMode.byVideoSize => isLandscapeVideo
+          ? <DeviceOrientation>[
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ]
+          : <DeviceOrientation>[DeviceOrientation.portraitUp],
+    };
+
+    await Future.wait(
+      [
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.immersiveSticky,
+          overlays: const [],
+        ),
+        SystemChrome.setPreferredOrientations(orientations),
+      ],
+    );
+  }
+
+  Future<void> _exitFullscreen() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return defaultExitNativeFullscreen();
+    }
+    await Future.wait(
+      [
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: SystemUiOverlay.values,
+        ),
+        SystemChrome.setPreferredOrientations(const []),
+      ],
+    );
+  }
+
+  Widget _buildCover(ApiDownloadTask task) {
+    final local = task.coverPath;
+    if (local != null && local.isNotEmpty && File(local).existsSync()) {
+      return Image.file(File(local), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox());
+    }
+    if (task.coverUrl.isEmpty) return const SizedBox();
+    return CachedNetworkImage(
+      imageUrl: task.coverUrl,
+      fit: BoxFit.cover,
+      errorWidget: (_, __, ___) => const SizedBox(),
+    );
+  }
+
+  Widget _buildAuthor(ApiDownloadTask task, ThemeData theme) {
+    final name = task.authorName ?? '';
+    final local = task.authorAvatarPath;
+    final url = task.authorAvatarUrl;
+
+    Widget avatar;
+    if (local != null && local.isNotEmpty && File(local).existsSync()) {
+      avatar = ClipOval(
+        child: Image.file(
+          File(local),
+          width: 28,
+          height: 28,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallbackAvatar(theme),
+        ),
+      );
+    } else if (url != null && url.isNotEmpty) {
+      avatar = ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: url,
+          width: 28,
+          height: 28,
+          fit: BoxFit.cover,
+          errorWidget: (_, __, ___) => _fallbackAvatar(theme),
+        ),
+      );
+    } else {
+      avatar = _fallbackAvatar(theme);
+    }
+
+    return Row(
+      children: [
+        avatar,
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            name,
+            style: theme.textTheme.bodyMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _fallbackAvatar(ThemeData theme) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.person, size: 18, color: theme.colorScheme.onSurfaceVariant),
+    );
+  }
 }

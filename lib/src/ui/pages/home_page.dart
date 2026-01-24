@@ -168,10 +168,48 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
     final quality = searchState.multiSelectQuality.value;
     final videosById = {for (final v in searchState.videos.value) v.id: v};
 
+    int done = 0;
     int ok = 0;
+    bool canceled = false;
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          final progress = ids.isEmpty ? 0.0 : (done / ids.length).clamp(0.0, 1.0);
+          return AlertDialog(
+            title: const Text('加入下载'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LinearProgressIndicator(value: progress),
+                const SizedBox(height: 12),
+                Text('已处理：$done/${ids.length} · 成功：$ok'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  canceled = true;
+                  Navigator.of(context).pop();
+                },
+                child: const Text('取消'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
     for (final id in ids) {
+      if (canceled) break;
       final v = videosById[id];
-      if (v == null) continue;
+      if (v == null) {
+        done++;
+        continue;
+      }
       try {
         await download_api.addDownload(
           videoId: v.id,
@@ -185,11 +223,16 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
       } catch (_) {
         // ignore per-item failure
       }
+      done++;
     }
 
     if (!mounted) return;
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+    final total = done;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('已加入下载：$ok/${ids.length}')),
+      SnackBar(content: Text('已加入下载：$ok/$total')),
     );
     searchState.exitMultiSelect();
   }

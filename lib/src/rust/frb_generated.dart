@@ -2457,24 +2457,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ApiDownloadTask dco_decode_api_download_task(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 15)
-      throw Exception('unexpected arr length: expect 15 but see ${arr.length}');
+    if (arr.length != 19)
+      throw Exception('unexpected arr length: expect 19 but see ${arr.length}');
     return ApiDownloadTask(
       id: dco_decode_String(arr[0]),
       videoId: dco_decode_String(arr[1]),
       title: dco_decode_String(arr[2]),
       coverUrl: dco_decode_String(arr[3]),
       coverPath: dco_decode_opt_String(arr[4]),
-      quality: dco_decode_String(arr[5]),
-      description: dco_decode_opt_String(arr[6]),
-      tags: dco_decode_list_String(arr[7]),
-      status: dco_decode_api_download_status(arr[8]),
-      progress: dco_decode_f_32(arr[9]),
-      downloadedBytes: dco_decode_u_64(arr[10]),
-      totalBytes: dco_decode_u_64(arr[11]),
-      speed: dco_decode_u_64(arr[12]),
-      createdAt: dco_decode_i_64(arr[13]),
-      filePath: dco_decode_opt_String(arr[14]),
+      authorId: dco_decode_opt_String(arr[5]),
+      authorName: dco_decode_opt_String(arr[6]),
+      authorAvatarUrl: dco_decode_opt_String(arr[7]),
+      authorAvatarPath: dco_decode_opt_String(arr[8]),
+      quality: dco_decode_String(arr[9]),
+      description: dco_decode_opt_String(arr[10]),
+      tags: dco_decode_list_String(arr[11]),
+      status: dco_decode_api_download_status(arr[12]),
+      progress: dco_decode_f_32(arr[13]),
+      downloadedBytes: dco_decode_u_64(arr[14]),
+      totalBytes: dco_decode_u_64(arr[15]),
+      speed: dco_decode_u_64(arr[16]),
+      createdAt: dco_decode_i_64(arr[17]),
+      filePath: dco_decode_opt_String(arr[18]),
     );
   }
 
@@ -3214,6 +3218,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_title = sse_decode_String(deserializer);
     var var_coverUrl = sse_decode_String(deserializer);
     var var_coverPath = sse_decode_opt_String(deserializer);
+    var var_authorId = sse_decode_opt_String(deserializer);
+    var var_authorName = sse_decode_opt_String(deserializer);
+    var var_authorAvatarUrl = sse_decode_opt_String(deserializer);
+    var var_authorAvatarPath = sse_decode_opt_String(deserializer);
     var var_quality = sse_decode_String(deserializer);
     var var_description = sse_decode_opt_String(deserializer);
     var var_tags = sse_decode_list_String(deserializer);
@@ -3230,6 +3238,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       title: var_title,
       coverUrl: var_coverUrl,
       coverPath: var_coverPath,
+      authorId: var_authorId,
+      authorName: var_authorName,
+      authorAvatarUrl: var_authorAvatarUrl,
+      authorAvatarPath: var_authorAvatarPath,
       quality: var_quality,
       description: var_description,
       tags: var_tags,
@@ -4166,6 +4178,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.title, serializer);
     sse_encode_String(self.coverUrl, serializer);
     sse_encode_opt_String(self.coverPath, serializer);
+    sse_encode_opt_String(self.authorId, serializer);
+    sse_encode_opt_String(self.authorName, serializer);
+    sse_encode_opt_String(self.authorAvatarUrl, serializer);
+    sse_encode_opt_String(self.authorAvatarPath, serializer);
     sse_encode_String(self.quality, serializer);
     sse_encode_opt_String(self.description, serializer);
     sse_encode_list_String(self.tags, serializer);

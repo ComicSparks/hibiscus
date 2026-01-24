@@ -1,6 +1,7 @@
 // 视频详情页
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,6 +84,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   late final Player _player;
   late final VideoController _controller;
   bool _hasOpened = false;
+  Orientation _lastOrientation = Orientation.portrait;
 
   StreamSubscription<Duration>? _posSub;
   StreamSubscription<Duration>? _durSub;
@@ -210,6 +212,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    _lastOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -372,7 +375,11 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
           // 视频区域
           Container(
             color: Colors.black,
-            child: Video(controller: _controller),
+            child: Video(
+              controller: _controller,
+              onEnterFullscreen: _enterFullscreen,
+              onExitFullscreen: _exitFullscreen,
+            ),
           ),
           // 封面占位
           StreamBuilder<bool>(
@@ -424,6 +431,65 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             ),
         ],
       ),
+    );
+  }
+
+  Future<void> _enterFullscreen() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return defaultEnterNativeFullscreen();
+    }
+
+    final mode = settingsState.settings.value.fullscreenOrientationMode;
+    final isPortrait = _lastOrientation == Orientation.portrait;
+    final w = _player.state.width ?? 0;
+    final h = _player.state.height ?? 0;
+    final isLandscapeVideo = w > 0 && h > 0 && w >= h;
+
+    final orientations = switch (mode) {
+      FullscreenOrientationMode.keepCurrent => isPortrait
+          ? <DeviceOrientation>[DeviceOrientation.portraitUp]
+          : <DeviceOrientation>[
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ],
+      FullscreenOrientationMode.portrait => <DeviceOrientation>[
+          DeviceOrientation.portraitUp,
+        ],
+      FullscreenOrientationMode.landscape => <DeviceOrientation>[
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+      FullscreenOrientationMode.byVideoSize => isLandscapeVideo
+          ? <DeviceOrientation>[
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ]
+          : <DeviceOrientation>[DeviceOrientation.portraitUp],
+    };
+
+    await Future.wait(
+      [
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.immersiveSticky,
+          overlays: const [],
+        ),
+        SystemChrome.setPreferredOrientations(orientations),
+      ],
+    );
+  }
+
+  Future<void> _exitFullscreen() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return defaultExitNativeFullscreen();
+    }
+    await Future.wait(
+      [
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: SystemUiOverlay.values,
+        ),
+        SystemChrome.setPreferredOrientations(const []),
+      ],
     );
   }
 

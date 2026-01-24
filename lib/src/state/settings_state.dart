@@ -8,50 +8,51 @@ import 'package:hibiscus/src/rust/api/settings.dart' as rust_settings;
 /// 应用设置
 class AppSettings {
   final ThemeMode themeMode;
-  final String downloadPath;
   final int maxConcurrentDownloads;
   final bool autoPlay;
   final double defaultVolume;
   final bool hardwareAcceleration;
   final String defaultPlayQuality;
   final String defaultDownloadQuality;
+  final FullscreenOrientationMode fullscreenOrientationMode;
   final String? proxyUrl;
   final bool enableProxy;
   
   const AppSettings({
     this.themeMode = ThemeMode.system,
-    this.downloadPath = '',
-    this.maxConcurrentDownloads = 3,
+    this.maxConcurrentDownloads = 1,
     this.autoPlay = true,
     this.defaultVolume = 1.0,
     this.hardwareAcceleration = true,
     this.defaultPlayQuality = '1080P',
     this.defaultDownloadQuality = '1080P',
+    this.fullscreenOrientationMode = FullscreenOrientationMode.landscape,
     this.proxyUrl,
     this.enableProxy = false,
   });
   
   AppSettings copyWith({
     ThemeMode? themeMode,
-    String? downloadPath,
     int? maxConcurrentDownloads,
     bool? autoPlay,
     double? defaultVolume,
     bool? hardwareAcceleration,
     String? defaultPlayQuality,
     String? defaultDownloadQuality,
+    FullscreenOrientationMode? fullscreenOrientationMode,
     String? proxyUrl,
     bool? enableProxy,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
-      downloadPath: downloadPath ?? this.downloadPath,
       maxConcurrentDownloads: maxConcurrentDownloads ?? this.maxConcurrentDownloads,
       autoPlay: autoPlay ?? this.autoPlay,
       defaultVolume: defaultVolume ?? this.defaultVolume,
       hardwareAcceleration: hardwareAcceleration ?? this.hardwareAcceleration,
       defaultPlayQuality: defaultPlayQuality ?? this.defaultPlayQuality,
       defaultDownloadQuality: defaultDownloadQuality ?? this.defaultDownloadQuality,
+      fullscreenOrientationMode:
+          fullscreenOrientationMode ?? this.fullscreenOrientationMode,
       proxyUrl: proxyUrl ?? this.proxyUrl,
       enableProxy: enableProxy ?? this.enableProxy,
     );
@@ -59,31 +60,49 @@ class AppSettings {
   
   Map<String, dynamic> toJson() => {
     'themeMode': themeMode.index,
-    'downloadPath': downloadPath,
     'maxConcurrentDownloads': maxConcurrentDownloads,
     'autoPlay': autoPlay,
     'defaultVolume': defaultVolume,
     'hardwareAcceleration': hardwareAcceleration,
     'defaultPlayQuality': defaultPlayQuality,
     'defaultDownloadQuality': defaultDownloadQuality,
+    'fullscreenOrientationMode': fullscreenOrientationMode.index,
     'proxyUrl': proxyUrl,
     'enableProxy': enableProxy,
   };
   
   factory AppSettings.fromJson(Map<String, dynamic> json) {
+    int clampConcurrent(dynamic v) {
+      final parsed = (v is num) ? v.toInt() : int.tryParse('$v');
+      return (parsed ?? 1).clamp(1, 2);
+    }
+    FullscreenOrientationMode parseFullscreenMode(dynamic v) {
+      final parsed = (v is num) ? v.toInt() : int.tryParse('$v');
+      final idx = (parsed ?? FullscreenOrientationMode.landscape.index)
+          .clamp(0, FullscreenOrientationMode.values.length - 1);
+      return FullscreenOrientationMode.values[idx];
+    }
     return AppSettings(
       themeMode: ThemeMode.values[json['themeMode'] ?? 0],
-      downloadPath: json['downloadPath'] ?? '',
-      maxConcurrentDownloads: json['maxConcurrentDownloads'] ?? 3,
+      maxConcurrentDownloads: clampConcurrent(json['maxConcurrentDownloads']),
       autoPlay: json['autoPlay'] ?? true,
       defaultVolume: (json['defaultVolume'] ?? 1.0).toDouble(),
       hardwareAcceleration: json['hardwareAcceleration'] ?? true,
       defaultPlayQuality: json['defaultPlayQuality'] ?? '1080P',
       defaultDownloadQuality: json['defaultDownloadQuality'] ?? '1080P',
+      fullscreenOrientationMode:
+          parseFullscreenMode(json['fullscreenOrientationMode']),
       proxyUrl: json['proxyUrl'],
       enableProxy: json['enableProxy'] ?? false,
     );
   }
+}
+
+enum FullscreenOrientationMode {
+  keepCurrent,
+  portrait,
+  landscape,
+  byVideoSize,
 }
 
 /// 设置状态
@@ -132,15 +151,16 @@ class SettingsState {
   }
   
   /// 设置下载路径
-  Future<void> setDownloadPath(String path) async {
-    settings.value = settings.value.copyWith(downloadPath: path);
-    await _save();
-  }
-  
   /// 设置最大并发下载数
   Future<void> setMaxConcurrentDownloads(int max) async {
-    settings.value = settings.value.copyWith(maxConcurrentDownloads: max);
+    final clamped = max.clamp(1, 2);
+    settings.value = settings.value.copyWith(maxConcurrentDownloads: clamped);
     await _save();
+    try {
+      await rust_settings.setDownloadConcurrent(count: clamped);
+    } catch (_) {
+      // ignore
+    }
   }
   
   /// 设置自动播放
@@ -158,6 +178,11 @@ class SettingsState {
   /// 设置默认下载清晰度
   Future<void> setDefaultDownloadQuality(String quality) async {
     settings.value = settings.value.copyWith(defaultDownloadQuality: quality);
+    await _save();
+  }
+
+  Future<void> setFullscreenOrientationMode(FullscreenOrientationMode mode) async {
+    settings.value = settings.value.copyWith(fullscreenOrientationMode: mode);
     await _save();
   }
   

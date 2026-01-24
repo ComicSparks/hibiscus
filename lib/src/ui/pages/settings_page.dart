@@ -1,5 +1,7 @@
 // 设置页
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
@@ -15,10 +17,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // 设置状态
-  bool _wifiOnlyDownload = true;
-  int _maxConcurrentDownloads = 3;
-
   @override
   void initState() {
     super.initState();
@@ -64,38 +62,26 @@ class _SettingsPageState extends State<SettingsPage> {
               value: settings.autoPlay,
               onChanged: (value) => settingsState.setAutoPlay(value),
             ),
-            ListTile(
-              title: const Text('默认画质'),
-              subtitle: Text(settings.defaultPlayQuality),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _showQualityPicker(context, settings.defaultPlayQuality),
-            ),
+            if (Platform.isAndroid || Platform.isIOS)
+              ListTile(
+                title: const Text('全屏方向'),
+                subtitle: Text(_fullscreenOrientationLabel(settings.fullscreenOrientationMode)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showFullscreenOrientationPicker(
+                  context,
+                  settings.fullscreenOrientationMode,
+                ),
+              ),
           
             const Divider(),
           
             // 下载设置
             _SectionHeader(title: '下载'),
-            SwitchListTile(
-              title: const Text('仅 Wi-Fi 下载'),
-              subtitle: const Text('移动网络下暂停下载'),
-              value: _wifiOnlyDownload,
-              onChanged: (value) {
-                setState(() => _wifiOnlyDownload = value);
-              },
-            ),
             ListTile(
               title: const Text('最大并发下载数'),
-              subtitle: Text('$_maxConcurrentDownloads'),
+              subtitle: Text('${settings.maxConcurrentDownloads}'),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => _showConcurrentPicker(context),
-            ),
-            ListTile(
-              title: const Text('下载路径'),
-              subtitle: const Text('/storage/emulated/0/Download/Hibiscus'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                // TODO: 选择下载路径
-              },
+              onTap: () => _showConcurrentPicker(context, settings.maxConcurrentDownloads),
             ),
           
             const Divider(),
@@ -140,43 +126,21 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
   
-  void _showQualityPicker(BuildContext context, String current) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('默认画质'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['1080P', '720P', '480P', '360P'].map((quality) {
-            return RadioListTile<String>(
-              title: Text(quality),
-              value: quality,
-              groupValue: current,
-              onChanged: (value) {
-                settingsState.setDefaultPlayQuality(value!);
-                Navigator.pop(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-  
-  void _showConcurrentPicker(BuildContext context) {
+  void _showConcurrentPicker(BuildContext context, int current) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('最大并发下载数'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [1, 2, 3, 4, 5].map((count) {
+          children: [1, 2].map((count) {
             return RadioListTile<int>(
               title: Text('$count'),
               value: count,
-              groupValue: _maxConcurrentDownloads,
+              groupValue: current,
               onChanged: (value) {
-                setState(() => _maxConcurrentDownloads = value!);
+                if (value == null) return;
+                settingsState.setMaxConcurrentDownloads(value);
                 Navigator.pop(context);
               },
             );
@@ -238,6 +202,42 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (value) {
                 if (value == null) return;
                 settingsState.setThemeMode(value);
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  String _fullscreenOrientationLabel(FullscreenOrientationMode mode) {
+    return switch (mode) {
+      FullscreenOrientationMode.keepCurrent => '保持当前方向',
+      FullscreenOrientationMode.portrait => '竖屏',
+      FullscreenOrientationMode.landscape => '横屏',
+      FullscreenOrientationMode.byVideoSize => '根据视频尺寸',
+    };
+  }
+
+  void _showFullscreenOrientationPicker(
+    BuildContext context,
+    FullscreenOrientationMode current,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('全屏方向'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: FullscreenOrientationMode.values.map((mode) {
+            return RadioListTile<FullscreenOrientationMode>(
+              title: Text(_fullscreenOrientationLabel(mode)),
+              value: mode,
+              groupValue: current,
+              onChanged: (value) {
+                if (value == null) return;
+                settingsState.setFullscreenOrientationMode(value);
                 Navigator.pop(context);
               },
             );
