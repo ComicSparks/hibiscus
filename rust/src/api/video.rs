@@ -138,13 +138,6 @@ pub async fn remove_from_favorites(video_id: String) -> anyhow::Result<bool> {
     Ok(true)
 }
 
-/// 添加视频到稀后观看
-#[frb]
-pub async fn add_to_watch_later(video_id: String) -> anyhow::Result<bool> {
-    // TODO: 实现实际的稀后观看逻辑
-    Ok(true)
-}
-
 /// 点赞评论
 #[frb]
 pub async fn like_comment(comment_id: String) -> anyhow::Result<bool> {

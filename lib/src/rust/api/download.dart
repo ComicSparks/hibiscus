@@ -7,19 +7,25 @@ import '../frb_generated.dart';
 import 'models.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These functions are ignored because they are not marked as `pub`: `build_download_path`, `download_cover`, `map_record`, `progress_sender`, `resolve_video_url`, `resume_queued_downloads`, `run_download`, `spawn_download`, `task_controls`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DownloadControl`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `eq`, `fmt`
+
 /// 添加下载任务
 Future<ApiDownloadTask> addDownload({
   required String videoId,
   required String title,
   required String coverUrl,
   required String quality,
-  required String url,
+  String? description,
+  required List<String> tags,
 }) => RustLib.instance.api.crateApiDownloadAddDownload(
   videoId: videoId,
   title: title,
   coverUrl: coverUrl,
   quality: quality,
-  url: url,
+  description: description,
+  tags: tags,
 );
 
 /// 获取所有下载任务

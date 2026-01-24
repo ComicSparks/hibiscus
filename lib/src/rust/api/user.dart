@@ -21,10 +21,6 @@ Future<bool> logout() => RustLib.instance.api.crateApiUserLogout();
 Future<ApiFavoriteList> getFavorites({required int page}) =>
     RustLib.instance.api.crateApiUserGetFavorites(page: page);
 
-/// 获取稍后观看列表
-Future<ApiFavoriteList> getWatchLater({required int page}) =>
-    RustLib.instance.api.crateApiUserGetWatchLater(page: page);
-
 /// 获取我的列表
 Future<ApiFavoriteList> getMyList({
   required String listType,
@@ -50,21 +46,6 @@ Future<bool> removeFromFavorites({
   required String userId,
 }) => RustLib.instance.api.crateApiUserRemoveFromFavorites(
   videoCode: videoCode,
-  csrfToken: csrfToken,
-  userId: userId,
-);
-
-/// 添加/移除稍后观看
-Future<bool> toggleWatchLater({
-  required String videoCode,
-  required String listCode,
-  required bool isChecked,
-  required String csrfToken,
-  required String userId,
-}) => RustLib.instance.api.crateApiUserToggleWatchLater(
-  videoCode: videoCode,
-  listCode: listCode,
-  isChecked: isChecked,
   csrfToken: csrfToken,
   userId: userId,
 );

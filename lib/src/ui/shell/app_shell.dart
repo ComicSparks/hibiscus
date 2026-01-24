@@ -8,7 +8,6 @@ import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
 import 'package:hibiscus/src/ui/pages/home_page.dart';
 import 'package:hibiscus/src/ui/pages/favorites_page.dart';
-import 'package:hibiscus/src/ui/pages/watch_later_page.dart';
 import 'package:hibiscus/src/ui/pages/history_page.dart';
 import 'package:hibiscus/src/ui/pages/downloads_page.dart';
 import 'package:hibiscus/src/ui/pages/subscriptions_page.dart';
@@ -76,12 +75,6 @@ const _allDestinations = [
     selectedIcon: Icons.favorite,
     label: '我的收藏',
     route: AppRoutes.favorites,
-  ),
-  _NavDestination(
-    icon: Icons.watch_later_outlined,
-    selectedIcon: Icons.watch_later,
-    label: '稍后观看',
-    route: AppRoutes.watchLater,
   ),
   _NavDestination(
     icon: Icons.history_outlined,
@@ -360,7 +353,6 @@ class _AppShellState extends State<AppShell> {
       children: const [
         HomePage(),
         FavoritesPage(),
-        WatchLaterPage(),
         HistoryPage(),
         DownloadsPage(),
         SubscriptionsPage(),

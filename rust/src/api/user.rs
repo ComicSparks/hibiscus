@@ -2,32 +2,51 @@
 
 use flutter_rust_bridge::frb;
 use crate::api::models::{ApiUserInfo, ApiFavoriteList, ApiPlayHistoryList, ApiPlayHistory, ApiVideoCard, ApiCloudflareChallenge};
-use crate::core::network;
+use crate::core::{network, storage};
 use crate::core::parser;
 
 /// 列表类型常量
 pub const LIST_TYPE_LIKE: &str = "LL";       // 喜欢的影片
-pub const LIST_TYPE_WATCH_LATER: &str = "WL"; // 稍后观看
 pub const LIST_TYPE_SAVE: &str = "SL";        // 已保存
 
 /// 获取当前用户信息
 #[frb]
 pub async fn get_current_user() -> anyhow::Result<Option<ApiUserInfo>> {
-    // TODO: 从持久化存储获取用户信息
-    Ok(None)
+    let url = format!("{}/", network::BASE_URL);
+    match network::get(&url).await {
+        Ok(html) => {
+            let home = parser::parse_homepage(&html)?;
+            let Some(name) = home.username else {
+                return Ok(None);
+            };
+            Ok(Some(ApiUserInfo {
+                id: String::new(),
+                name,
+                avatar_url: home.avatar_url,
+                is_logged_in: true,
+            }))
+        }
+        Err(e) => {
+            let err_str = e.to_string();
+            if err_str.contains("CLOUDFLARE_CHALLENGE") {
+                return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
+            }
+            Ok(None)
+        }
+    }
 }
 
 /// 检查登录状态
 #[frb]
 pub async fn is_logged_in() -> anyhow::Result<bool> {
-    // TODO: 检查 Cookie 是否有效
-    Ok(false)
+    Ok(get_current_user().await?.is_some())
 }
 
 /// 登出
 #[frb]
 pub async fn logout() -> anyhow::Result<bool> {
-    // TODO: 清除登录 Cookie
+    storage::clear_cookies()?;
+    let _ = network::clear_cookies();
     Ok(true)
 }
 
@@ -35,12 +54,6 @@ pub async fn logout() -> anyhow::Result<bool> {
 #[frb]
 pub async fn get_favorites(page: u32) -> anyhow::Result<ApiFavoriteList> {
     get_my_list(LIST_TYPE_LIKE.to_string(), page).await
-}
-
-/// 获取稍后观看列表
-#[frb]
-pub async fn get_watch_later(page: u32) -> anyhow::Result<ApiFavoriteList> {
-    get_my_list(LIST_TYPE_WATCH_LATER.to_string(), page).await
 }
 
 /// 获取我的列表
@@ -116,33 +129,6 @@ pub async fn remove_from_favorites(video_code: String, csrf_token: String, user_
     let body = format!(
         "like-foreign-id={}&like-status=0&_token={}&like-user-id={}&like-is-positive=1",
         video_code, csrf_token, user_id
-    );
-    
-    match network::post_with_csrf(&url, &body, &csrf_token).await {
-        Ok(_) => Ok(true),
-        Err(e) => {
-            let err_str = e.to_string();
-            if err_str.contains("CLOUDFLARE_CHALLENGE") {
-                return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
-            }
-            Err(e)
-        }
-    }
-}
-
-/// 添加/移除稍后观看
-#[frb]
-pub async fn toggle_watch_later(
-    video_code: String, 
-    list_code: String,
-    is_checked: bool,
-    csrf_token: String,
-    user_id: String,
-) -> anyhow::Result<bool> {
-    let url = format!("{}/save", network::BASE_URL);
-    let body = format!(
-        "_token={}&input_id={}&video_id={}&is_checked={}&user_id={}",
-        csrf_token, list_code, video_code, is_checked, user_id
     );
     
     match network::post_with_csrf(&url, &body, &csrf_token).await {
@@ -261,12 +247,39 @@ pub async fn unsubscribe_author(
 /// 获取播放历史
 #[frb]
 pub async fn get_play_history(page: u32, page_size: u32) -> anyhow::Result<ApiPlayHistoryList> {
-    // TODO: 从本地数据库获取播放历史
+    let page_size_i32 = page_size.min(100) as i32;
+    let offset = ((page.saturating_sub(1)) * page_size) as i32;
+    let records = storage::get_history(page_size_i32, offset)?;
+    let total = storage::get_history_count()? as u32;
+
+    let items = records
+        .into_iter()
+        .map(|r| {
+            let duration = r.total_duration.max(0) as u32;
+            let watched = r.watch_progress.max(0) as u32;
+            let progress = if duration > 0 {
+                (watched as f32 / duration as f32).clamp(0.0, 1.0)
+            } else {
+                0.0
+            };
+            ApiPlayHistory {
+                video_id: r.video_id,
+                title: r.title,
+                cover_url: r.cover_url,
+                progress,
+                duration,
+                last_played_at: r.watched_at,
+            }
+        })
+        .collect::<Vec<_>>();
+
+    let has_next = (offset as u32 + items.len() as u32) < total;
+
     Ok(ApiPlayHistoryList {
-        items: vec![],
-        total: 0,
+        items,
+        total,
         page,
-        has_next: false,
+        has_next,
     })
 }
 
@@ -279,29 +292,54 @@ pub async fn update_play_history(
     progress: f32,
     duration: u32,
 ) -> anyhow::Result<bool> {
-    // TODO: 保存到本地数据库
+    let duration_i32 = duration.min(i32::MAX as u32) as i32;
+    let watched = ((progress.clamp(0.0, 1.0)) * duration as f32).round() as i32;
+    storage::upsert_history(
+        &video_id,
+        &title,
+        &cover_url,
+        "",
+        watched,
+        duration_i32,
+    )?;
     Ok(true)
 }
 
 /// 删除单条播放历史
 #[frb]
 pub async fn delete_play_history(video_id: String) -> anyhow::Result<bool> {
-    // TODO: 从数据库删除
+    storage::delete_history(&video_id)?;
     Ok(true)
 }
 
 /// 清空播放历史
 #[frb]
 pub async fn clear_play_history() -> anyhow::Result<bool> {
-    // TODO: 清空数据库表
+    storage::clear_history()?;
     Ok(true)
 }
 
 /// 获取视频的播放进度
 #[frb]
 pub async fn get_video_progress(video_id: String) -> anyhow::Result<Option<ApiPlayHistory>> {
-    // TODO: 从数据库查询
-    Ok(None)
+    let Some(r) = storage::get_history_by_video_id(&video_id)? else {
+        return Ok(None);
+    };
+    let duration = r.total_duration.max(0) as u32;
+    let watched = r.watch_progress.max(0) as u32;
+    let progress = if duration > 0 {
+        (watched as f32 / duration as f32).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    Ok(Some(ApiPlayHistory {
+        video_id: r.video_id,
+        title: r.title,
+        cover_url: r.cover_url,
+        progress,
+        duration,
+        last_played_at: r.watched_at,
+    }))
 }
 
 // ============================================================================

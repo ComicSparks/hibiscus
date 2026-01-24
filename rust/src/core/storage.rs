@@ -58,6 +58,9 @@ pub fn init_db(db_path: Option<&str>) -> Result<()> {
             cover_url TEXT,
             video_url TEXT NOT NULL,
             quality TEXT,
+            description TEXT,
+            tags TEXT,
+            cover_path TEXT,
             save_path TEXT,
             total_bytes INTEGER DEFAULT 0,
             downloaded_bytes INTEGER DEFAULT 0,
@@ -129,6 +132,15 @@ fn ensure_download_columns(conn: &Connection) -> Result<()> {
 
     if !columns.iter().any(|c| c == "quality") {
         let _ = conn.execute("ALTER TABLE downloads ADD COLUMN quality TEXT", []);
+    }
+    if !columns.iter().any(|c| c == "description") {
+        let _ = conn.execute("ALTER TABLE downloads ADD COLUMN description TEXT", []);
+    }
+    if !columns.iter().any(|c| c == "tags") {
+        let _ = conn.execute("ALTER TABLE downloads ADD COLUMN tags TEXT", []);
+    }
+    if !columns.iter().any(|c| c == "cover_path") {
+        let _ = conn.execute("ALTER TABLE downloads ADD COLUMN cover_path TEXT", []);
     }
     Ok(())
 }
@@ -207,6 +219,39 @@ pub fn get_history(limit: i32, offset: i32) -> Result<Vec<HistoryRecord>> {
     Ok(result)
 }
 
+/// 获取历史记录总数
+pub fn get_history_count() -> Result<i64> {
+    let db = get_db()?;
+    let mut stmt = db.prepare("SELECT COUNT(1) FROM history")?;
+    let count: i64 = stmt.query_row([], |row| row.get(0))?;
+    Ok(count)
+}
+
+/// 获取单条历史记录
+pub fn get_history_by_video_id(video_id: &str) -> Result<Option<HistoryRecord>> {
+    let db = get_db()?;
+    let mut stmt = db.prepare(
+        "SELECT id, video_id, title, cover_url, duration, watch_progress, total_duration, watched_at 
+         FROM history WHERE video_id = ?1 LIMIT 1"
+    )?;
+
+    let mut rows = stmt.query(params![video_id])?;
+    if let Some(row) = rows.next()? {
+        Ok(Some(HistoryRecord {
+            id: row.get(0)?,
+            video_id: row.get(1)?,
+            title: row.get(2)?,
+            cover_url: row.get(3)?,
+            duration: row.get(4)?,
+            watch_progress: row.get(5)?,
+            total_duration: row.get(6)?,
+            watched_at: row.get(7)?,
+        }))
+    } else {
+        Ok(None)
+    }
+}
+
 /// 删除历史记录
 pub fn delete_history(video_id: &str) -> Result<()> {
     let db = get_db()?;
@@ -256,6 +301,9 @@ pub(crate) struct DownloadRecord {
     pub cover_url: String,
     pub video_url: String,
     pub quality: Option<String>,
+    pub description: Option<String>,
+    pub tags: Vec<String>,
+    pub cover_path: Option<String>,
     pub save_path: Option<String>,
     pub total_bytes: i64,
     pub downloaded_bytes: i64,
@@ -272,16 +320,20 @@ pub fn add_download(
     cover_url: &str,
     video_url: &str,
     quality: &str,
+    description: Option<&str>,
+    tags: &[String],
+    cover_path: Option<&str>,
 ) -> Result<i64> {
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
+    let tags_json = serde_json::to_string(tags).unwrap_or_else(|_| "[]".to_string());
     
     db.execute(
         r#"
-        INSERT OR IGNORE INTO downloads (video_id, title, cover_url, video_url, quality, created_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT OR IGNORE INTO downloads (video_id, title, cover_url, video_url, quality, description, tags, cover_path, created_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
         "#,
-        params![video_id, title, cover_url, video_url, quality, now],
+        params![video_id, title, cover_url, video_url, quality, description, tags_json, cover_path, now],
     )?;
     
     Ok(db.last_insert_rowid())
@@ -291,13 +343,18 @@ pub fn add_download(
 pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-        "SELECT id, video_id, title, cover_url, video_url, quality, save_path, 
+        "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path, save_path,
                 total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads WHERE video_id = ?1 LIMIT 1"
     )?;
 
     let mut rows = stmt.query(params![video_id])?;
     if let Some(row) = rows.next()? {
+        let tags_json: Option<String> = row.get(7)?;
+        let tags = tags_json
+            .as_deref()
+            .and_then(|s| serde_json::from_str::<Vec<String>>(s).ok())
+            .unwrap_or_default();
         Ok(Some(DownloadRecord {
             id: row.get(0)?,
             video_id: row.get(1)?,
@@ -305,13 +362,16 @@ pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>
             cover_url: row.get(3)?,
             video_url: row.get(4)?,
             quality: row.get(5)?,
-            save_path: row.get(6)?,
-            total_bytes: row.get(7)?,
-            downloaded_bytes: row.get(8)?,
-            status: DownloadStatus::from(row.get::<_, i32>(9)?),
-            error_message: row.get(10)?,
-            created_at: row.get(11)?,
-            completed_at: row.get(12)?,
+            description: row.get(6)?,
+            tags,
+            cover_path: row.get(8)?,
+            save_path: row.get(9)?,
+            total_bytes: row.get(10)?,
+            downloaded_bytes: row.get(11)?,
+            status: DownloadStatus::from(row.get::<_, i32>(12)?),
+            error_message: row.get(13)?,
+            created_at: row.get(14)?,
+            completed_at: row.get(15)?,
         }))
     } else {
         Ok(None)
@@ -358,12 +418,17 @@ pub fn update_download_status(video_id: &str, status: DownloadStatus, error: Opt
 pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-    "SELECT id, video_id, title, cover_url, video_url, quality, save_path, 
+    "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path, save_path,
         total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads ORDER BY created_at DESC"
     )?;
     
     let records = stmt.query_map([], |row| {
+        let tags_json: Option<String> = row.get(7)?;
+        let tags = tags_json
+            .as_deref()
+            .and_then(|s| serde_json::from_str::<Vec<String>>(s).ok())
+            .unwrap_or_default();
         Ok(DownloadRecord {
             id: row.get(0)?,
             video_id: row.get(1)?,
@@ -371,13 +436,16 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
             cover_url: row.get(3)?,
             video_url: row.get(4)?,
             quality: row.get(5)?,
-            save_path: row.get(6)?,
-            total_bytes: row.get(7)?,
-            downloaded_bytes: row.get(8)?,
-            status: DownloadStatus::from(row.get::<_, i32>(9)?),
-            error_message: row.get(10)?,
-            created_at: row.get(11)?,
-            completed_at: row.get(12)?,
+            description: row.get(6)?,
+            tags,
+            cover_path: row.get(8)?,
+            save_path: row.get(9)?,
+            total_bytes: row.get(10)?,
+            downloaded_bytes: row.get(11)?,
+            status: DownloadStatus::from(row.get::<_, i32>(12)?),
+            error_message: row.get(13)?,
+            created_at: row.get(14)?,
+            completed_at: row.get(15)?,
         })
     })?;
     

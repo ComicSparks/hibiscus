@@ -37,10 +37,6 @@ Future<bool> addToFavorites({required String videoId}) =>
 Future<bool> removeFromFavorites({required String videoId}) =>
     RustLib.instance.api.crateApiVideoRemoveFromFavorites(videoId: videoId);
 
-/// 添加视频到稀后观看
-Future<bool> addToWatchLater({required String videoId}) =>
-    RustLib.instance.api.crateApiVideoAddToWatchLater(videoId: videoId);
-
 /// 点赞评论
 Future<bool> likeComment({required String commentId}) =>
     RustLib.instance.api.crateApiVideoLikeComment(commentId: commentId);

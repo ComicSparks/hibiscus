@@ -160,9 +160,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Widget _buildHistoryItem(BuildContext context, ApiPlayHistory item) {
     final theme = Theme.of(context);
-    final progressPercent = item.duration > 0
-        ? (item.progress / item.duration * 100).clamp(0, 100)
-        : 0.0;
+    final progressPercent = (item.progress * 100).clamp(0, 100);
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

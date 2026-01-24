@@ -80,7 +80,7 @@ class VideoCard extends StatelessWidget {
                   // 播放量
                   if (video.views != null)
                     Text(
-                      '${video.views} 次播放',
+                      '${video.views} 播放',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),

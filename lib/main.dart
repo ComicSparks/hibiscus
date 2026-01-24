@@ -5,6 +5,7 @@ import 'package:hibiscus/src/rust/api/init.dart' as init_api;
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/ui/theme/app_theme.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:hibiscus/src/state/user_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ Future<void> main() async {
   final appSupportDir = await getApplicationSupportDirectory();
   print('App Support Directory: ${appSupportDir.path}');
   await init_api.initApp(dataPath: appSupportDir.path);
+  await userState.checkLoginStatus();
   
   MediaKit.ensureInitialized();
   

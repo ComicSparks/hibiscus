@@ -2,6 +2,8 @@
 // 使用原生 Navigator (MaterialPageRoute)
 
 import 'package:flutter/material.dart';
+import 'package:hibiscus/src/rust/api/models.dart';
+import 'package:hibiscus/src/ui/pages/download_detail_page.dart';
 import 'package:hibiscus/src/ui/pages/video_detail_page.dart';
 import 'package:hibiscus/src/ui/shell/app_shell.dart';
 
@@ -13,7 +15,6 @@ class AppRoutes {
   static const String downloads = '/downloads';
   static const String history = '/history';
   static const String favorites = '/favorites';
-  static const String watchLater = '/watch-later';
   static const String subscriptions = '/subscriptions';
   static const String settings = '/settings';
 }
@@ -28,22 +29,19 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
       initialIndex = 0;
       break;
     case AppRoutes.downloads:
-      initialIndex = 4;
+      initialIndex = 3;
       break;
     case AppRoutes.history:
-      initialIndex = 3;
+      initialIndex = 2;
       break;
     case AppRoutes.favorites:
       initialIndex = 1;
       break;
-    case AppRoutes.watchLater:
-      initialIndex = 2;
-      break;
     case AppRoutes.subscriptions:
-      initialIndex = 5;
+      initialIndex = 4;
       break;
     case AppRoutes.settings:
-      initialIndex = 6;
+      initialIndex = 5;
       break;
     default:
       initialIndex = 0;
@@ -62,6 +60,15 @@ extension NavigatorExtension on BuildContext {
     Navigator.of(this).push(
       MaterialPageRoute(
         builder: (context) => VideoDetailPage(videoId: videoId),
+      ),
+    );
+  }
+
+  /// 导航到下载详情页（本地/在线播放）
+  void pushDownloadDetail(ApiDownloadTask task) {
+    Navigator.of(this).push(
+      MaterialPageRoute(
+        builder: (context) => DownloadDetailPage(task: task),
       ),
     );
   }

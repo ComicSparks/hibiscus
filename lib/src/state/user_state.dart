@@ -1,6 +1,8 @@
 // 用户状态管理
 
 import 'package:signals/signals_flutter.dart';
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
+import 'package:hibiscus/src/rust/api/init.dart' as init_api;
 
 /// 用户登录状态
 enum LoginStatus {
@@ -51,15 +53,21 @@ class UserState {
     isLoading.value = true;
     
     try {
-      // TODO: 从本地存储加载 cookies
-      // TODO: 调用 Rust API 验证 cookies 有效性
-      
-      await Future.delayed(const Duration(milliseconds: 300));
-      
-      // 模拟未登录状态
-      loginStatus.value = LoginStatus.loggedOut;
+      final current = await user_api.getCurrentUser();
+      if (current != null && current.isLoggedIn) {
+        loginStatus.value = LoginStatus.loggedIn;
+        userInfo.value = UserInfo(
+          id: current.id,
+          username: current.name,
+          avatarUrl: current.avatarUrl,
+        );
+      } else {
+        loginStatus.value = LoginStatus.loggedOut;
+        userInfo.value = null;
+      }
     } catch (e) {
       loginStatus.value = LoginStatus.loggedOut;
+      userInfo.value = null;
     } finally {
       isLoading.value = false;
     }
@@ -68,18 +76,10 @@ class UserState {
   /// 设置 Cookies（从 WebView 获取）
   Future<void> setCookies(Map<String, String> newCookies) async {
     cookies.value = newCookies;
-    
-    // TODO: 保存到本地存储
-    // TODO: 验证并获取用户信息
-    
-    if (newCookies.isNotEmpty) {
-      // 模拟已登录
-      loginStatus.value = LoginStatus.loggedIn;
-      userInfo.value = const UserInfo(
-        id: 'user_123',
-        username: '用户',
-      );
-    }
+    if (newCookies.isEmpty) return;
+    final cookieString = newCookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+    await init_api.setCookies(cookieString: cookieString);
+    await checkLoginStatus();
   }
   
   /// 登出
@@ -87,8 +87,7 @@ class UserState {
     cookies.value = {};
     userInfo.value = null;
     loginStatus.value = LoginStatus.loggedOut;
-    
-    // TODO: 清除本地存储的 cookies
+    await init_api.clearCookies();
   }
   
   /// 手动导入 Cookies（Linux 无 WebView 时使用）
@@ -107,8 +106,9 @@ class UserState {
       }
       
       if (parsed.isEmpty) return false;
-      
-      await setCookies(parsed);
+
+      await init_api.setCookies(cookieString: cookieString);
+      await checkLoginStatus();
       return true;
     } catch (e) {
       return false;

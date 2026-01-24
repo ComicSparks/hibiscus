@@ -1,16 +1,22 @@
 // 视频详情页
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/rust/api/video.dart' as video_api;
 import 'package:hibiscus/src/rust/api/download.dart' as download_api;
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/state/search_state.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:hibiscus/src/state/download_state.dart';
+import 'package:hibiscus/src/state/user_state.dart';
+import 'package:hibiscus/src/ui/pages/login_page.dart';
 
 /// 视频详情状态
 class _VideoDetailState {
@@ -29,6 +35,7 @@ class _VideoDetailState {
     try {
       final detail = await video_api.getVideoDetail(videoId: videoId);
       videoDetail.value = detail;
+      isFavorite.value = detail.isFav;
       
     } catch (e) {
       error.value = e.toString();
@@ -51,27 +58,7 @@ class _VideoDetailState {
     return detail.qualities.isNotEmpty ? detail.qualities.first.url : null;
   }
 
-  Future<void> toggleFavorite(String videoId) async {
-    try {
-      if (isFavorite.value) {
-        await video_api.removeFromFavorites(videoId: videoId);
-        isFavorite.value = false;
-      } else {
-        await video_api.addToFavorites(videoId: videoId);
-        isFavorite.value = true;
-      }
-    } catch (e) {
-      // 忽略错误
-    }
-  }
-
-  Future<void> addToWatchLater(String videoId) async {
-    try {
-      await video_api.addToWatchLater(videoId: videoId);
-    } catch (e) {
-      // 忽略错误
-    }
-  }
+  // 收藏/分享/登录相关逻辑在页面层处理
 
   void reset() {
     videoDetail.value = null;
@@ -99,6 +86,13 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   late final VideoController _controller;
   bool _hasOpened = false;
 
+  StreamSubscription<Duration>? _posSub;
+  StreamSubscription<Duration>? _durSub;
+  Timer? _historyTimer;
+  Duration _lastPos = Duration.zero;
+  Duration _lastDur = Duration.zero;
+  int _lastSavedAtMs = 0;
+
   static const Map<String, String> _kDefaultHeaders = {
     'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -111,13 +105,49 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     _player = Player();
     _controller = VideoController(_player);
     _loadDetail(autoPlay: settingsState.settings.value.autoPlay);
+
+    _posSub = _player.stream.position.listen((d) => _lastPos = d);
+    _durSub = _player.stream.duration.listen((d) => _lastDur = d);
+    _historyTimer = Timer.periodic(const Duration(seconds: 5), (_) => _flushHistory());
   }
 
   @override
   void dispose() {
+    _flushHistory(force: true);
+    _historyTimer?.cancel();
+    _posSub?.cancel();
+    _durSub?.cancel();
     _state.reset();
     _player.dispose();
     super.dispose();
+  }
+
+  Future<void> _flushHistory({bool force = false}) async {
+    final detail = _state.videoDetail.value;
+    if (detail == null) return;
+    if (_lastDur <= Duration.zero) return;
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (!force && now - _lastSavedAtMs < 4000) return;
+
+    final durMs = _lastDur.inMilliseconds;
+    if (durMs <= 0) return;
+    final posMs = _lastPos.inMilliseconds.clamp(0, durMs);
+    final progress = (posMs / durMs).clamp(0.0, 1.0);
+    if (!force && progress <= 0) return;
+
+    _lastSavedAtMs = now;
+    try {
+      await user_api.updatePlayHistory(
+        videoId: detail.id,
+        title: detail.title,
+        coverUrl: detail.coverUrl,
+        progress: progress,
+        duration: _lastDur.inSeconds,
+      );
+    } catch (_) {
+      // ignore
+    }
   }
 
   Future<void> _loadDetail({bool autoPlay = false}) async {
@@ -182,8 +212,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -199,6 +227,23 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         ),
         actions: [
           _buildQualityAction(),
+          IconButton(
+            icon: const Icon(Icons.share_outlined),
+            tooltip: '分享',
+            onPressed: _shareCurrent,
+          ),
+          Watch((context) {
+            final isFav = _state.isFavorite.value;
+            return IconButton(
+              icon: Icon(isFav ? Icons.favorite : Icons.favorite_outline),
+              tooltip: isFav ? '取消收藏' : '收藏',
+              onPressed: () async {
+                final detail = _state.videoDetail.value;
+                if (detail == null) return;
+                await _toggleFavorite(detail);
+              },
+            );
+          }),
           IconButton(
             icon: const Icon(Icons.download_outlined),
             onPressed: () => _showDownloadDialog(context),
@@ -287,7 +332,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
                 // 统计信息
                 Text(
-                  '${detail.views ?? "0"} 次播放 · ${detail.uploadDate ?? "未知"}',
+                  '${detail.views ?? "0次"} 播放 · ${detail.uploadDate ?? "未知"}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -297,11 +342,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
                 // 作者信息
                 if (detail.author != null) _buildAuthorInfo(context, detail.author!),
-
-                const SizedBox(height: 16),
-
-                // 操作按钮
-                _buildActionButtons(context),
 
                 const SizedBox(height: 16),
                 const Divider(),
@@ -430,36 +470,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         ),
       ],
     );
-  }
-
-  Widget _buildActionButtons(BuildContext context) {
-    return Watch((context) {
-      final isFavorite = _state.isFavorite.value;
-
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _ActionButton(
-            icon: isFavorite ? Icons.favorite : Icons.favorite_outline,
-            label: '收藏',
-            isActive: isFavorite,
-            onPressed: () => _state.toggleFavorite(widget.videoId),
-          ),
-          _ActionButton(
-            icon: Icons.watch_later_outlined,
-            label: '稀后观看',
-            onPressed: () => _state.addToWatchLater(widget.videoId),
-          ),
-          _ActionButton(
-            icon: Icons.share_outlined,
-            label: '分享',
-            onPressed: () {
-              // TODO: 分享功能
-            },
-          ),
-        ],
-      );
-    });
   }
 
   Widget _buildTags(BuildContext context, List<String> tags) {
@@ -627,6 +637,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   }
 
   void _showDownloadDialog(BuildContext context) {
+    final rootContext = context;
     final detail = _state.videoDetail.value;
     if (detail == null) return;
 
@@ -662,23 +673,18 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             FilledButton(
               onPressed: () async {
                 Navigator.pop(context);
-                final url = _state.getVideoUrlForQuality(selected);
-                if (url == null || url.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('无法获取视频链接')),
-                  );
-                  return;
-                }
                 await download_api.addDownload(
                   videoId: detail.id,
                   title: detail.title,
                   coverUrl: detail.coverUrl,
                   quality: selected,
-                  url: url,
+                  description: detail.description,
+                  tags: detail.tags,
                 );
                 downloadState.refreshTick.value++;
                 await settingsState.setDefaultDownloadQuality(selected);
-                ScaffoldMessenger.of(context).showSnackBar(
+                if (!rootContext.mounted) return;
+                ScaffoldMessenger.of(rootContext).showSnackBar(
                   SnackBar(content: Text('已添加下载: $selected')),
                 );
               },
@@ -689,46 +695,58 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       ),
     );
   }
-}
 
-/// 操作按钮
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-  final VoidCallback onPressed;
+  Future<void> _shareCurrent() async {
+    final url = 'https://hanime1.me/watch?v=${widget.videoId}';
+    await Clipboard.setData(ClipboardData(text: url));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('链接已复制')));
+  }
 
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    this.isActive = false,
-    required this.onPressed,
-  });
+  Future<void> _toggleFavorite(ApiVideoDetail detail) async {
+    if (userState.loginStatus.value == LoginStatus.unknown) {
+      await userState.checkLoginStatus();
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = isActive
-        ? theme.colorScheme.primary
-        : theme.colorScheme.onSurfaceVariant;
-
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: theme.textTheme.bodySmall?.copyWith(color: color),
-            ),
+    if (!userState.isLoggedIn) {
+      if (!mounted) return;
+      final goLogin = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('需要登录'),
+          content: const Text('收藏功能需要登录账号。'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('去登录')),
           ],
         ),
-      ),
-    );
+      );
+      if (goLogin == true && mounted) {
+        await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginPage()));
+        await userState.checkLoginStatus();
+      }
+      return;
+    }
+
+    final csrf = detail.csrfToken;
+    final userId = detail.currentUserId;
+    if (csrf == null || csrf.isEmpty || userId == null || userId.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('登录信息缺失，请刷新页面后重试')));
+      return;
+    }
+
+    try {
+      if (_state.isFavorite.value) {
+        await user_api.removeFromFavorites(videoCode: detail.id, csrfToken: csrf, userId: userId);
+        _state.isFavorite.value = false;
+      } else {
+        await user_api.addToFavorites(videoCode: detail.id, csrfToken: csrf, userId: userId);
+        _state.isFavorite.value = true;
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 }

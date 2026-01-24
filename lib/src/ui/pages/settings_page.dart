@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
+import 'package:hibiscus/src/state/user_state.dart';
+import 'package:hibiscus/src/ui/pages/login_page.dart';
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,6 +18,15 @@ class _SettingsPageState extends State<SettingsPage> {
   // 设置状态
   bool _wifiOnlyDownload = true;
   int _maxConcurrentDownloads = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    if (userState.loginStatus.value == LoginStatus.unknown) {
+      userState.checkLoginStatus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -26,9 +38,14 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Watch((context) {
         final settings = settingsState.settings.value;
         final isDark = settings.themeMode == ThemeMode.dark;
+        final loginStatus = userState.loginStatus.value;
+        final user = userState.userInfo.value;
 
         return ListView(
           children: [
+            _buildUserHeader(context, theme, loginStatus, user),
+            const Divider(),
+
             // 外观设置
             _SectionHeader(title: '外观'),
             SwitchListTile(
@@ -106,22 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           
             const Divider(),
-          
-            // 账号设置
-            _SectionHeader(title: '账号'),
-            ListTile(
-              title: const Text('登录状态'),
-              subtitle: const Text('未登录'),
-              trailing: FilledButton.tonal(
-                onPressed: () {
-                  // TODO: 跳转到登录
-                },
-                child: const Text('登录'),
-              ),
-            ),
-          
-            const Divider(),
-          
+            
             // 关于
             _SectionHeader(title: '关于'),
             ListTile(
@@ -224,6 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
   
   void _showClearHistoryDialog(BuildContext context) {
+    final rootContext = context;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -235,10 +238,11 @@ class _SettingsPageState extends State<SettingsPage> {
             child: const Text('取消'),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // TODO: 清除历史
-              ScaffoldMessenger.of(context).showSnackBar(
+              await user_api.clearPlayHistory();
+              if (!rootContext.mounted) return;
+              ScaffoldMessenger.of(rootContext).showSnackBar(
                 const SnackBar(content: Text('播放历史已清除')),
               );
             },
@@ -246,6 +250,52 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildUserHeader(
+    BuildContext context,
+    ThemeData theme,
+    LoginStatus status,
+    UserInfo? user,
+  ) {
+    final subtitle = switch (status) {
+      LoginStatus.unknown => '正在检查登录状态…',
+      LoginStatus.loggedOut => '未登录',
+      LoginStatus.loggedIn => '已登录',
+    };
+
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 22,
+        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+        backgroundImage: (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
+            ? NetworkImage(user.avatarUrl!)
+            : null,
+        child: (user?.avatarUrl == null || user!.avatarUrl!.isEmpty)
+            ? const Icon(Icons.person_outline)
+            : null,
+      ),
+      title: Text(user?.username ?? '账号'),
+      subtitle: Text(subtitle),
+      trailing: status == LoginStatus.loggedIn
+          ? FilledButton.tonal(
+              onPressed: () async {
+                await userState.logout();
+                if (mounted) setState(() {});
+              },
+              child: const Text('退出'),
+            )
+          : FilledButton.tonal(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                );
+                await userState.checkLoginStatus();
+                if (mounted) setState(() {});
+              },
+              child: const Text('登录'),
+            ),
     );
   }
 }

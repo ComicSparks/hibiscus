@@ -5,6 +5,8 @@ import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/ui/widgets/video_grid.dart';
+import 'package:hibiscus/src/state/user_state.dart';
+import 'package:hibiscus/src/ui/pages/login_page.dart';
 
 /// 收藏页状态
 class _FavoritesState {
@@ -71,7 +73,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   void initState() {
     super.initState();
-    _state.load(refresh: true);
+    if (userState.loginStatus.value == LoginStatus.unknown) {
+      userState.checkLoginStatus().then((_) {
+        if (mounted && userState.isLoggedIn) {
+          _state.load(refresh: true);
+        }
+      });
+    } else if (userState.isLoggedIn) {
+      _state.load(refresh: true);
+    }
     _scrollController.addListener(_onScroll);
   }
 
@@ -98,6 +108,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
         title: const Text('我的收藏'),
       ),
       body: Watch((context) {
+        final loginStatus = userState.loginStatus.value;
+        if (loginStatus != LoginStatus.loggedIn) {
+          return _buildNeedLogin(context, theme, loginStatus);
+        }
+
         final videos = _state.videos.value;
         final isLoading = _state.isLoading.value;
         final error = _state.error.value;
@@ -125,6 +140,44 @@ class _FavoritesPageState extends State<FavoritesPage> {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildNeedLogin(BuildContext context, ThemeData theme, LoginStatus status) {
+    final subtitle = switch (status) {
+      LoginStatus.unknown => '正在检查登录状态…',
+      LoginStatus.loggedOut => '登录后才能查看收藏列表',
+      LoginStatus.loggedIn => '',
+    };
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock_outline, size: 64, color: theme.colorScheme.onSurfaceVariant.withAlpha(128)),
+            const SizedBox(height: 16),
+            Text('需要登录', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(subtitle, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: status == LoginStatus.unknown
+                  ? null
+                  : () async {
+                      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginPage()));
+                      await userState.checkLoginStatus();
+                      if (mounted && userState.isLoggedIn) {
+                        await _state.load(refresh: true);
+                      }
+                    },
+              icon: const Icon(Icons.login),
+              label: const Text('去登录'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

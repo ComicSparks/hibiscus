@@ -114,6 +114,7 @@ pub async fn check_cloudflare() -> anyhow::Result<bool> {
 #[frb]
 pub async fn clear_cookies() -> anyhow::Result<()> {
     storage::clear_cookies()?;
+    let _ = network::clear_cookies();
     tracing::info!("All cookies cleared");
     Ok(())
 }

@@ -1,6 +1,10 @@
 // 下载管理页
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/rust/api/download.dart' as download_api;
 import 'package:hibiscus/src/rust/api/models.dart';
@@ -19,11 +23,23 @@ class _DownloadsPageState extends State<DownloadsPage> {
   final _isLoading = signal(false);
   final _error = signal<String?>(null);
   late final void Function() _refreshDispose;
+  StreamSubscription<ApiDownloadTask>? _sub;
 
   @override
   void initState() {
     super.initState();
     _loadDownloads();
+    _sub = download_api.subscribeDownloadProgress().listen((event) {
+      final list = _items.value;
+      final idx = list.indexWhere((t) => t.id == event.id);
+      if (idx >= 0) {
+        final next = [...list];
+        next[idx] = event;
+        _items.value = next;
+      } else {
+        _items.value = [event, ...list];
+      }
+    });
     _refreshDispose = effect(() {
       downloadState.refreshTick.value;
       _loadDownloads();
@@ -32,6 +48,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
 
   @override
   void dispose() {
+    _sub?.cancel();
     _refreshDispose();
     super.dispose();
   }
@@ -170,7 +187,8 @@ class _DownloadsPageState extends State<DownloadsPage> {
           final item = items[index];
           return _DownloadListTile(
             item: item,
-            onTap: () => context.pushVideo(item.videoId),
+            onTap: () => context.pushDownloadDetail(item),
+            onTrace: () => context.pushVideo(item.videoId),
             onPause: () async {
               await download_api.pauseDownload(taskId: item.id);
               await _loadDownloads();
@@ -193,6 +211,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
 class _DownloadListTile extends StatelessWidget {
   final ApiDownloadTask item;
   final VoidCallback onTap;
+  final VoidCallback onTrace;
   final VoidCallback onPause;
   final VoidCallback onResume;
   final VoidCallback onDelete;
@@ -200,6 +219,7 @@ class _DownloadListTile extends StatelessWidget {
   const _DownloadListTile({
     required this.item,
     required this.onTap,
+    required this.onTrace,
     required this.onPause,
     required this.onResume,
     required this.onDelete,
@@ -225,11 +245,9 @@ class _DownloadListTile extends StatelessWidget {
                     child: Container(
                       width: 80,
                       height: 45,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Icon(Icons.movie_outlined, size: 24),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+                      child: _buildCover(theme),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -252,6 +270,11 @@ class _DownloadListTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.travel_explore),
+                    onPressed: onTrace,
+                    tooltip: '溯源',
                   ),
                   _buildStatusButton(context),
                 ],
@@ -310,6 +333,32 @@ class _DownloadListTile extends StatelessWidget {
       icon: const Icon(Icons.more_horiz),
       onPressed: onDelete,
       tooltip: '删除',
+    );
+  }
+
+  Widget _buildCover(ThemeData theme) {
+    final local = item.coverPath;
+    if (local != null && local.isNotEmpty && File(local).existsSync()) {
+      return Image.file(
+        File(local),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _fallbackCover(theme),
+      );
+    }
+    if (item.coverUrl.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: item.coverUrl,
+        fit: BoxFit.cover,
+        errorWidget: (context, url, error) => _fallbackCover(theme),
+      );
+    }
+    return _fallbackCover(theme);
+  }
+
+  Widget _fallbackCover(ThemeData theme) {
+    return Container(
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: const Icon(Icons.movie_outlined, size: 24),
     );
   }
 }
