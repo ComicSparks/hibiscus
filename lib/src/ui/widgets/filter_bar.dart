@@ -210,7 +210,8 @@ class _FilterBarState extends State<FilterBar> {
             color: theme.colorScheme.surface,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                color: theme.colorScheme.outlineVariant
+                    .withValues(alpha: theme.colorScheme.outlineVariant.a * 0.5),
               ),
             ),
           ),
@@ -264,7 +265,8 @@ class _FilterBarState extends State<FilterBar> {
           color: theme.colorScheme.surface,
           border: Border(
             bottom: BorderSide(
-              color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+              color: theme.colorScheme.outlineVariant
+                  .withValues(alpha: theme.colorScheme.outlineVariant.a * 0.5),
             ),
           ),
         ),
@@ -549,7 +551,8 @@ class _TagsSheetState extends State<_TagsSheet> {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
+            color: theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: theme.colorScheme.onSurfaceVariant.a * 0.4),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -708,12 +711,13 @@ class _DateSheetState extends State<_DateSheet> {
           Container(
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(2),
-            ),
+          height: 4,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: theme.colorScheme.onSurfaceVariant.a * 0.4),
+            borderRadius: BorderRadius.circular(2),
           ),
+        ),
           
           // 标题栏
           Padding(
@@ -781,8 +785,8 @@ class _DateSheetState extends State<_DateSheet> {
             child: Row(
               children: [
                 Expanded(
-                  child: DropdownButtonFormField<String?>(
-                    value: _selectedYear,
+        child: DropdownButtonFormField<String?>(
+          initialValue: _selectedYear,
                     decoration: const InputDecoration(
                       labelText: '年份',
                       border: OutlineInputBorder(),
@@ -801,8 +805,8 @@ class _DateSheetState extends State<_DateSheet> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: DropdownButtonFormField<String?>(
-                    value: _selectedMonth,
+        child: DropdownButtonFormField<String?>(
+          initialValue: _selectedMonth,
                     decoration: const InputDecoration(
                       labelText: '月份',
                       border: OutlineInputBorder(),

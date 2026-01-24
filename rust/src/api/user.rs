@@ -222,8 +222,15 @@ pub async fn get_subscribed_authors(
 
 /// 获取我的订阅页（作者 + 订阅更新视频）
 #[frb]
-pub async fn get_my_subscriptions(page: u32) -> anyhow::Result<ApiSubscriptionsPage> {
-    let url = format!("{}/subscriptions?page={}", network::BASE_URL, page);
+pub async fn get_my_subscriptions(page: u32, query: Option<String>) -> anyhow::Result<ApiSubscriptionsPage> {
+    let mut url = format!("{}/subscriptions?page={}", network::BASE_URL, page);
+    if let Some(q) = query.as_ref().and_then(|s| {
+        let trimmed = s.trim();
+        if trimmed.is_empty() { None } else { Some(trimmed) }
+    }) {
+        url.push_str("&query=");
+        url.push_str(&urlencoding::encode(q));
+    }
     tracing::info!("Getting my subscriptions: {}", url);
 
     match network::get(&url).await {

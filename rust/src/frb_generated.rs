@@ -1241,11 +1241,13 @@ fn wire__crate__api__user__get_my_subscriptions_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_page = <u32>::sse_decode(&mut deserializer);
+            let api_query = <Option<String>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
-                        let output_ok = crate::api::user::get_my_subscriptions(api_page).await?;
+                        let output_ok =
+                            crate::api::user::get_my_subscriptions(api_page, api_query).await?;
                         Ok(output_ok)
                     })()
                     .await,

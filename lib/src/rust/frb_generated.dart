@@ -180,6 +180,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<ApiSubscriptionsPage> crateApiUserGetMySubscriptions({
     required int page,
+    String? query,
   });
 
   Future<ApiPlayHistoryList> crateApiUserGetPlayHistory({
@@ -1283,12 +1284,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   Future<ApiSubscriptionsPage> crateApiUserGetMySubscriptions({
     required int page,
+    String? query,
   }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_u_32(page, serializer);
+          sse_encode_opt_String(query, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -1301,7 +1304,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta: kCrateApiUserGetMySubscriptionsConstMeta,
-        argValues: [page],
+        argValues: [page, query],
         apiImpl: this,
       ),
     );
@@ -1310,7 +1313,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiUserGetMySubscriptionsConstMeta =>
       const TaskConstMeta(
         debugName: "get_my_subscriptions",
-        argNames: ["page"],
+        argNames: ["page", "query"],
       );
 
   @override

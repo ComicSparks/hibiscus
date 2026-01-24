@@ -72,8 +72,13 @@ Future<List<ApiAuthorInfo>> getSubscribedAuthors({required int page}) =>
     RustLib.instance.api.crateApiUserGetSubscribedAuthors(page: page);
 
 /// 获取我的订阅页（作者 + 订阅更新视频）
-Future<ApiSubscriptionsPage> getMySubscriptions({required int page}) =>
-    RustLib.instance.api.crateApiUserGetMySubscriptions(page: page);
+Future<ApiSubscriptionsPage> getMySubscriptions({
+  required int page,
+  String? query,
+}) => RustLib.instance.api.crateApiUserGetMySubscriptions(
+  page: page,
+  query: query,
+);
 
 /// 订阅作者
 Future<bool> subscribeAuthor({

@@ -201,17 +201,15 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
               child: VideoPager(
                 key: ValueKey('subscriptions:$userId:${selectedAuthor ?? 'all'}'),
                 pageLoader: (page) async {
-                  final result = await user_api.getMySubscriptions(page: page);
+                  final result = await user_api.getMySubscriptions(
+                    page: page,
+                    query: selectedAuthor?.isEmpty ?? true ? null : selectedAuthor,
+                  );
                   if (page == 1) {
                     subscriptionsState.authors.value = result.authors;
                   }
-                  final videos = selectedAuthor == null || selectedAuthor.isEmpty
-                      ? result.videos
-                      : result.videos
-                          .where((v) => (v.authorName ?? '').trim() == selectedAuthor)
-                          .toList();
                   return VideoPagerPage(
-                    videos: videos,
+                    videos: result.videos,
                     hasNext: result.hasNext,
                   );
                 },
@@ -245,7 +243,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         scrollDirection: Axis.horizontal,
         itemCount: authors.length + 2,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (context, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           if (index == 0) {
             return Watch((context) {
@@ -385,7 +383,8 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+            color: theme.colorScheme.outlineVariant
+                .withValues(alpha: theme.colorScheme.outlineVariant.a * 0.5),
           ),
         ),
       ),
