@@ -7,12 +7,16 @@ class VideoCard extends StatelessWidget {
   final ApiVideoCard video;
   final VoidCallback? onTap;
   final double sizeScale;
+  final bool selectionMode;
+  final bool selected;
   
   const VideoCard({
     super.key,
     required this.video,
     this.onTap,
     this.sizeScale = 1.0,
+    this.selectionMode = false,
+    this.selected = false,
   });
   
   @override
@@ -27,6 +31,12 @@ class VideoCard extends StatelessWidget {
     
     return Card(
       clipBehavior: Clip.antiAlias,
+      shape: selected
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: colorScheme.primary, width: 2),
+            )
+          : null,
       child: InkWell(
         onTap: onTap,
         child: Column(
@@ -40,6 +50,26 @@ class VideoCard extends StatelessWidget {
                 children: [
                   // 封面
                   _buildCover(context),
+
+                  // 多选状态标记
+                  if (selectionMode)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 28 * sizeScale,
+                        height: 28 * sizeScale,
+                        decoration: BoxDecoration(
+                          color: selected ? colorScheme.primary : Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          selected ? Icons.check : Icons.circle_outlined,
+                          size: 18 * sizeScale,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   
                   // 时长标签
                   if (video.duration != null)

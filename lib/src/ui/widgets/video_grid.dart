@@ -12,6 +12,9 @@ class VideoGrid extends StatelessWidget {
   final bool isLoading;
   final bool hasMore;
   final VoidCallback? onLoadMore;
+  final bool selectionMode;
+  final Set<String> selectedIds;
+  final ValueChanged<ApiVideoCard>? onToggleSelect;
   
   const VideoGrid({
     super.key,
@@ -20,6 +23,9 @@ class VideoGrid extends StatelessWidget {
     this.isLoading = false,
     this.hasMore = true,
     this.onLoadMore,
+    this.selectionMode = false,
+    this.selectedIds = const <String>{},
+    this.onToggleSelect,
   });
   
   @override
@@ -77,7 +83,15 @@ class VideoGrid extends StatelessWidget {
             return VideoCard(
               video: video,
               sizeScale: sizeScale,
-              onTap: () => context.pushVideo(video.id),
+              selectionMode: selectionMode,
+              selected: selectedIds.contains(video.id),
+              onTap: () {
+                if (selectionMode) {
+                  onToggleSelect?.call(video);
+                } else {
+                  context.pushVideo(video.id);
+                }
+              },
             );
           },
         );

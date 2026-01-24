@@ -32,8 +32,48 @@ class SearchState {
   // 需要 Cloudflare 验证
   final needsCloudflare = signal(false);
 
+  // 多选下载模式（发现页使用）
+  final isMultiSelectMode = signal(false);
+  final selectedVideoIds = signal<Set<String>>(<String>{});
+  final multiSelectQuality = signal<String>('1080P');
+
   // 当前页码
   int _currentPage = 1;
+
+  void enterMultiSelect({String? defaultQuality}) {
+    isMultiSelectMode.value = true;
+    selectedVideoIds.value = <String>{};
+    if (defaultQuality != null && defaultQuality.isNotEmpty) {
+      multiSelectQuality.value = defaultQuality;
+    }
+  }
+
+  void exitMultiSelect() {
+    isMultiSelectMode.value = false;
+    selectedVideoIds.value = <String>{};
+  }
+
+  void toggleSelected(String videoId) {
+    final next = <String>{...selectedVideoIds.value};
+    if (next.contains(videoId)) {
+      next.remove(videoId);
+    } else {
+      next.add(videoId);
+    }
+    selectedVideoIds.value = next;
+  }
+
+  void clearSelection() {
+    selectedVideoIds.value = <String>{};
+  }
+
+  void selectAllVisible() {
+    final next = <String>{...selectedVideoIds.value};
+    for (final v in videos.value) {
+      next.add(v.id);
+    }
+    selectedVideoIds.value = next;
+  }
 
   /// 初始化默认过滤条件
   Future<void> init() async {

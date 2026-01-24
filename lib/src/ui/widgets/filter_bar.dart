@@ -144,7 +144,14 @@ class FilterOptions {
 }
 
 class FilterBar extends StatefulWidget {
-  const FilterBar({super.key});
+  final VoidCallback? onBatchDownload;
+  final VoidCallback? onEnterMultiSelect;
+
+  const FilterBar({
+    super.key,
+    this.onBatchDownload,
+    this.onEnterMultiSelect,
+  });
 
   @override
   State<FilterBar> createState() => _FilterBarState();
@@ -190,6 +197,65 @@ class _FilterBarState extends State<FilterBar> {
     final theme = Theme.of(context);
 
     return Watch((context) {
+      final isMultiSelect = searchState.isMultiSelectMode.value;
+      final selectedCount = searchState.selectedVideoIds.value.length;
+      final quality = searchState.multiSelectQuality.value;
+
+      if (isMultiSelect) {
+        return Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border(
+              bottom: BorderSide(
+                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              TextButton.icon(
+                onPressed: () => searchState.exitMultiSelect(),
+                icon: const Icon(Icons.close),
+                label: const Text('取消'),
+              ),
+              const SizedBox(width: 8),
+              PopupMenuButton<String>(
+                tooltip: '下载清晰度',
+                onSelected: (value) => searchState.multiSelectQuality.value = value,
+                itemBuilder: (context) {
+                  const items = ['1080P', '720P', '480P', '360P', 'auto'];
+                  return items
+                      .map((q) => PopupMenuItem(
+                            value: q,
+                            child: Row(
+                              children: [
+                                if (q == quality) const Icon(Icons.check, size: 18),
+                                if (q == quality) const SizedBox(width: 8),
+                                Text(q),
+                              ],
+                            ),
+                          ))
+                      .toList();
+                },
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.high_quality),
+                  label: Text(quality),
+                ),
+              ),
+              const Spacer(),
+              FilledButton.icon(
+                onPressed: selectedCount == 0 ? null : widget.onBatchDownload,
+                icon: const Icon(Icons.download),
+                label: Text('下载($selectedCount)'),
+              ),
+            ],
+          ),
+        );
+      }
+
       return Container(
         height: 56,
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -269,6 +335,18 @@ class _FilterBarState extends State<FilterBar> {
               onChanged: (value) {
                 _updateDuration(value);
               },
+            ),
+            const SizedBox(width: 12),
+            IconButton(
+              tooltip: '多选下载',
+              onPressed: () {
+                if (widget.onEnterMultiSelect != null) {
+                  widget.onEnterMultiSelect!();
+                } else {
+                  searchState.enterMultiSelect();
+                }
+              },
+              icon: const Icon(Icons.playlist_add_check),
             ),
             ],
           ),

@@ -4,8 +4,10 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/state/search_state.dart';
+import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:hibiscus/src/ui/widgets/video_grid.dart';
 import 'package:hibiscus/src/ui/widgets/filter_bar.dart';
+import 'package:hibiscus/src/rust/api/download.dart' as download_api;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,9 +16,12 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -29,7 +34,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadInitialData() async {
     await searchState.init();
     await searchState.loadFilterOptions();
-    searchState.loadHomeVideos(refresh: true);
+    _searchController.text = searchState.filters.value?.query ?? '';
+    if (searchState.videos.value.isEmpty) {
+      searchState.loadHomeVideos(refresh: true);
+    }
   }
 
   @override
@@ -62,50 +70,68 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // 搜索框
-        title: _buildSearchField(context),
-        titleSpacing: 16,
-      ),
-      body: Column(
-        children: [
-          // 过滤条件栏
-          const FilterBar(),
+    super.build(context);
+    return Watch((context) {
+      final isMultiSelect = searchState.isMultiSelectMode.value;
+      final selectedCount = searchState.selectedVideoIds.value.length;
 
-          // 视频列表
-          Expanded(
-            child: Watch((context) {
-              final videos = searchState.videos.value;
-              final isLoading = searchState.isLoading.value;
-              final hasMore = searchState.hasMore.value;
-              final error = searchState.error.value;
-              final needsCloudflare = searchState.needsCloudflare.value;
+      return Scaffold(
+        appBar: AppBar(
+          title: isMultiSelect
+              ? Text('已选择 $selectedCount')
+              : _buildSearchField(context),
+          titleSpacing: 16,
+        ),
+        body: Column(
+          children: [
+            // 过滤条件栏
+            FilterBar(
+              onEnterMultiSelect: () {
+                FocusScope.of(context).unfocus();
+                searchState.enterMultiSelect(
+                  defaultQuality: settingsState.settings.value.defaultDownloadQuality,
+                );
+              },
+              onBatchDownload: _batchDownloadSelected,
+            ),
 
-              // 显示 Cloudflare 验证提示
-              if (needsCloudflare) {
-                return _buildCloudflarePrompt(context);
-              }
+            // 视频列表
+            Expanded(
+              child: Watch((context) {
+                final videos = searchState.videos.value;
+                final isLoading = searchState.isLoading.value;
+                final hasMore = searchState.hasMore.value;
+                final error = searchState.error.value;
+                final needsCloudflare = searchState.needsCloudflare.value;
 
-              // 显示错误
-              if (error != null && videos.isEmpty) {
-                return _buildErrorState(context, error);
-              }
+                // 显示 Cloudflare 验证提示
+                if (needsCloudflare) {
+                  return _buildCloudflarePrompt(context);
+                }
 
-              return RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: VideoGrid(
-                  controller: _scrollController,
-                  videos: videos,
-                  isLoading: isLoading,
-                  hasMore: hasMore,
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
-    );
+                // 显示错误
+                if (error != null && videos.isEmpty) {
+                  return _buildErrorState(context, error);
+                }
+
+                return RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: VideoGrid(
+                    controller: _scrollController,
+                    videos: videos,
+                    isLoading: isLoading,
+                    hasMore: hasMore,
+                    selectionMode: isMultiSelect,
+                    selectedIds: searchState.selectedVideoIds.value,
+                    onToggleSelect: (video) => searchState.toggleSelected(video.id),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildSearchField(BuildContext context) {
@@ -133,6 +159,39 @@ class _HomePageState extends State<HomePage> {
       onSubmitted: _onSearch,
       onChanged: (value) => setState(() {}),
     );
+  }
+
+  Future<void> _batchDownloadSelected() async {
+    final ids = searchState.selectedVideoIds.value.toList();
+    if (ids.isEmpty) return;
+
+    final quality = searchState.multiSelectQuality.value;
+    final videosById = {for (final v in searchState.videos.value) v.id: v};
+
+    int ok = 0;
+    for (final id in ids) {
+      final v = videosById[id];
+      if (v == null) continue;
+      try {
+        await download_api.addDownload(
+          videoId: v.id,
+          title: v.title,
+          coverUrl: v.coverUrl,
+          quality: quality,
+          description: null,
+          tags: v.tags,
+        );
+        ok++;
+      } catch (_) {
+        // ignore per-item failure
+      }
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('已加入下载：$ok/${ids.length}')),
+    );
+    searchState.exitMultiSelect();
   }
 
   Widget _buildErrorState(BuildContext context, String error) {
