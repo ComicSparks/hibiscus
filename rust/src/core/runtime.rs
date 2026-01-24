@@ -21,4 +21,3 @@ where
 {
     shared_runtime().spawn(future)
 }
-

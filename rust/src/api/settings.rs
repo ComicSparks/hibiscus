@@ -1,8 +1,8 @@
 // 设置相关 API
 
-use flutter_rust_bridge::frb;
 use crate::api::models::ApiAppSettings;
 use crate::core::storage;
+use flutter_rust_bridge::frb;
 use std::path::PathBuf;
 
 /// 获取应用设置
@@ -10,7 +10,8 @@ use std::path::PathBuf;
 pub async fn get_settings() -> anyhow::Result<ApiAppSettings> {
     let default = ApiAppSettings::default();
     let theme_mode = storage::get_setting("theme_mode")?.unwrap_or(default.theme_mode);
-    let default_quality = storage::get_setting("default_quality")?.unwrap_or(default.default_quality);
+    let default_quality =
+        storage::get_setting("default_quality")?.unwrap_or(default.default_quality);
     let download_concurrent = storage::get_setting("download_concurrent")?
         .and_then(|v| v.parse::<u32>().ok())
         .unwrap_or(default.download_concurrent);
@@ -30,7 +31,10 @@ pub async fn get_settings() -> anyhow::Result<ApiAppSettings> {
 #[frb]
 pub async fn save_settings(settings: ApiAppSettings) -> anyhow::Result<bool> {
     storage::save_setting("default_quality", &settings.default_quality)?;
-    storage::save_setting("download_concurrent", &settings.download_concurrent.to_string())?;
+    storage::save_setting(
+        "download_concurrent",
+        &settings.download_concurrent.to_string(),
+    )?;
     storage::save_setting("theme_mode", &settings.theme_mode)?;
     storage::save_setting("language", &settings.language)?;
     if let Some(url) = settings.proxy_url.as_deref() {
@@ -118,6 +122,12 @@ pub async fn clear_all_cache() -> anyhow::Result<bool> {
     Ok(true)
 }
 
+/// 获取数据目录路径（用于桌面端打开数据存储目录）
+#[frb]
+pub async fn get_data_dir_path() -> anyhow::Result<String> {
+    Ok(storage::get_data_dir()?.to_string_lossy().to_string())
+}
+
 /// 缓存信息
 #[frb(dart_metadata=("freezed"))]
 #[derive(Debug, Clone)]
@@ -130,13 +140,17 @@ pub struct CacheInfo {
 /// 初始化应用（启动时调用）
 #[frb]
 pub async fn init_app(data_dir: String, cache_dir: String) -> anyhow::Result<bool> {
-    // TODO: 
+    // TODO:
     // 1. 初始化数据库
     // 2. 运行数据库迁移
     // 3. 加载 Cookie
     // 4. 初始化 HTTP 客户端
     // 5. 清理过期的临时缓存
-    log::info!("Initializing app with data_dir: {}, cache_dir: {}", data_dir, cache_dir);
+    log::info!(
+        "Initializing app with data_dir: {}, cache_dir: {}",
+        data_dir,
+        cache_dir
+    );
     Ok(true)
 }
 
@@ -149,9 +163,13 @@ pub fn get_app_version() -> String {
 fn dir_size(path: PathBuf) -> u64 {
     fn walk(p: &std::path::Path) -> u64 {
         let mut total = 0u64;
-        let Ok(rd) = std::fs::read_dir(p) else { return 0; };
+        let Ok(rd) = std::fs::read_dir(p) else {
+            return 0;
+        };
         for entry in rd.flatten() {
-            let Ok(meta) = entry.metadata() else { continue; };
+            let Ok(meta) = entry.metadata() else {
+                continue;
+            };
             if meta.is_file() {
                 total = total.saturating_add(meta.len());
             } else if meta.is_dir() {

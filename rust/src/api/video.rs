@@ -1,11 +1,11 @@
 // 视频详情相关 API
 
-use flutter_rust_bridge::frb;
 use crate::api::models::{
-    ApiVideoDetail, ApiVideoQuality, ApiAuthorInfo, ApiCommentList, 
-    ApiComment, ApiVideoCard, ApiPlaylistInfo, ApiMyListInfo, ApiMyListItem
+    ApiAuthorInfo, ApiComment, ApiCommentList, ApiMyListInfo, ApiMyListItem, ApiPlaylistInfo,
+    ApiVideoCard, ApiVideoDetail, ApiVideoQuality,
 };
 use crate::core::{network, parser};
+use flutter_rust_bridge::frb;
 use urlencoding::encode;
 
 /// 获取视频详情
@@ -13,13 +13,13 @@ use urlencoding::encode;
 pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail> {
     let url = format!("{}/watch?v={}", network::BASE_URL, video_id);
     tracing::info!("Getting video detail: {}", url);
-    
+
     // 尝试发起网络请求
     match network::get(&url).await {
         Ok(html) => {
             // 解析 HTML
             let detail = parser::parse_video_detail(&html)?;
-            
+
             // 转换为 API 模型
             Ok(ApiVideoDetail {
                 id: detail.id,
@@ -41,27 +41,19 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                     is_subscribed: c.is_subscribed,
                 }),
                 tags: detail.tags,
-                qualities: detail.video_sources.into_iter().map(|s| ApiVideoQuality {
-                    quality: s.quality,
-                    url: s.url,
-                }).collect(),
+                qualities: detail
+                    .video_sources
+                    .into_iter()
+                    .map(|s| ApiVideoQuality {
+                        quality: s.quality,
+                        url: s.url,
+                    })
+                    .collect(),
                 series: None,
-                related_videos: detail.related_videos.into_iter().map(|v| ApiVideoCard {
-                    id: v.id,
-                    title: v.title,
-                    cover_url: v.cover_url,
-                    duration: Some(v.duration).filter(|s| !s.is_empty()),
-                    views: Some(v.views).filter(|s| !s.is_empty()),
-                    upload_date: v.upload_date,
-                    tags: v.tags,
-                }).collect(),
-                form_token: detail.form_token,
-                current_user_id: detail.current_user_id,
-                is_fav: detail.is_fav,
-                fav_times: detail.fav_times,
-                playlist: detail.playlist.map(|p| ApiPlaylistInfo {
-                    name: p.name,
-                    videos: p.videos.into_iter().map(|v| ApiVideoCard {
+                related_videos: detail
+                    .related_videos
+                    .into_iter()
+                    .map(|v| ApiVideoCard {
                         id: v.id,
                         title: v.title,
                         cover_url: v.cover_url,
@@ -69,26 +61,50 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                         views: Some(v.views).filter(|s| !s.is_empty()),
                         upload_date: v.upload_date,
                         tags: v.tags,
-                    }).collect(),
+                    })
+                    .collect(),
+                form_token: detail.form_token,
+                current_user_id: detail.current_user_id,
+                is_fav: detail.is_fav,
+                fav_times: detail.fav_times,
+                playlist: detail.playlist.map(|p| ApiPlaylistInfo {
+                    name: p.name,
+                    videos: p
+                        .videos
+                        .into_iter()
+                        .map(|v| ApiVideoCard {
+                            id: v.id,
+                            title: v.title,
+                            cover_url: v.cover_url,
+                            duration: Some(v.duration).filter(|s| !s.is_empty()),
+                            views: Some(v.views).filter(|s| !s.is_empty()),
+                            upload_date: v.upload_date,
+                            tags: v.tags,
+                        })
+                        .collect(),
                 }),
                 my_list: detail.my_list.map(|m| ApiMyListInfo {
                     is_watch_later: m.is_watch_later,
-                    items: m.items.into_iter().map(|i| ApiMyListItem {
-                        code: i.code,
-                        title: i.title,
-                        is_selected: i.is_selected,
-                    }).collect(),
+                    items: m
+                        .items
+                        .into_iter()
+                        .map(|i| ApiMyListItem {
+                            code: i.code,
+                            title: i.title,
+                            is_selected: i.is_selected,
+                        })
+                        .collect(),
                 }),
             })
         }
         Err(e) => {
             let err_str = e.to_string();
-            
+
             // 检查是否需要 Cloudflare 验证
             if err_str.contains("CLOUDFLARE_CHALLENGE") {
                 return Err(anyhow::anyhow!("CLOUDFLARE_CHALLENGE"));
             }
-            
+
             // 返回真实错误
             tracing::error!("Video detail error: {}", err_str);
             Err(e)
@@ -162,7 +178,10 @@ pub async fn get_comment_replies(comment_id: String) -> anyhow::Result<Vec<ApiCo
 #[frb]
 pub async fn get_video_url(video_id: String, quality: String) -> anyhow::Result<String> {
     // TODO: 实现实际的播放地址获取逻辑
-    Ok(format!("https://example.com/video/{}/{}.m3u8", video_id, quality))
+    Ok(format!(
+        "https://example.com/video/{}/{}.m3u8",
+        video_id, quality
+    ))
 }
 
 /// 添加视频到收藏
@@ -188,7 +207,11 @@ pub async fn like_comment(comment_id: String) -> anyhow::Result<bool> {
 
 /// 发表评论
 #[frb]
-pub async fn post_comment(video_id: String, content: String, reply_to: Option<String>) -> anyhow::Result<ApiComment> {
+pub async fn post_comment(
+    video_id: String,
+    content: String,
+    reply_to: Option<String>,
+) -> anyhow::Result<ApiComment> {
     if let Some(reply_id) = reply_to.filter(|s| !s.trim().is_empty()) {
         let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
         let html = network::get(&watch_url).await?;
@@ -202,7 +225,12 @@ pub async fn post_comment(video_id: String, content: String, reply_to: Option<St
             encode(&reply_id),
             encode(&content)
         );
-        let _ = network::post_with_x_csrf_token(&format!("{}/replyComment", network::BASE_URL), &body, &form_token).await?;
+        let _ = network::post_with_x_csrf_token(
+            &format!("{}/replyComment", network::BASE_URL),
+            &body,
+            &form_token,
+        )
+        .await?;
         return Ok(ApiComment {
             id: "reply".to_string(),
             user_name: "你".to_string(),
@@ -234,7 +262,12 @@ pub async fn post_comment(video_id: String, content: String, reply_to: Option<St
         encode(&detail.id),
         encode(&content),
     );
-    let _ = network::post_with_x_csrf_token(&format!("{}/createComment", network::BASE_URL), &body, &form_token).await?;
+    let _ = network::post_with_x_csrf_token(
+        &format!("{}/createComment", network::BASE_URL),
+        &body,
+        &form_token,
+    )
+    .await?;
 
     Ok(ApiComment {
         id: "new".to_string(),

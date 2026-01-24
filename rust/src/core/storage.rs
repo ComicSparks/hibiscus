@@ -1,11 +1,11 @@
 // 本地存储模块 (SQLite)
 
-use std::path::PathBuf;
-use std::sync::OnceLock;
-use rusqlite::{Connection, params};
 use anyhow::Result;
-use std::sync::Mutex;
 use refinery::embed_migrations;
+use rusqlite::{params, Connection};
+use std::path::PathBuf;
+use std::sync::Mutex;
+use std::sync::OnceLock;
 
 embed_migrations!("migrations");
 
@@ -22,21 +22,19 @@ fn get_db_path() -> PathBuf {
 
 /// 初始化数据库
 pub fn init_db(db_path: Option<&str>) -> Result<()> {
-    let path = db_path
-        .map(PathBuf::from)
-        .unwrap_or_else(get_db_path);
-    
+    let path = db_path.map(PathBuf::from).unwrap_or_else(get_db_path);
+
     // 确保目录存在
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
         let _ = DATA_DIR.set(parent.to_path_buf());
     }
-    
+
     let mut conn = Connection::open(&path)?;
 
     migrations::runner().run(&mut conn)?;
     DB.get_or_init(|| Mutex::new(conn));
-    
+
     Ok(())
 }
 
@@ -84,7 +82,7 @@ pub fn upsert_history(
 ) -> Result<()> {
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
-    
+
     db.execute(
         r#"
         INSERT INTO history (video_id, title, cover_url, duration, watch_progress, total_duration, watched_at)
@@ -99,7 +97,7 @@ pub fn upsert_history(
         "#,
         params![video_id, title, cover_url, duration, watch_progress, total_duration, now],
     )?;
-    
+
     Ok(())
 }
 
@@ -110,7 +108,7 @@ pub fn get_history(limit: i32, offset: i32) -> Result<Vec<HistoryRecord>> {
         "SELECT id, video_id, title, cover_url, duration, watch_progress, total_duration, watched_at 
          FROM history ORDER BY watched_at DESC LIMIT ?1 OFFSET ?2"
     )?;
-    
+
     let records = stmt.query_map(params![limit, offset], |row| {
         Ok(HistoryRecord {
             id: row.get(0)?,
@@ -123,12 +121,12 @@ pub fn get_history(limit: i32, offset: i32) -> Result<Vec<HistoryRecord>> {
             watched_at: row.get(7)?,
         })
     })?;
-    
+
     let mut result = Vec::new();
     for record in records {
         result.push(record?);
     }
-    
+
     Ok(result)
 }
 
@@ -248,7 +246,7 @@ pub fn add_download(
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
     let tags_json = serde_json::to_string(tags).unwrap_or_else(|_| "[]".to_string());
-    
+
     db.execute(
         r#"
         INSERT OR IGNORE INTO downloads (
@@ -274,7 +272,7 @@ pub fn add_download(
             now
         ],
     )?;
-    
+
     Ok(db.last_insert_rowid())
 }
 
@@ -369,14 +367,18 @@ pub fn update_download_progress(video_id: &str, downloaded: i64, total: i64) -> 
 }
 
 /// 更新下载状态
-pub fn update_download_status(video_id: &str, status: DownloadStatus, error: Option<&str>) -> Result<()> {
+pub fn update_download_status(
+    video_id: &str,
+    status: DownloadStatus,
+    error: Option<&str>,
+) -> Result<()> {
     let db = get_db()?;
     let completed_at = if status == DownloadStatus::Completed {
         Some(chrono::Utc::now().timestamp())
     } else {
         None
     };
-    
+
     db.execute(
         "UPDATE downloads SET status = ?1, error_message = ?2, completed_at = ?3 WHERE video_id = ?4",
         params![status as i32, error, completed_at, video_id],
@@ -390,8 +392,7 @@ pub fn update_download_description_and_tags(
     tags: Option<&[String]>,
 ) -> Result<()> {
     let db = get_db()?;
-    let tags_json = tags
-        .map(|t| serde_json::to_string(t).unwrap_or_else(|_| "[]".to_string()));
+    let tags_json = tags.map(|t| serde_json::to_string(t).unwrap_or_else(|_| "[]".to_string()));
     db.execute(
         "UPDATE downloads SET description = COALESCE(?1, description), tags = COALESCE(?2, tags) WHERE video_id = ?3",
         params![description, tags_json, video_id],
@@ -403,12 +404,12 @@ pub fn update_download_description_and_tags(
 pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-    "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
+        "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
         author_id, author_name, author_avatar_url, author_avatar_path,
         save_path, total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
-         FROM downloads ORDER BY created_at DESC"
+         FROM downloads ORDER BY created_at DESC",
     )?;
-    
+
     let records = stmt.query_map([], |row| {
         let tags_json: Option<String> = row.get(7)?;
         let tags = tags_json
@@ -438,12 +439,12 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
             completed_at: row.get(19)?,
         })
     })?;
-    
+
     let mut result = Vec::new();
     for record in records {
         result.push(record?);
     }
-    
+
     Ok(result)
 }
 
@@ -452,7 +453,10 @@ pub fn reset_running_downloads() -> Result<()> {
     let db = get_db()?;
     db.execute(
         "UPDATE downloads SET status = ?1 WHERE status = ?2",
-        params![DownloadStatus::Queued as i32, DownloadStatus::Downloading as i32],
+        params![
+            DownloadStatus::Queued as i32,
+            DownloadStatus::Downloading as i32
+        ],
     )?;
     Ok(())
 }
@@ -460,7 +464,10 @@ pub fn reset_running_downloads() -> Result<()> {
 /// 删除下载任务
 pub fn delete_download(video_id: &str) -> Result<()> {
     let db = get_db()?;
-    db.execute("DELETE FROM downloads WHERE video_id = ?1", params![video_id])?;
+    db.execute(
+        "DELETE FROM downloads WHERE video_id = ?1",
+        params![video_id],
+    )?;
     Ok(())
 }
 
@@ -481,7 +488,7 @@ pub fn get_setting(key: &str) -> Result<Option<String>> {
     let db = get_db()?;
     let mut stmt = db.prepare("SELECT value FROM settings WHERE key = ?1")?;
     let mut rows = stmt.query(params![key])?;
-    
+
     if let Some(row) = rows.next()? {
         Ok(Some(row.get(0)?))
     } else {
@@ -499,7 +506,13 @@ pub fn delete_setting(key: &str) -> Result<()> {
 // ========== Cookies ==========
 
 /// 保存 Cookie
-pub fn save_cookie(domain: &str, name: &str, value: &str, path: &str, expires: Option<i64>) -> Result<()> {
+pub fn save_cookie(
+    domain: &str,
+    name: &str,
+    value: &str,
+    path: &str,
+    expires: Option<i64>,
+) -> Result<()> {
     let db = get_db()?;
     db.execute(
         "INSERT OR REPLACE INTO cookies (domain, name, value, path, expires) VALUES (?1, ?2, ?3, ?4, ?5)",
@@ -512,20 +525,20 @@ pub fn save_cookie(domain: &str, name: &str, value: &str, path: &str, expires: O
 pub fn get_cookies(domain: &str) -> Result<Vec<(String, String)>> {
     let db = get_db()?;
     let now = chrono::Utc::now().timestamp();
-    
+
     let mut stmt = db.prepare(
-        "SELECT name, value FROM cookies WHERE domain = ?1 AND (expires IS NULL OR expires > ?2)"
+        "SELECT name, value FROM cookies WHERE domain = ?1 AND (expires IS NULL OR expires > ?2)",
     )?;
-    
+
     let cookies = stmt.query_map(params![domain, now], |row| {
         Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
     })?;
-    
+
     let mut result = Vec::new();
     for cookie in cookies {
         result.push(cookie?);
     }
-    
+
     Ok(result)
 }
 
@@ -539,24 +552,32 @@ pub fn clear_cookies() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_init_db() {
         let temp_dir = std::env::temp_dir();
         let db_path = temp_dir.join("test_hibiscus.db");
-        
+
         // 清理旧文件
         let _ = std::fs::remove_file(&db_path);
-        
+
         // 初始化
         init_db(Some(db_path.to_str().unwrap())).unwrap();
-        
+
         // 测试历史记录
-        upsert_history("video1", "Test Video", "http://example.com/cover.jpg", "10:00", 300, 600).unwrap();
+        upsert_history(
+            "video1",
+            "Test Video",
+            "http://example.com/cover.jpg",
+            "10:00",
+            300,
+            600,
+        )
+        .unwrap();
         let history = get_history(10, 0).unwrap();
         assert_eq!(history.len(), 1);
         assert_eq!(history[0].video_id, "video1");
-        
+
         // 清理
         let _ = std::fs::remove_file(&db_path);
     }

@@ -56,6 +56,10 @@ Future<bool> clearVideoCache() =>
 Future<bool> clearAllCache() =>
     RustLib.instance.api.crateApiSettingsClearAllCache();
 
+/// 获取数据目录路径（用于桌面端打开数据存储目录）
+Future<String> getDataDirPath() =>
+    RustLib.instance.api.crateApiSettingsGetDataDirPath();
+
 /// 初始化应用（启动时调用）
 Future<bool> initApp({required String dataDir, required String cacheDir}) =>
     RustLib.instance.api.crateApiSettingsInitApp(

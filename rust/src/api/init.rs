@@ -1,8 +1,8 @@
 // 初始化和系统相关 API
 
-use flutter_rust_bridge::frb;
-use crate::core::{network, storage};
 use crate::api::download;
+use crate::core::{network, storage};
+use flutter_rust_bridge::frb;
 use std::sync::{Mutex, OnceLock};
 
 static INIT_GUARD: OnceLock<Mutex<bool>> = OnceLock::new();
@@ -20,16 +20,16 @@ pub async fn init_app(data_path: String) -> anyhow::Result<()> {
         .with_max_level(tracing::Level::INFO)
         .with_target(false)
         .try_init();
-    
+
     // 初始化数据库
     let db_path = format!("{}/data.db", data_path);
     storage::init_db(Some(&db_path))?;
     storage::reset_running_downloads()?;
     download::resume_queued_downloads().await?;
-    
+
     // 加载保存的 Cookies
     load_saved_cookies().await?;
-    
+
     *guard.lock().unwrap() = true;
     tracing::info!("App initialized with data path: {}", data_path);
     Ok(())
@@ -38,18 +38,18 @@ pub async fn init_app(data_path: String) -> anyhow::Result<()> {
 /// 加载保存的 Cookies
 async fn load_saved_cookies() -> anyhow::Result<()> {
     let cookies = storage::get_cookies("hanime1.me")?;
-    
+
     if !cookies.is_empty() {
         let cookie_str: String = cookies
             .iter()
             .map(|(k, v)| format!("{}={}", k, v))
             .collect::<Vec<_>>()
             .join("; ");
-        
+
         network::set_cookies(&cookie_str)?;
         tracing::info!("Loaded {} cookies from storage", cookies.len());
     }
-    
+
     Ok(())
 }
 
@@ -58,7 +58,7 @@ async fn load_saved_cookies() -> anyhow::Result<()> {
 pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
     // 设置到网络模块
     network::set_cookies(&cookie_string)?;
-    
+
     // 解析并保存到数据库
     let mut last_expires: Option<i64> = None;
 
@@ -82,7 +82,11 @@ pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
             }
             continue;
         }
-        if lower.starts_with("path=") || lower.starts_with("domain=") || lower == "httponly" || lower == "secure" {
+        if lower.starts_with("path=")
+            || lower.starts_with("domain=")
+            || lower == "httponly"
+            || lower == "secure"
+        {
             continue;
         }
 
@@ -93,7 +97,7 @@ pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
             last_expires = None;
         }
     }
-    
+
     tracing::info!("Cookies saved");
     Ok(())
 }
@@ -103,13 +107,13 @@ pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
 pub async fn check_cloudflare() -> anyhow::Result<bool> {
     // 尝试访问首页
     let needs_challenge = !network::check_access().await;
-    
+
     if needs_challenge {
         tracing::info!("Cloudflare challenge required");
     } else {
         tracing::info!("No Cloudflare challenge needed");
     }
-    
+
     Ok(needs_challenge)
 }
 

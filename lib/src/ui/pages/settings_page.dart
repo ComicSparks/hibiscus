@@ -94,6 +94,13 @@ class _SettingsPageState extends State<SettingsPage> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _showClearCacheDialog(context),
             ),
+            if (Platform.isMacOS || Platform.isWindows)
+              ListTile(
+                title: const Text('打开数据目录'),
+                subtitle: const Text('打开应用数据存储位置'),
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openDataDir(context),
+              ),
           
             const Divider(),
             
@@ -110,14 +117,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 showLicensePage(context: context);
               },
             ),
-            ListTile(
-              title: const Text('GitHub'),
-              subtitle: const Text('查看源代码'),
-              trailing: const Icon(Icons.open_in_new),
-              onTap: () {
-                // TODO: 打开 GitHub 页面
-              },
-            ),
+            // ListTile(
+            //   title: const Text('GitHub'),
+            //   subtitle: const Text('查看源代码'),
+            //   trailing: const Icon(Icons.open_in_new),
+            //   onTap: () {
+            //     // TODO: 打开 GitHub 页面
+            //   },
+            // ),
             
             const SizedBox(height: 32),
           ],
@@ -177,6 +184,22 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _openDataDir(BuildContext context) async {
+    try {
+      final dirPath = await settings_api.getDataDirPath();
+      if (Platform.isMacOS) {
+        await Process.run('open', [dirPath]);
+      } else if (Platform.isWindows) {
+        await Process.run('explorer', [dirPath]);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('打开失败: $e')),
+      );
+    }
   }
 
   String _themeModeLabel(ThemeMode mode) {

@@ -180,14 +180,14 @@ pub struct ApiSearchResult {
 #[derive(Debug, Clone)]
 pub struct ApiSearchFilters {
     pub query: Option<String>,
-    pub genre: Option<String>,       // 影片類型: 裏番, 泡麵番, Motion Anime, 3DCG, 2.5D, 2D動畫, AI生成, MMD, Cosplay
-    pub tags: Vec<String>,           // 內容標籤
-    pub broad_match: bool,           // 廣泛配對
-    pub sort: Option<String>,        // 排序: 最新上市, 最新上傳, 本日排行, 本週排行, 本月排行, 觀看次數, 讚好比例, 時長最長, 他們在看
-    pub year: Option<String>,        // 年份: "2024 年"
-    pub month: Option<String>,       // 月份: "1 月"
-    pub date: Option<String>,        // 快速日期: 過去 24 小時, 過去 2 天, 過去 1 週, 過去 1 個月, 過去 3 個月, 過去 1 年
-    pub duration: Option<String>,    // 時長: 1 分鐘 +, 5 分鐘 +, 10 分鐘 +, 20 分鐘 +, 30 分鐘 +, 60 分鐘 +, 0 - 10 分鐘, 0 - 20 分鐘
+    pub genre: Option<String>, // 影片類型: 裏番, 泡麵番, Motion Anime, 3DCG, 2.5D, 2D動畫, AI生成, MMD, Cosplay
+    pub tags: Vec<String>,     // 內容標籤
+    pub broad_match: bool,     // 廣泛配對
+    pub sort: Option<String>, // 排序: 最新上市, 最新上傳, 本日排行, 本週排行, 本月排行, 觀看次數, 讚好比例, 時長最長, 他們在看
+    pub year: Option<String>, // 年份: "2024 年"
+    pub month: Option<String>, // 月份: "1 月"
+    pub date: Option<String>, // 快速日期: 過去 24 小時, 過去 2 天, 過去 1 週, 過去 1 個月, 過去 3 個月, 過去 1 年
+    pub duration: Option<String>, // 時長: 1 分鐘 +, 5 分鐘 +, 10 分鐘 +, 20 分鐘 +, 30 分鐘 +, 60 分鐘 +, 0 - 10 分鐘, 0 - 20 分鐘
     pub page: u32,
 }
 

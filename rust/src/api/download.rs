@@ -1,15 +1,15 @@
 // 下载管理 API
 
-use flutter_rust_bridge::frb;
+use crate::api::models::{ApiDownloadStatus, ApiDownloadTask, ApiExportProgress};
+use crate::core::{network, parser, runtime, storage};
 use crate::frb_generated::StreamSink;
-use crate::api::models::{ApiDownloadTask, ApiDownloadStatus, ApiExportProgress};
-use crate::core::{storage, network, parser, runtime};
+use flutter_rust_bridge::frb;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::OnceLock;
-use std::collections::HashMap;
 use tokio::sync::broadcast;
-use tokio::sync::{watch, Mutex};
 use tokio::sync::Semaphore;
+use tokio::sync::{watch, Mutex};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum DownloadControl {
@@ -52,15 +52,25 @@ pub async fn add_download(
 ) -> anyhow::Result<ApiDownloadTask> {
     if let Ok(Some(record)) = storage::get_download_by_video_id(&video_id) {
         if record.cover_path.is_none() && !record.cover_url.trim().is_empty() {
-            if let Ok(Some(cover_path)) = download_cover(&record.video_id, &record.cover_url).await {
+            if let Ok(Some(cover_path)) = download_cover(&record.video_id, &record.cover_url).await
+            {
                 let _ = storage::update_download_cover_path(&record.video_id, &cover_path);
             }
         }
         let record = storage::get_download_by_video_id(&video_id)?.unwrap_or(record);
         let task = map_record(record.clone());
-        if matches!(record.status, storage::DownloadStatus::Queued | storage::DownloadStatus::Failed | storage::DownloadStatus::Paused) {
+        if matches!(
+            record.status,
+            storage::DownloadStatus::Queued
+                | storage::DownloadStatus::Failed
+                | storage::DownloadStatus::Paused
+        ) {
             if let Some(save_path) = record.save_path.clone() {
-                storage::update_download_status(&record.video_id, storage::DownloadStatus::Queued, None)?;
+                storage::update_download_status(
+                    &record.video_id,
+                    storage::DownloadStatus::Queued,
+                    None,
+                )?;
                 spawn_download(record.video_id, PathBuf::from(save_path));
             }
         }
@@ -189,7 +199,11 @@ pub async fn delete_download(task_id: String, delete_file: bool) -> anyhow::Resu
 /// - 仅导出已下载完成且存在本地文件的任务
 /// - 文件名格式：`[{作者}]{标题}.{ext}`，非法字符替换为 `_`
 #[frb]
-pub fn export_downloads_to_dir(task_ids: Vec<String>, dest_dir: String, sink: StreamSink<ApiExportProgress>) {
+pub fn export_downloads_to_dir(
+    task_ids: Vec<String>,
+    dest_dir: String,
+    sink: StreamSink<ApiExportProgress>,
+) {
     runtime::spawn(async move {
         let total_files = task_ids.len() as u32;
         let mut done_files: u32 = 0;
@@ -277,7 +291,10 @@ pub fn export_downloads_to_dir(task_ids: Vec<String>, dest_dir: String, sink: St
                 .and_then(|s| s.to_str())
                 .unwrap_or("mp4");
 
-            let author = record.author_name.clone().unwrap_or_else(|| "Unknown".to_string());
+            let author = record
+                .author_name
+                .clone()
+                .unwrap_or_else(|| "Unknown".to_string());
             let filename = format!(
                 "[{}]{}.{}",
                 sanitize_filename(&author),
@@ -360,8 +377,15 @@ pub fn export_downloads_to_dir(task_ids: Vec<String>, dest_dir: String, sink: St
 pub async fn pause_all_downloads() -> anyhow::Result<bool> {
     let records = storage::get_downloads()?;
     for record in records {
-        if matches!(record.status, storage::DownloadStatus::Downloading | storage::DownloadStatus::Queued) {
-            storage::update_download_status(&record.video_id, storage::DownloadStatus::Paused, None)?;
+        if matches!(
+            record.status,
+            storage::DownloadStatus::Downloading | storage::DownloadStatus::Queued
+        ) {
+            storage::update_download_status(
+                &record.video_id,
+                storage::DownloadStatus::Paused,
+                None,
+            )?;
             if let Some(tx) = task_controls().lock().await.get(&record.video_id).cloned() {
                 let _ = tx.send(DownloadControl::Paused);
             }
@@ -376,7 +400,11 @@ pub async fn resume_all_downloads() -> anyhow::Result<bool> {
     let records = storage::get_downloads()?;
     for record in records {
         if matches!(record.status, storage::DownloadStatus::Paused) {
-            storage::update_download_status(&record.video_id, storage::DownloadStatus::Queued, None)?;
+            storage::update_download_status(
+                &record.video_id,
+                storage::DownloadStatus::Queued,
+                None,
+            )?;
             if let Some(save_path) = record.save_path.clone() {
                 spawn_download(record.video_id, PathBuf::from(save_path));
             } else {
@@ -415,7 +443,11 @@ pub async fn get_local_video_path(video_id: String) -> anyhow::Result<Option<Str
     let records = storage::get_downloads()?;
     let record = records.into_iter().find(|r| r.video_id == video_id);
     Ok(record.and_then(|r| {
-        if r.status == storage::DownloadStatus::Completed { r.save_path } else { None }
+        if r.status == storage::DownloadStatus::Completed {
+            r.save_path
+        } else {
+            None
+        }
     }))
 }
 
@@ -441,7 +473,9 @@ fn map_record(record: storage::DownloadRecord) -> ApiDownloadTask {
         storage::DownloadStatus::Downloading => ApiDownloadStatus::Downloading,
         storage::DownloadStatus::Paused => ApiDownloadStatus::Paused,
         storage::DownloadStatus::Completed => ApiDownloadStatus::Completed,
-        storage::DownloadStatus::Failed => ApiDownloadStatus::Failed { error: record.error_message.unwrap_or_default() },
+        storage::DownloadStatus::Failed => ApiDownloadStatus::Failed {
+            error: record.error_message.unwrap_or_default(),
+        },
     };
 
     let progress = if record.total_bytes > 0 {
@@ -483,7 +517,10 @@ fn build_download_path(video_id: &str, quality: &str, ext: &str) -> anyhow::Resu
     Ok(base)
 }
 
-async fn download_author_avatar(author_id: &str, avatar_url: &str) -> anyhow::Result<Option<String>> {
+async fn download_author_avatar(
+    author_id: &str,
+    avatar_url: &str,
+) -> anyhow::Result<Option<String>> {
     if avatar_url.trim().is_empty() || author_id.trim().is_empty() {
         return Ok(None);
     }
@@ -550,7 +587,11 @@ async fn download_cover(video_id: &str, cover_url: &str) -> anyhow::Result<Optio
 fn spawn_download(video_id: String, save_path_hint: PathBuf) {
     runtime::spawn(async move {
         // 全局并发控制（最多同时下载不同视频）
-        let permits_needed = if current_download_concurrency() <= 1 { 2 } else { 1 };
+        let permits_needed = if current_download_concurrency() <= 1 {
+            2
+        } else {
+            1
+        };
         let permit = match download_semaphore().acquire_many(permits_needed).await {
             Ok(p) => p,
             Err(_) => return,
@@ -574,7 +615,11 @@ fn spawn_download(video_id: String, save_path_hint: PathBuf) {
             let _ = progress_sender().send(task);
         }
         if let Err(e) = result {
-            let _ = storage::update_download_status(&video_id, storage::DownloadStatus::Failed, Some(&e.to_string()));
+            let _ = storage::update_download_status(
+                &video_id,
+                storage::DownloadStatus::Failed,
+                Some(&e.to_string()),
+            );
             if let Ok(Some(record)) = storage::get_download_by_video_id(&video_id) {
                 let task = map_record(record);
                 let _ = progress_sender().send(task);
@@ -597,7 +642,10 @@ async fn run_download(
         return Ok(());
     }
 
-    let quality = record.quality.clone().unwrap_or_else(|| "1080P".to_string());
+    let quality = record
+        .quality
+        .clone()
+        .unwrap_or_else(|| "1080P".to_string());
 
     // 模拟播放：访问 watch 页获取链接 + 元数据
     let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
@@ -605,8 +653,19 @@ async fn run_download(
     let html = network::get(&watch_url).await?;
     let detail = parser::parse_video_detail(&html)?;
 
-    if record.description.as_deref().unwrap_or("").trim().is_empty() && !detail.description.trim().is_empty() {
-        let _ = storage::update_download_description_and_tags(&video_id, Some(detail.description.trim()), None);
+    if record
+        .description
+        .as_deref()
+        .unwrap_or("")
+        .trim()
+        .is_empty()
+        && !detail.description.trim().is_empty()
+    {
+        let _ = storage::update_download_description_and_tags(
+            &video_id,
+            Some(detail.description.trim()),
+            None,
+        );
     }
     if record.tags.is_empty() && !detail.tags.is_empty() {
         let _ = storage::update_download_description_and_tags(&video_id, None, Some(&detail.tags));
@@ -615,7 +674,10 @@ async fn run_download(
     // 尝试补齐作者信息（用于离线展示）
     if let Some(creator) = detail.creator.clone() {
         let avatar_path = if record.author_avatar_path.is_none() {
-            download_author_avatar(&creator.id, creator.avatar_url.as_deref().unwrap_or("")).await.ok().flatten()
+            download_author_avatar(&creator.id, creator.avatar_url.as_deref().unwrap_or(""))
+                .await
+                .ok()
+                .flatten()
         } else {
             record.author_avatar_path.clone()
         };
@@ -632,8 +694,16 @@ async fn run_download(
     }
 
     let q_norm = quality.to_ascii_lowercase();
-    let pick = detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == q_norm)
-        .or_else(|| detail.video_sources.iter().find(|s| s.quality.to_ascii_lowercase() == "auto"))
+    let pick = detail
+        .video_sources
+        .iter()
+        .find(|s| s.quality.to_ascii_lowercase() == q_norm)
+        .or_else(|| {
+            detail
+                .video_sources
+                .iter()
+                .find(|s| s.quality.to_ascii_lowercase() == "auto")
+        })
         .or_else(|| detail.video_sources.first())
         .ok_or_else(|| anyhow::anyhow!("No playable source"))?;
     let url = pick.url.clone();
@@ -677,7 +747,11 @@ async fn run_download(
     let client = network::get_client();
     let mut req = client.get(&url);
     if downloaded > 0 {
-        tracing::info!("download resume_range video_id={} from_bytes={}", video_id, downloaded);
+        tracing::info!(
+            "download resume_range video_id={} from_bytes={}",
+            video_id,
+            downloaded
+        );
         req = req.header(reqwest::header::RANGE, format!("bytes={}-", downloaded));
     }
     let resp = req.send().await?;
@@ -690,11 +764,19 @@ async fn run_download(
     }
 
     let total_size = resp.content_length().unwrap_or(0);
-    let total = if downloaded > 0 { downloaded + total_size } else { total_size };
+    let total = if downloaded > 0 {
+        downloaded + total_size
+    } else {
+        total_size
+    };
 
     use tokio::io::AsyncWriteExt;
     let mut file = if downloaded > 0 {
-        tokio::fs::OpenOptions::new().create(true).append(true).open(&save_path).await?
+        tokio::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&save_path)
+            .await?
     } else {
         tokio::fs::File::create(&save_path).await?
     };
@@ -752,10 +834,8 @@ fn sanitize_filename(input: &str) -> String {
     // Windows + common filesystem forbidden: <>:"/\|?* and control chars
     let mut out = String::with_capacity(input.len());
     for ch in input.chars() {
-        let invalid = matches!(
-            ch,
-            '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*' 
-        ) || ch.is_control();
+        let invalid =
+            matches!(ch, '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*') || ch.is_control();
         if invalid {
             out.push('_');
         } else {
@@ -763,7 +843,11 @@ fn sanitize_filename(input: &str) -> String {
         }
     }
     let out = out.trim().trim_matches('.').trim().to_string();
-    if out.is_empty() { "_".to_string() } else { out }
+    if out.is_empty() {
+        "_".to_string()
+    } else {
+        out
+    }
 }
 
 fn uniquify_path(mut path: PathBuf) -> PathBuf {
@@ -776,7 +860,10 @@ fn uniquify_path(mut path: PathBuf) -> PathBuf {
         .unwrap_or("file")
         .to_string();
     let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
-    let dir = path.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| PathBuf::new());
+    let dir = path
+        .parent()
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::new());
 
     for i in 1..10_000 {
         let name = if ext.is_empty() {
