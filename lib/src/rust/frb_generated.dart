@@ -2860,8 +2860,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ApiVideoCard dco_decode_api_video_card(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return ApiVideoCard(
       id: dco_decode_String(arr[0]),
       title: dco_decode_String(arr[1]),
@@ -2869,7 +2869,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       duration: dco_decode_opt_String(arr[3]),
       views: dco_decode_opt_String(arr[4]),
       uploadDate: dco_decode_opt_String(arr[5]),
-      tags: dco_decode_list_String(arr[6]),
+      authorName: dco_decode_opt_String(arr[6]),
+      tags: dco_decode_list_String(arr[7]),
     );
   }
 
@@ -3690,6 +3691,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_duration = sse_decode_opt_String(deserializer);
     var var_views = sse_decode_opt_String(deserializer);
     var var_uploadDate = sse_decode_opt_String(deserializer);
+    var var_authorName = sse_decode_opt_String(deserializer);
     var var_tags = sse_decode_list_String(deserializer);
     return ApiVideoCard(
       id: var_id,
@@ -3698,6 +3700,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       duration: var_duration,
       views: var_views,
       uploadDate: var_uploadDate,
+      authorName: var_authorName,
       tags: var_tags,
     );
   }
@@ -4634,6 +4637,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.duration, serializer);
     sse_encode_opt_String(self.views, serializer);
     sse_encode_opt_String(self.uploadDate, serializer);
+    sse_encode_opt_String(self.authorName, serializer);
     sse_encode_list_String(self.tags, serializer);
   }
 

@@ -98,6 +98,7 @@ pub async fn search(filters: ApiSearchFilters) -> anyhow::Result<ApiSearchResult
                     duration: Some(v.duration).filter(|s| !s.is_empty()),
                     views: Some(v.views).filter(|s| !s.is_empty()),
                     upload_date: v.upload_date,
+                    author_name: v.artist,
                     tags: v.tags,
                 })
                 .collect();
@@ -383,6 +384,7 @@ pub async fn get_homepage() -> anyhow::Result<ApiHomePage> {
                         duration: Some(v.duration).filter(|s| !s.is_empty()),
                         views: Some(v.views).filter(|s| !s.is_empty()),
                         upload_date: v.upload_date,
+                        author_name: v.artist,
                         tags: v.tags,
                     })
                     .collect()

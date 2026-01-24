@@ -84,6 +84,7 @@ pub async fn get_my_list(list_type: String, page: u32) -> anyhow::Result<ApiFavo
                     duration: Some(v.duration).filter(|s| !s.is_empty()),
                     views: Some(v.views).filter(|s| !s.is_empty()),
                     upload_date: v.upload_date,
+                    author_name: v.artist,
                     tags: v.tags,
                 })
                 .collect();
@@ -247,6 +248,7 @@ pub async fn get_my_subscriptions(page: u32) -> anyhow::Result<ApiSubscriptionsP
                     duration: Some(v.duration).filter(|s| !s.is_empty()),
                     views: Some(v.views).filter(|s| !s.is_empty()),
                     upload_date: v.upload_date,
+                    author_name: v.artist,
                     tags: v.tags,
                 })
                 .collect::<Vec<_>>();

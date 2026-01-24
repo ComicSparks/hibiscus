@@ -3133,6 +3133,7 @@ impl SseDecode for crate::api::models::ApiVideoCard {
         let mut var_duration = <Option<String>>::sse_decode(deserializer);
         let mut var_views = <Option<String>>::sse_decode(deserializer);
         let mut var_uploadDate = <Option<String>>::sse_decode(deserializer);
+        let mut var_authorName = <Option<String>>::sse_decode(deserializer);
         let mut var_tags = <Vec<String>>::sse_decode(deserializer);
         return crate::api::models::ApiVideoCard {
             id: var_id,
@@ -3141,6 +3142,7 @@ impl SseDecode for crate::api::models::ApiVideoCard {
             duration: var_duration,
             views: var_views,
             upload_date: var_uploadDate,
+            author_name: var_authorName,
             tags: var_tags,
         };
     }
@@ -4392,6 +4394,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::models::ApiVideoCard {
             self.duration.into_into_dart().into_dart(),
             self.views.into_into_dart().into_dart(),
             self.upload_date.into_into_dart().into_dart(),
+            self.author_name.into_into_dart().into_dart(),
             self.tags.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -4841,6 +4844,7 @@ impl SseEncode for crate::api::models::ApiVideoCard {
         <Option<String>>::sse_encode(self.duration, serializer);
         <Option<String>>::sse_encode(self.views, serializer);
         <Option<String>>::sse_encode(self.upload_date, serializer);
+        <Option<String>>::sse_encode(self.author_name, serializer);
         <Vec<String>>::sse_encode(self.tags, serializer);
     }
 }

@@ -23,6 +23,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
   final _isMultiSelect = signal(false);
   final _selectedIds = signal<Set<String>>(<String>{});
   final _selectedQuality = signal('1080P');
+  final _selectedAuthorName = signal<String?>(null);
 
   @override
   void initState() {
@@ -47,6 +48,11 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
   void _exitMultiSelect() {
     _isMultiSelect.value = false;
     _selectedIds.value = <String>{};
+  }
+
+  void _selectAuthor(String? name) {
+    _selectedAuthorName.value = name;
+    _exitMultiSelect();
   }
 
   void _toggleSelected(String id) {
@@ -177,6 +183,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
         final isMultiSelect = _isMultiSelect.value;
         final selectedCount = _selectedIds.value.length;
         final quality = _selectedQuality.value;
+        final selectedAuthor = _selectedAuthorName.value?.trim();
 
         final userId = userState.userInfo.value?.id ?? '';
 
@@ -192,14 +199,19 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
               ),
             Expanded(
               child: VideoPager(
-                key: ValueKey('subscriptions:$userId'),
+                key: ValueKey('subscriptions:$userId:${selectedAuthor ?? 'all'}'),
                 pageLoader: (page) async {
                   final result = await user_api.getMySubscriptions(page: page);
                   if (page == 1) {
                     subscriptionsState.authors.value = result.authors;
                   }
+                  final videos = selectedAuthor == null || selectedAuthor.isEmpty
+                      ? result.videos
+                      : result.videos
+                          .where((v) => (v.authorName ?? '').trim() == selectedAuthor)
+                          .toList();
                   return VideoPagerPage(
-                    videos: result.videos,
+                    videos: videos,
                     hasNext: result.hasNext,
                   );
                 },
@@ -232,7 +244,7 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         scrollDirection: Axis.horizontal,
-        itemCount: authors.length + 1,
+        itemCount: authors.length + 2,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           if (index == 0) {
@@ -266,32 +278,95 @@ class _SubscriptionsPageState extends State<SubscriptionsPage> {
             });
           }
 
-          final a = authors[index - 1];
+          if (index == 1) {
+            return Watch((context) {
+              final selected = _selectedAuthorName.value == null;
+              return InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => _selectAuthor(null),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selected
+                              ? theme.colorScheme.primary
+                              : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                        child: const Icon(Icons.all_inclusive),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    SizedBox(
+                      width: 64,
+                      child: Text(
+                        '全部',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.labelMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          }
+
+          final a = authors[index - 2];
           final name = a.name;
           final avatarUrl = a.avatarUrl;
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
-                child: avatarUrl == null ? const Icon(Icons.person) : null,
+          return Watch((context) {
+            final selected = _selectedAuthorName.value == name;
+            return InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _selectAuthor(selected ? null : name),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: selected
+                            ? theme.colorScheme.primary
+                            : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      backgroundImage:
+                          avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                      child: avatarUrl == null ? const Icon(Icons.person) : null,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    width: 64,
+                    child: Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelMedium,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
-              SizedBox(
-                width: 64,
-                child: Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.labelMedium,
-                ),
-              ),
-            ],
-          );
+            );
+          });
         },
       ),
     );

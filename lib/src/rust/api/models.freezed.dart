@@ -7129,7 +7129,7 @@ as bool,
 /// @nodoc
 mixin _$ApiVideoCard {
 
- String get id; String get title; String get coverUrl; String? get duration; String? get views; String? get uploadDate; List<String> get tags;
+ String get id; String get title; String get coverUrl; String? get duration; String? get views; String? get uploadDate; String? get authorName; List<String> get tags;
 /// Create a copy of ApiVideoCard
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -7140,16 +7140,16 @@ $ApiVideoCardCopyWith<ApiVideoCard> get copyWith => _$ApiVideoCardCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&const DeepCollectionEquality().equals(other.tags, tags));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&const DeepCollectionEquality().equals(other.tags, tags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,const DeepCollectionEquality().hash(tags));
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,authorName,const DeepCollectionEquality().hash(tags));
 
 @override
 String toString() {
-  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, tags: $tags)';
+  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, authorName: $authorName, tags: $tags)';
 }
 
 
@@ -7160,7 +7160,7 @@ abstract mixin class $ApiVideoCardCopyWith<$Res>  {
   factory $ApiVideoCardCopyWith(ApiVideoCard value, $Res Function(ApiVideoCard) _then) = _$ApiVideoCardCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, List<String> tags
+ String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, String? authorName, List<String> tags
 });
 
 
@@ -7177,7 +7177,7 @@ class _$ApiVideoCardCopyWithImpl<$Res>
 
 /// Create a copy of ApiVideoCard
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? tags = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? authorName = freezed,Object? tags = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -7185,6 +7185,7 @@ as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast
 as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
 as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,authorName: freezed == authorName ? _self.authorName : authorName // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
 as List<String>,
   ));
@@ -7268,10 +7269,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  String? authorName,  List<String> tags)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ApiVideoCard() when $default != null:
-return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);case _:
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.authorName,_that.tags);case _:
   return orElse();
 
 }
@@ -7289,10 +7290,10 @@ return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  String? authorName,  List<String> tags)  $default,) {final _that = this;
 switch (_that) {
 case _ApiVideoCard():
-return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);}
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.authorName,_that.tags);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -7306,10 +7307,10 @@ return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  List<String> tags)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String coverUrl,  String? duration,  String? views,  String? uploadDate,  String? authorName,  List<String> tags)?  $default,) {final _that = this;
 switch (_that) {
 case _ApiVideoCard() when $default != null:
-return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.tags);case _:
+return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_that.uploadDate,_that.authorName,_that.tags);case _:
   return null;
 
 }
@@ -7321,7 +7322,7 @@ return $default(_that.id,_that.title,_that.coverUrl,_that.duration,_that.views,_
 
 
 class _ApiVideoCard implements ApiVideoCard {
-  const _ApiVideoCard({required this.id, required this.title, required this.coverUrl, this.duration, this.views, this.uploadDate, required final  List<String> tags}): _tags = tags;
+  const _ApiVideoCard({required this.id, required this.title, required this.coverUrl, this.duration, this.views, this.uploadDate, this.authorName, required final  List<String> tags}): _tags = tags;
   
 
 @override final  String id;
@@ -7330,6 +7331,7 @@ class _ApiVideoCard implements ApiVideoCard {
 @override final  String? duration;
 @override final  String? views;
 @override final  String? uploadDate;
+@override final  String? authorName;
  final  List<String> _tags;
 @override List<String> get tags {
   if (_tags is EqualUnmodifiableListView) return _tags;
@@ -7348,16 +7350,16 @@ _$ApiVideoCardCopyWith<_ApiVideoCard> get copyWith => __$ApiVideoCardCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&const DeepCollectionEquality().equals(other._tags, _tags));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiVideoCard&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.views, views) || other.views == views)&&(identical(other.uploadDate, uploadDate) || other.uploadDate == uploadDate)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&const DeepCollectionEquality().equals(other._tags, _tags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,const DeepCollectionEquality().hash(_tags));
+int get hashCode => Object.hash(runtimeType,id,title,coverUrl,duration,views,uploadDate,authorName,const DeepCollectionEquality().hash(_tags));
 
 @override
 String toString() {
-  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, tags: $tags)';
+  return 'ApiVideoCard(id: $id, title: $title, coverUrl: $coverUrl, duration: $duration, views: $views, uploadDate: $uploadDate, authorName: $authorName, tags: $tags)';
 }
 
 
@@ -7368,7 +7370,7 @@ abstract mixin class _$ApiVideoCardCopyWith<$Res> implements $ApiVideoCardCopyWi
   factory _$ApiVideoCardCopyWith(_ApiVideoCard value, $Res Function(_ApiVideoCard) _then) = __$ApiVideoCardCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, List<String> tags
+ String id, String title, String coverUrl, String? duration, String? views, String? uploadDate, String? authorName, List<String> tags
 });
 
 
@@ -7385,7 +7387,7 @@ class __$ApiVideoCardCopyWithImpl<$Res>
 
 /// Create a copy of ApiVideoCard
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? tags = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? coverUrl = null,Object? duration = freezed,Object? views = freezed,Object? uploadDate = freezed,Object? authorName = freezed,Object? tags = null,}) {
   return _then(_ApiVideoCard(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -7393,6 +7395,7 @@ as String,coverUrl: null == coverUrl ? _self.coverUrl : coverUrl // ignore: cast
 as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String?,views: freezed == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
 as String?,uploadDate: freezed == uploadDate ? _self.uploadDate : uploadDate // ignore: cast_nullable_to_non_nullable
+as String?,authorName: freezed == authorName ? _self.authorName : authorName // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
 as List<String>,
   ));

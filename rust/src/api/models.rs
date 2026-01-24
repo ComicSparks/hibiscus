@@ -18,6 +18,8 @@ pub struct ApiVideoCard {
     pub duration: Option<String>,
     pub views: Option<String>,
     pub upload_date: Option<String>,
+    /// 上传用户名称（部分页面可解析到，如订阅页）
+    pub author_name: Option<String>,
     pub tags: Vec<String>,
 }
 

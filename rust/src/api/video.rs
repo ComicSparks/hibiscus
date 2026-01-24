@@ -60,6 +60,7 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                         duration: Some(v.duration).filter(|s| !s.is_empty()),
                         views: Some(v.views).filter(|s| !s.is_empty()),
                         upload_date: v.upload_date,
+                        author_name: v.artist,
                         tags: v.tags,
                     })
                     .collect(),
@@ -79,6 +80,7 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
                             duration: Some(v.duration).filter(|s| !s.is_empty()),
                             views: Some(v.views).filter(|s| !s.is_empty()),
                             upload_date: v.upload_date,
+                            author_name: v.artist,
                             tags: v.tags,
                         })
                         .collect(),

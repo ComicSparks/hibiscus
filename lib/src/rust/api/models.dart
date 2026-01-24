@@ -337,6 +337,7 @@ sealed class ApiVideoCard with _$ApiVideoCard {
     String? duration,
     String? views,
     String? uploadDate,
+    String? authorName,
     required List<String> tags,
   }) = _ApiVideoCard;
 }
