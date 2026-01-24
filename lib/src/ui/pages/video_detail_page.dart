@@ -668,23 +668,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
               );
             },
           ),
-          // 时长
-          if (detail.duration != null)
-            Positioned(
-              right: 8,
-              bottom: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black87,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  detail.duration!,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-            ),
         ],
       ),
     );
