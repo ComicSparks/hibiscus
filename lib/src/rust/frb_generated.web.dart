@@ -8,6 +8,7 @@
 
 import 'api/cache.dart';
 import 'api/download.dart';
+import 'api/download_folders.dart';
 import 'api/init.dart';
 import 'api/models.dart';
 import 'api/search.dart';
@@ -60,6 +61,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ApiCommentList dco_decode_api_comment_list(dynamic raw);
+
+  @protected
+  ApiDownloadFolder dco_decode_api_download_folder(dynamic raw);
 
   @protected
   ApiDownloadStatus dco_decode_api_download_status(dynamic raw);
@@ -202,6 +206,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ApiComment> dco_decode_list_api_comment(dynamic raw);
 
   @protected
+  List<ApiDownloadFolder> dco_decode_list_api_download_folder(dynamic raw);
+
+  @protected
   List<ApiDownloadTask> dco_decode_list_api_download_task(dynamic raw);
 
   @protected
@@ -324,6 +331,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ApiCommentList sse_decode_api_comment_list(SseDeserializer deserializer);
+
+  @protected
+  ApiDownloadFolder sse_decode_api_download_folder(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ApiDownloadStatus sse_decode_api_download_status(
@@ -490,6 +502,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ApiComment> sse_decode_list_api_comment(SseDeserializer deserializer);
+
+  @protected
+  List<ApiDownloadFolder> sse_decode_list_api_download_folder(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<ApiDownloadTask> sse_decode_list_api_download_task(
@@ -659,6 +676,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_api_comment_list(
     ApiCommentList self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_api_download_folder(
+    ApiDownloadFolder self,
     SseSerializer serializer,
   );
 
@@ -890,6 +913,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_api_comment(
     List<ApiComment> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_api_download_folder(
+    List<ApiDownloadFolder> self,
     SseSerializer serializer,
   );
 

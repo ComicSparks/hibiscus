@@ -227,6 +227,7 @@ pub(crate) struct DownloadRecord {
     pub author_name: Option<String>,
     pub author_avatar_url: Option<String>,
     pub author_avatar_path: Option<String>,
+    pub folder_id: Option<String>,
     pub save_path: Option<String>,
     pub total_bytes: i64,
     pub downloaded_bytes: i64,
@@ -234,6 +235,14 @@ pub(crate) struct DownloadRecord {
     pub error_message: Option<String>,
     pub created_at: i64,
     pub completed_at: Option<i64>,
+}
+
+/// 下载文件夹记录（内部使用）
+#[derive(Debug, Clone)]
+pub(crate) struct DownloadFolderRecord {
+    pub id: String,
+    pub name: String,
+    pub created_at: i64,
 }
 
 /// 添加下载任务
@@ -289,7 +298,7 @@ pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>
     let db = get_db()?;
     let mut stmt = db.prepare(
         "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
-                author_id, author_name, author_avatar_url, author_avatar_path,
+                author_id, author_name, author_avatar_url, author_avatar_path, folder_id,
                 save_path, total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads WHERE video_id = ?1 LIMIT 1"
     )?;
@@ -315,13 +324,14 @@ pub fn get_download_by_video_id(video_id: &str) -> Result<Option<DownloadRecord>
             author_name: row.get(10)?,
             author_avatar_url: row.get(11)?,
             author_avatar_path: row.get(12)?,
-            save_path: row.get(13)?,
-            total_bytes: row.get(14)?,
-            downloaded_bytes: row.get(15)?,
-            status: DownloadStatus::from(row.get::<_, i32>(16)?),
-            error_message: row.get(17)?,
-            created_at: row.get(18)?,
-            completed_at: row.get(19)?,
+            folder_id: row.get(13)?,
+            save_path: row.get(14)?,
+            total_bytes: row.get(15)?,
+            downloaded_bytes: row.get(16)?,
+            status: DownloadStatus::from(row.get::<_, i32>(17)?),
+            error_message: row.get(18)?,
+            created_at: row.get(19)?,
+            completed_at: row.get(20)?,
         }))
     } else {
         Ok(None)
@@ -413,7 +423,7 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
     let db = get_db()?;
     let mut stmt = db.prepare(
         "SELECT id, video_id, title, cover_url, video_url, quality, description, tags, cover_path,
-        author_id, author_name, author_avatar_url, author_avatar_path,
+        author_id, author_name, author_avatar_url, author_avatar_path, folder_id,
         save_path, total_bytes, downloaded_bytes, status, error_message, created_at, completed_at
          FROM downloads ORDER BY created_at DESC",
     )?;
@@ -438,13 +448,14 @@ pub fn get_downloads() -> Result<Vec<DownloadRecord>> {
             author_name: row.get(10)?,
             author_avatar_url: row.get(11)?,
             author_avatar_path: row.get(12)?,
-            save_path: row.get(13)?,
-            total_bytes: row.get(14)?,
-            downloaded_bytes: row.get(15)?,
-            status: DownloadStatus::from(row.get::<_, i32>(16)?),
-            error_message: row.get(17)?,
-            created_at: row.get(18)?,
-            completed_at: row.get(19)?,
+            folder_id: row.get(13)?,
+            save_path: row.get(14)?,
+            total_bytes: row.get(15)?,
+            downloaded_bytes: row.get(16)?,
+            status: DownloadStatus::from(row.get::<_, i32>(17)?),
+            error_message: row.get(18)?,
+            created_at: row.get(19)?,
+            completed_at: row.get(20)?,
         })
     })?;
 
@@ -475,6 +486,90 @@ pub fn delete_download(video_id: &str) -> Result<()> {
     db.execute(
         "DELETE FROM downloads WHERE video_id = ?1",
         params![video_id],
+    )?;
+    Ok(())
+}
+
+/// 更新下载的文件夹ID
+pub fn update_download_folder(video_id: &str, folder_id: Option<&str>) -> Result<()> {
+    let db = get_db()?;
+    db.execute(
+        "UPDATE downloads SET folder_id = ?1 WHERE video_id = ?2",
+        params![folder_id, video_id],
+    )?;
+    Ok(())
+}
+
+/// 批量更新下载的文件夹ID
+pub fn update_downloads_folder(video_ids: &[String], folder_id: Option<&str>) -> Result<()> {
+    let db = get_db()?;
+    for video_id in video_ids {
+        db.execute(
+            "UPDATE downloads SET folder_id = ?1 WHERE video_id = ?2",
+            params![folder_id, video_id],
+        )?;
+    }
+    Ok(())
+}
+
+// ========== 下载文件夹 ==========
+
+/// 创建下载文件夹
+pub fn create_download_folder(id: &str, name: &str) -> Result<()> {
+    let db = get_db()?;
+    let now = chrono::Utc::now().timestamp();
+    db.execute(
+        "INSERT INTO download_folders (id, name, created_at) VALUES (?1, ?2, ?3)",
+        params![id, name, now],
+    )?;
+    Ok(())
+}
+
+/// 获取所有下载文件夹
+pub fn get_download_folders() -> Result<Vec<DownloadFolderRecord>> {
+    let db = get_db()?;
+    let mut stmt = db.prepare(
+        "SELECT id, name, created_at FROM download_folders ORDER BY created_at ASC",
+    )?;
+
+    let records = stmt.query_map([], |row| {
+        Ok(DownloadFolderRecord {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            created_at: row.get(2)?,
+        })
+    })?;
+
+    let mut result = Vec::new();
+    for record in records {
+        result.push(record?);
+    }
+
+    Ok(result)
+}
+
+/// 更新下载文件夹名称
+pub fn update_download_folder_name(id: &str, name: &str) -> Result<()> {
+    let db = get_db()?;
+    db.execute(
+        "UPDATE download_folders SET name = ?1 WHERE id = ?2",
+        params![name, id],
+    )?;
+    Ok(())
+}
+
+/// 删除下载文件夹（不影响视频，仅清除视频的 folder_id）
+pub fn delete_download_folder(id: &str) -> Result<()> {
+    let db = get_db()?;
+    // 先清除所有关联视频的 folder_id
+    db.execute(
+        "UPDATE downloads SET folder_id = NULL WHERE folder_id = ?1",
+        params![id],
+    )?;
+    // 再删除文件夹
+    db.execute(
+        "DELETE FROM download_folders WHERE id = ?1",
+        params![id],
     )?;
     Ok(())
 }

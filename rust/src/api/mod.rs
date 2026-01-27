@@ -3,6 +3,7 @@
 
 pub mod cache;
 pub mod download;
+pub mod download_folders;
 pub mod init;
 pub mod models;
 pub mod search;

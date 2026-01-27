@@ -318,6 +318,16 @@ pub struct ApiDownloadTask {
     pub speed: u64,
     pub created_at: i64,
     pub file_path: Option<String>,
+    pub folder_id: Option<String>,
+}
+
+/// 下载文件夹（仅用于过滤分类，删除文件夹不影响视频）
+#[frb(dart_metadata=("freezed"))]
+#[derive(Debug, Clone)]
+pub struct ApiDownloadFolder {
+    pub id: String,
+    pub name: String,
+    pub created_at: i64,
 }
 
 // ============================================================================

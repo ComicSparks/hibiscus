@@ -1596,6 +1596,263 @@ as bool,
 }
 
 /// @nodoc
+mixin _$ApiDownloadFolder {
+
+ String get id; String get name; PlatformInt64 get createdAt;
+/// Create a copy of ApiDownloadFolder
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ApiDownloadFolderCopyWith<ApiDownloadFolder> get copyWith => _$ApiDownloadFolderCopyWithImpl<ApiDownloadFolder>(this as ApiDownloadFolder, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadFolder&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,createdAt);
+
+@override
+String toString() {
+  return 'ApiDownloadFolder(id: $id, name: $name, createdAt: $createdAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ApiDownloadFolderCopyWith<$Res>  {
+  factory $ApiDownloadFolderCopyWith(ApiDownloadFolder value, $Res Function(ApiDownloadFolder) _then) = _$ApiDownloadFolderCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, PlatformInt64 createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$ApiDownloadFolderCopyWithImpl<$Res>
+    implements $ApiDownloadFolderCopyWith<$Res> {
+  _$ApiDownloadFolderCopyWithImpl(this._self, this._then);
+
+  final ApiDownloadFolder _self;
+  final $Res Function(ApiDownloadFolder) _then;
+
+/// Create a copy of ApiDownloadFolder
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? createdAt = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ApiDownloadFolder].
+extension ApiDownloadFolderPatterns on ApiDownloadFolder {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ApiDownloadFolder value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ApiDownloadFolder() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ApiDownloadFolder value)  $default,){
+final _that = this;
+switch (_that) {
+case _ApiDownloadFolder():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ApiDownloadFolder value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ApiDownloadFolder() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  PlatformInt64 createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ApiDownloadFolder() when $default != null:
+return $default(_that.id,_that.name,_that.createdAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  PlatformInt64 createdAt)  $default,) {final _that = this;
+switch (_that) {
+case _ApiDownloadFolder():
+return $default(_that.id,_that.name,_that.createdAt);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  PlatformInt64 createdAt)?  $default,) {final _that = this;
+switch (_that) {
+case _ApiDownloadFolder() when $default != null:
+return $default(_that.id,_that.name,_that.createdAt);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ApiDownloadFolder implements ApiDownloadFolder {
+  const _ApiDownloadFolder({required this.id, required this.name, required this.createdAt});
+  
+
+@override final  String id;
+@override final  String name;
+@override final  PlatformInt64 createdAt;
+
+/// Create a copy of ApiDownloadFolder
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApiDownloadFolderCopyWith<_ApiDownloadFolder> get copyWith => __$ApiDownloadFolderCopyWithImpl<_ApiDownloadFolder>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiDownloadFolder&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,name,createdAt);
+
+@override
+String toString() {
+  return 'ApiDownloadFolder(id: $id, name: $name, createdAt: $createdAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ApiDownloadFolderCopyWith<$Res> implements $ApiDownloadFolderCopyWith<$Res> {
+  factory _$ApiDownloadFolderCopyWith(_ApiDownloadFolder value, $Res Function(_ApiDownloadFolder) _then) = __$ApiDownloadFolderCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, PlatformInt64 createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$ApiDownloadFolderCopyWithImpl<$Res>
+    implements _$ApiDownloadFolderCopyWith<$Res> {
+  __$ApiDownloadFolderCopyWithImpl(this._self, this._then);
+
+  final _ApiDownloadFolder _self;
+  final $Res Function(_ApiDownloadFolder) _then;
+
+/// Create a copy of ApiDownloadFolder
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? createdAt = null,}) {
+  return _then(_ApiDownloadFolder(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$ApiDownloadStatus {
 
 
@@ -1970,7 +2227,7 @@ as String,
 /// @nodoc
 mixin _$ApiDownloadTask {
 
- String get id; String get videoId; String get title; String get coverUrl; String? get coverPath; String? get authorId; String? get authorName; String? get authorAvatarUrl; String? get authorAvatarPath; String get quality; String? get description; List<String> get tags; ApiDownloadStatus get status; double get progress; BigInt get downloadedBytes; BigInt get totalBytes; BigInt get speed; PlatformInt64 get createdAt; String? get filePath;
+ String get id; String get videoId; String get title; String get coverUrl; String? get coverPath; String? get authorId; String? get authorName; String? get authorAvatarUrl; String? get authorAvatarPath; String get quality; String? get description; List<String> get tags; ApiDownloadStatus get status; double get progress; BigInt get downloadedBytes; BigInt get totalBytes; BigInt get speed; PlatformInt64 get createdAt; String? get filePath; String? get folderId;
 /// Create a copy of ApiDownloadTask
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1981,16 +2238,16 @@ $ApiDownloadTaskCopyWith<ApiDownloadTask> get copyWith => _$ApiDownloadTaskCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.coverPath, coverPath) || other.coverPath == coverPath)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorAvatarUrl, authorAvatarUrl) || other.authorAvatarUrl == authorAvatarUrl)&&(identical(other.authorAvatarPath, authorAvatarPath) || other.authorAvatarPath == authorAvatarPath)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.coverPath, coverPath) || other.coverPath == coverPath)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorAvatarUrl, authorAvatarUrl) || other.authorAvatarUrl == authorAvatarUrl)&&(identical(other.authorAvatarPath, authorAvatarPath) || other.authorAvatarPath == authorAvatarPath)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.folderId, folderId) || other.folderId == folderId));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,videoId,title,coverUrl,coverPath,authorId,authorName,authorAvatarUrl,authorAvatarPath,quality,description,const DeepCollectionEquality().hash(tags),status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath]);
+int get hashCode => Object.hashAll([runtimeType,id,videoId,title,coverUrl,coverPath,authorId,authorName,authorAvatarUrl,authorAvatarPath,quality,description,const DeepCollectionEquality().hash(tags),status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath,folderId]);
 
 @override
 String toString() {
-  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, coverPath: $coverPath, authorId: $authorId, authorName: $authorName, authorAvatarUrl: $authorAvatarUrl, authorAvatarPath: $authorAvatarPath, quality: $quality, description: $description, tags: $tags, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath)';
+  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, coverPath: $coverPath, authorId: $authorId, authorName: $authorName, authorAvatarUrl: $authorAvatarUrl, authorAvatarPath: $authorAvatarPath, quality: $quality, description: $description, tags: $tags, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath, folderId: $folderId)';
 }
 
 
@@ -2001,7 +2258,7 @@ abstract mixin class $ApiDownloadTaskCopyWith<$Res>  {
   factory $ApiDownloadTaskCopyWith(ApiDownloadTask value, $Res Function(ApiDownloadTask) _then) = _$ApiDownloadTaskCopyWithImpl;
 @useResult
 $Res call({
- String id, String videoId, String title, String coverUrl, String? coverPath, String? authorId, String? authorName, String? authorAvatarUrl, String? authorAvatarPath, String quality, String? description, List<String> tags, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath
+ String id, String videoId, String title, String coverUrl, String? coverPath, String? authorId, String? authorName, String? authorAvatarUrl, String? authorAvatarPath, String quality, String? description, List<String> tags, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath, String? folderId
 });
 
 
@@ -2018,7 +2275,7 @@ class _$ApiDownloadTaskCopyWithImpl<$Res>
 
 /// Create a copy of ApiDownloadTask
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? coverPath = freezed,Object? authorId = freezed,Object? authorName = freezed,Object? authorAvatarUrl = freezed,Object? authorAvatarPath = freezed,Object? quality = null,Object? description = freezed,Object? tags = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? coverPath = freezed,Object? authorId = freezed,Object? authorName = freezed,Object? authorAvatarUrl = freezed,Object? authorAvatarPath = freezed,Object? quality = null,Object? description = freezed,Object? tags = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,Object? folderId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
@@ -2039,6 +2296,7 @@ as BigInt,totalBytes: null == totalBytes ? _self.totalBytes : totalBytes // igno
 as BigInt,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
 as BigInt,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as PlatformInt64,filePath: freezed == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
+as String?,folderId: freezed == folderId ? _self.folderId : folderId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -2130,10 +2388,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath,  String? folderId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ApiDownloadTask() when $default != null:
-return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);case _:
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath,_that.folderId);case _:
   return orElse();
 
 }
@@ -2151,10 +2409,10 @@ return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath,  String? folderId)  $default,) {final _that = this;
 switch (_that) {
 case _ApiDownloadTask():
-return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);}
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath,_that.folderId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -2168,10 +2426,10 @@ return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String videoId,  String title,  String coverUrl,  String? coverPath,  String? authorId,  String? authorName,  String? authorAvatarUrl,  String? authorAvatarPath,  String quality,  String? description,  List<String> tags,  ApiDownloadStatus status,  double progress,  BigInt downloadedBytes,  BigInt totalBytes,  BigInt speed,  PlatformInt64 createdAt,  String? filePath,  String? folderId)?  $default,) {final _that = this;
 switch (_that) {
 case _ApiDownloadTask() when $default != null:
-return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath);case _:
+return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPath,_that.authorId,_that.authorName,_that.authorAvatarUrl,_that.authorAvatarPath,_that.quality,_that.description,_that.tags,_that.status,_that.progress,_that.downloadedBytes,_that.totalBytes,_that.speed,_that.createdAt,_that.filePath,_that.folderId);case _:
   return null;
 
 }
@@ -2183,7 +2441,7 @@ return $default(_that.id,_that.videoId,_that.title,_that.coverUrl,_that.coverPat
 
 
 class _ApiDownloadTask implements ApiDownloadTask {
-  const _ApiDownloadTask({required this.id, required this.videoId, required this.title, required this.coverUrl, this.coverPath, this.authorId, this.authorName, this.authorAvatarUrl, this.authorAvatarPath, required this.quality, this.description, required final  List<String> tags, required this.status, required this.progress, required this.downloadedBytes, required this.totalBytes, required this.speed, required this.createdAt, this.filePath}): _tags = tags;
+  const _ApiDownloadTask({required this.id, required this.videoId, required this.title, required this.coverUrl, this.coverPath, this.authorId, this.authorName, this.authorAvatarUrl, this.authorAvatarPath, required this.quality, this.description, required final  List<String> tags, required this.status, required this.progress, required this.downloadedBytes, required this.totalBytes, required this.speed, required this.createdAt, this.filePath, this.folderId}): _tags = tags;
   
 
 @override final  String id;
@@ -2211,6 +2469,7 @@ class _ApiDownloadTask implements ApiDownloadTask {
 @override final  BigInt speed;
 @override final  PlatformInt64 createdAt;
 @override final  String? filePath;
+@override final  String? folderId;
 
 /// Create a copy of ApiDownloadTask
 /// with the given fields replaced by the non-null parameter values.
@@ -2222,16 +2481,16 @@ _$ApiDownloadTaskCopyWith<_ApiDownloadTask> get copyWith => __$ApiDownloadTaskCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.coverPath, coverPath) || other.coverPath == coverPath)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorAvatarUrl, authorAvatarUrl) || other.authorAvatarUrl == authorAvatarUrl)&&(identical(other.authorAvatarPath, authorAvatarPath) || other.authorAvatarPath == authorAvatarPath)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiDownloadTask&&(identical(other.id, id) || other.id == id)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&(identical(other.title, title) || other.title == title)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.coverPath, coverPath) || other.coverPath == coverPath)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorAvatarUrl, authorAvatarUrl) || other.authorAvatarUrl == authorAvatarUrl)&&(identical(other.authorAvatarPath, authorAvatarPath) || other.authorAvatarPath == authorAvatarPath)&&(identical(other.quality, quality) || other.quality == quality)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.status, status) || other.status == status)&&(identical(other.progress, progress) || other.progress == progress)&&(identical(other.downloadedBytes, downloadedBytes) || other.downloadedBytes == downloadedBytes)&&(identical(other.totalBytes, totalBytes) || other.totalBytes == totalBytes)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.folderId, folderId) || other.folderId == folderId));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,videoId,title,coverUrl,coverPath,authorId,authorName,authorAvatarUrl,authorAvatarPath,quality,description,const DeepCollectionEquality().hash(_tags),status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath]);
+int get hashCode => Object.hashAll([runtimeType,id,videoId,title,coverUrl,coverPath,authorId,authorName,authorAvatarUrl,authorAvatarPath,quality,description,const DeepCollectionEquality().hash(_tags),status,progress,downloadedBytes,totalBytes,speed,createdAt,filePath,folderId]);
 
 @override
 String toString() {
-  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, coverPath: $coverPath, authorId: $authorId, authorName: $authorName, authorAvatarUrl: $authorAvatarUrl, authorAvatarPath: $authorAvatarPath, quality: $quality, description: $description, tags: $tags, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath)';
+  return 'ApiDownloadTask(id: $id, videoId: $videoId, title: $title, coverUrl: $coverUrl, coverPath: $coverPath, authorId: $authorId, authorName: $authorName, authorAvatarUrl: $authorAvatarUrl, authorAvatarPath: $authorAvatarPath, quality: $quality, description: $description, tags: $tags, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, speed: $speed, createdAt: $createdAt, filePath: $filePath, folderId: $folderId)';
 }
 
 
@@ -2242,7 +2501,7 @@ abstract mixin class _$ApiDownloadTaskCopyWith<$Res> implements $ApiDownloadTask
   factory _$ApiDownloadTaskCopyWith(_ApiDownloadTask value, $Res Function(_ApiDownloadTask) _then) = __$ApiDownloadTaskCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String videoId, String title, String coverUrl, String? coverPath, String? authorId, String? authorName, String? authorAvatarUrl, String? authorAvatarPath, String quality, String? description, List<String> tags, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath
+ String id, String videoId, String title, String coverUrl, String? coverPath, String? authorId, String? authorName, String? authorAvatarUrl, String? authorAvatarPath, String quality, String? description, List<String> tags, ApiDownloadStatus status, double progress, BigInt downloadedBytes, BigInt totalBytes, BigInt speed, PlatformInt64 createdAt, String? filePath, String? folderId
 });
 
 
@@ -2259,7 +2518,7 @@ class __$ApiDownloadTaskCopyWithImpl<$Res>
 
 /// Create a copy of ApiDownloadTask
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? coverPath = freezed,Object? authorId = freezed,Object? authorName = freezed,Object? authorAvatarUrl = freezed,Object? authorAvatarPath = freezed,Object? quality = null,Object? description = freezed,Object? tags = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? videoId = null,Object? title = null,Object? coverUrl = null,Object? coverPath = freezed,Object? authorId = freezed,Object? authorName = freezed,Object? authorAvatarUrl = freezed,Object? authorAvatarPath = freezed,Object? quality = null,Object? description = freezed,Object? tags = null,Object? status = null,Object? progress = null,Object? downloadedBytes = null,Object? totalBytes = null,Object? speed = null,Object? createdAt = null,Object? filePath = freezed,Object? folderId = freezed,}) {
   return _then(_ApiDownloadTask(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,videoId: null == videoId ? _self.videoId : videoId // ignore: cast_nullable_to_non_nullable
@@ -2280,6 +2539,7 @@ as BigInt,totalBytes: null == totalBytes ? _self.totalBytes : totalBytes // igno
 as BigInt,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
 as BigInt,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as PlatformInt64,filePath: freezed == filePath ? _self.filePath : filePath // ignore: cast_nullable_to_non_nullable
+as String?,folderId: freezed == folderId ? _self.folderId : folderId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

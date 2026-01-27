@@ -117,6 +117,7 @@ pub async fn add_download(
         speed: 0,
         created_at: chrono::Utc::now().timestamp(),
         file_path: None,
+        folder_id: None,
     };
     Ok(task)
 }
@@ -504,6 +505,7 @@ fn map_record(record: storage::DownloadRecord) -> ApiDownloadTask {
         speed: 0,
         created_at: record.created_at,
         file_path: record.save_path,
+        folder_id: record.folder_id,
     }
 }
 
