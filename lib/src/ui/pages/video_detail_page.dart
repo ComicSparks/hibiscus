@@ -18,6 +18,7 @@ import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:hibiscus/src/state/download_state.dart';
 import 'package:hibiscus/src/state/user_state.dart';
 import 'package:hibiscus/src/ui/pages/login_page.dart';
+import 'package:hibiscus/src/ui/widgets/cached_image.dart' as rust_image;
 import 'package:url_launcher/url_launcher.dart';
 
 /// 视频详情状态
@@ -652,16 +653,16 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 onTap: () async {
                   await _playSelectedQuality(detail);
                 },
-                child: Stack(children: [                
-                Positioned.fill(
-                  child: Image.network(
-                    detail.coverUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const SizedBox(),
-                  ),
-                ),
-                Center(
-                  child: Icon(
+	                child: Stack(children: [                
+	                Positioned.fill(
+	                  child: rust_image.CachedNetworkImage(
+	                    imageUrl: detail.coverUrl,
+	                    fit: BoxFit.cover,
+	                    errorWidget: const SizedBox(),
+	                  ),
+	                ),
+	                Center(
+	                  child: Icon(
                           isPlaying ? Icons.pause : Icons.play_arrow,
                           size: 48,
                           color: Colors.white.withOpacity(0.9),
@@ -825,17 +826,15 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                   )
                                 : null,
                           ),
-                          child: video.coverUrl.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(6),
-                                  child: Image.network(
-                                    video.coverUrl,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : Center(
-                                  child: Text(video.episode),
-                                ),
+	                          child: video.coverUrl.isNotEmpty
+	                              ? rust_image.CachedNetworkImage(
+	                                  imageUrl: video.coverUrl,
+	                                  fit: BoxFit.cover,
+	                                  borderRadius: BorderRadius.circular(6),
+	                                )
+	                              : Center(
+	                                  child: Text(video.episode),
+	                                ),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -874,14 +873,15 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: video.coverUrl.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(video.coverUrl, fit: BoxFit.cover),
-                    )
-                  : const Icon(Icons.video_library_outlined),
-            ),
-          ),
+	              child: video.coverUrl.isNotEmpty
+	                  ? rust_image.CachedNetworkImage(
+	                      imageUrl: video.coverUrl,
+	                      fit: BoxFit.cover,
+	                      borderRadius: BorderRadius.circular(8),
+	                    )
+	                  : const Icon(Icons.video_library_outlined),
+	            ),
+	          ),
           title: Text(
             video.title,
             maxLines: 2,

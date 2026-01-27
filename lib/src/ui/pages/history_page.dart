@@ -5,6 +5,7 @@ import 'package:hibiscus/src/router/router.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 import 'package:hibiscus/src/rust/api/models.dart';
+import 'package:hibiscus/src/ui/widgets/cached_image.dart' as rust_image;
 
 /// 历史记录状态
 class _HistoryState {
@@ -162,78 +163,85 @@ class _HistoryPageState extends State<HistoryPage> {
     final theme = Theme.of(context);
     final progressPercent = (item.progress * 100).clamp(0, 100);
 
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      leading: SizedBox(
-        width: 120,
-        child: Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: item.coverUrl.isNotEmpty
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          item.coverUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.video_library_outlined,
-                          ),
+    const tileHeight = 72.0;
+    final lastPlayed = DateTime.fromMillisecondsSinceEpoch(item.lastPlayedAt * 1000);
+    final lastPlayedText =
+        '${lastPlayed.month.toString().padLeft(2, '0')}-${lastPlayed.day.toString().padLeft(2, '0')} '
+        '${lastPlayed.hour.toString().padLeft(2, '0')}:${lastPlayed.minute.toString().padLeft(2, '0')}';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.pushVideo(item.videoId),
+          child: SizedBox(
+            height: tileHeight,
+            child: Stack(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: _HistoryCover(url: item.coverUrl),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '观看 ${progressPercent.toStringAsFixed(0)}% · $lastPlayedText',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                      )
-                    : const Icon(Icons.video_library_outlined),
-              ),
-            ),
-            // 进度条
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      tooltip: '移除',
+                      onPressed: () async {
+                        await user_api.deletePlayHistory(videoId: item.videoId);
+                        _state.load(refresh: true);
+                      },
+                    ),
+                  ],
                 ),
-                child: LinearProgressIndicator(
-                  value: progressPercent / 100,
-                  minHeight: 3,
-                  backgroundColor: Colors.black45,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    theme.colorScheme.primary,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: LinearProgressIndicator(
+                    value: (progressPercent / 100).toDouble(),
+                    minHeight: 3,
+                    backgroundColor: Colors.black26,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      theme.colorScheme.primary,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-      title: Text(
-        item.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        '观看了 ${progressPercent.toStringAsFixed(0)}%',
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-      trailing: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () async {
-          await user_api.deletePlayHistory(videoId: item.videoId);
-          _state.load(refresh: true);
-        },
-      ),
-      onTap: () => context.pushVideo(item.videoId),
     );
   }
-
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     return Center(
       child: Column(
@@ -311,6 +319,31 @@ class _HistoryPageState extends State<HistoryPage> {
             child: const Text('清除'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HistoryCover extends StatelessWidget {
+  final String url;
+
+  const _HistoryCover({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (url.isEmpty) {
+      return Container(
+        color: theme.colorScheme.surfaceContainerHighest,
+        child: const Icon(Icons.video_library_outlined),
+      );
+    }
+    return rust_image.CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      errorWidget: Container(
+        color: theme.colorScheme.surfaceContainerHighest,
+        child: const Icon(Icons.video_library_outlined),
       ),
     );
   }

@@ -640,57 +640,75 @@ class _DownloadListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final sizeText = _formatSizeDisplay(item);
-    
+
+    const tileHeight = 96.0;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: SizedBox(
+            height: tileHeight,
+            child: Stack(
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 缩略图占位
-                    _buildCoverWithSelection(theme),
-                    const SizedBox(width: 12),
+                    AspectRatio(
+                      // aspectRatio: 16 / 9,
+                      aspectRatio: 4 / 3,
+                      child: _buildCoverWithSelection(theme),
+                    ),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.title,
-                            style: theme.textTheme.bodyMedium,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if ((item.authorName ?? '').trim().isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            _buildAuthorLine(theme),
-                          ],
-                          const SizedBox(height: 4),
-                          Text(
-                            '${item.quality} · $sizeText',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item.title,
+                              style: theme.textTheme.bodyMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                            if ((item.authorName ?? '').trim().isNotEmpty) ...[
+                              const SizedBox(height: 6),
+                              _buildAuthorLine(theme),
+                            ] else ...[
+                              const SizedBox(height: 6),
+                            ],
+                            Text(
+                              '${item.quality} · $sizeText',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    _buildTrailing(context),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: _buildTrailing(context),
+                    ),
                   ],
                 ),
-                if (item.status is! ApiDownloadStatus_Completed) ...[
-                  const SizedBox(height: 12),
-                  LinearProgressIndicator(
-                    value: item.progress <= 0 ? null : item.progress,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                if (item.status is! ApiDownloadStatus_Completed)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: LinearProgressIndicator(
+                      value: item.progress <= 0 ? null : item.progress,
+                      minHeight: 3,
+                      backgroundColor: Colors.black26,
+                    ),
                   ),
-                ],
               ],
             ),
           ),
@@ -702,13 +720,7 @@ class _DownloadListTile extends StatelessWidget {
   Widget _buildCoverWithSelection(ThemeData theme) {
     return Stack(
       children: [
-        Container(
-          width: 80,
-          height: 45,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-          child: _buildCover(theme),
-        ),
+        Positioned.fill(child: _buildCover(theme)),
         if (isSelectionMode)
           Positioned.fill(
             child: AnimatedOpacity(
@@ -717,7 +729,6 @@ class _DownloadListTile extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.35),
-                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Center(
                   child: Icon(Icons.check_circle, color: Colors.white),

@@ -96,18 +96,6 @@ pub async fn get_cache_size() -> anyhow::Result<CacheInfo> {
     })
 }
 
-/// 清理封面缓存
-#[frb]
-pub async fn clear_cover_cache() -> anyhow::Result<bool> {
-    let dir = storage::get_data_dir()?.join("download_covers");
-    let _ = std::fs::remove_dir_all(&dir);
-    let _ = std::fs::create_dir_all(&dir);
-    let avatar = storage::get_data_dir()?.join("download_avatars");
-    let _ = std::fs::remove_dir_all(&avatar);
-    let _ = std::fs::create_dir_all(&avatar);
-    Ok(true)
-}
-
 /// 清理视频缓存（临时缓存，不含下载）
 #[frb]
 pub async fn clear_video_cache() -> anyhow::Result<bool> {

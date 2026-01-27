@@ -518,10 +518,11 @@ fn build_download_path(video_id: &str, quality: &str, ext: &str) -> anyhow::Resu
 }
 
 async fn download_author_avatar(
+    video_id: &str,
     author_id: &str,
     avatar_url: &str,
 ) -> anyhow::Result<Option<String>> {
-    if avatar_url.trim().is_empty() || author_id.trim().is_empty() {
+    if avatar_url.trim().is_empty() || author_id.trim().is_empty() || video_id.trim().is_empty() {
         return Ok(None);
     }
     let mut dir = storage::get_data_dir()?;
@@ -544,7 +545,8 @@ async fn download_author_avatar(
         }
     };
     let mut file_path = dir;
-    file_path.push(format!("{}.{}", author_id, ext));
+    // 以 video_id 作为文件名的一部分，保证“与视频绑定”，删除下载时易于清理且避免冲突。
+    file_path.push(format!("{}_{}.{}", video_id, author_id, ext));
 
     let client = network::get_client();
     let bytes = client.get(avatar_url).send().await?.bytes().await?;
@@ -674,7 +676,7 @@ async fn run_download(
     // 尝试补齐作者信息（用于离线展示）
     if let Some(creator) = detail.creator.clone() {
         let avatar_path = if record.author_avatar_path.is_none() {
-            download_author_avatar(&creator.id, creator.avatar_url.as_deref().unwrap_or(""))
+            download_author_avatar(&video_id, &creator.id, creator.avatar_url.as_deref().unwrap_or(""))
                 .await
                 .ok()
                 .flatten()
