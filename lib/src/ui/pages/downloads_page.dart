@@ -14,6 +14,7 @@ import 'package:hibiscus/src/rust/api/models.dart';
 import 'package:hibiscus/src/state/download_state.dart';
 import 'package:hibiscus/src/router/router.dart';
 import 'package:hibiscus/src/platform/gallery_export.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DownloadsPage extends StatefulWidget {
   const DownloadsPage({super.key});
@@ -168,6 +169,62 @@ class _DownloadsPageState extends State<DownloadsPage> {
     } finally {
       _isOperating.value = false;
     }
+  }
+
+  Future<void> _shareSelected(BuildContext context) async {
+    if (kIsWeb) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(this.context).showSnackBar(
+        const SnackBar(content: Text('Web 暂不支持分享文件')),
+      );
+      return;
+    }
+
+    final selected = _items.value
+        .where((e) => _selectedIds.value.contains(e.id))
+        .where((e) => e.status is ApiDownloadStatus_Completed)
+        .where((e) => e.filePath != null && e.filePath!.isNotEmpty)
+        .where((e) => File(e.filePath!).existsSync())
+        .toList();
+
+    if (selected.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(this.context).showSnackBar(
+        const SnackBar(content: Text('请选择已完成且文件存在的下载任务')),
+      );
+      return;
+    }
+
+    final shareOrigin = _shareOriginFromContext(context);
+    final files = selected.map((e) => XFile(e.filePath!)).toList();
+
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          files: files,
+          subject: 'Hibiscus downloads',
+          text: 'Hibiscus 下载文件',
+          sharePositionOrigin: shareOrigin,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(this.context).showSnackBar(
+        SnackBar(content: Text('分享失败：$e')),
+      );
+    }
+  }
+
+  Rect _shareOriginFromContext(BuildContext context) {
+    final renderObject = context.findRenderObject();
+    final box = renderObject is RenderBox ? renderObject : null;
+    if (box == null || !box.hasSize || box.size.isEmpty) {
+      return const Rect.fromLTWH(1, 1, 1, 1);
+    }
+    final origin = box.localToGlobal(Offset.zero);
+    final rect = origin & box.size;
+    if (rect.isEmpty) return const Rect.fromLTWH(1, 1, 1, 1);
+    return rect;
   }
 
   Future<void> _exportSelectedToFiles() async {
@@ -429,6 +486,14 @@ class _DownloadsPageState extends State<DownloadsPage> {
           Watch((context) {
             final selecting = _isSelectionMode.value;
             if (selecting) {
+              final selected = _selectedIds.value;
+              final hasSharable = _items.value.any(
+                (e) =>
+                    selected.contains(e.id) &&
+                    e.status is ApiDownloadStatus_Completed &&
+                    (e.filePath ?? '').isNotEmpty &&
+                    File(e.filePath!).existsSync(),
+              );
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -436,6 +501,11 @@ class _DownloadsPageState extends State<DownloadsPage> {
                     tooltip: '全选',
                     icon: const Icon(Icons.select_all),
                     onPressed: _selectAllVisible,
+                  ),
+                  IconButton(
+                    tooltip: '分享文件',
+                    icon: const Icon(Icons.share_outlined),
+                    onPressed: hasSharable ? () => _shareSelected(context) : null,
                   ),
                   IconButton(
                     tooltip: Platform.isIOS ? '导出到文件（Documents）' : '导出到文件',

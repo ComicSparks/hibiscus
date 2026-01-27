@@ -96,20 +96,6 @@ pub async fn get_cache_size() -> anyhow::Result<CacheInfo> {
     })
 }
 
-/// 清理视频缓存（临时缓存，不含下载）
-#[frb]
-pub async fn clear_video_cache() -> anyhow::Result<bool> {
-    Ok(true)
-}
-
-/// 清理所有缓存
-#[frb]
-pub async fn clear_all_cache() -> anyhow::Result<bool> {
-    clear_cover_cache().await?;
-    clear_video_cache().await?;
-    Ok(true)
-}
-
 /// 获取数据目录路径（用于桌面端打开数据存储目录）
 #[frb]
 pub async fn get_data_dir_path() -> anyhow::Result<String> {

@@ -44,14 +44,6 @@ Future<bool> saveFlutterSettings({required String json}) =>
 Future<CacheInfo> getCacheSize() =>
     RustLib.instance.api.crateApiSettingsGetCacheSize();
 
-/// 清理视频缓存（临时缓存，不含下载）
-Future<bool> clearVideoCache() =>
-    RustLib.instance.api.crateApiSettingsClearVideoCache();
-
-/// 清理所有缓存
-Future<bool> clearAllCache() =>
-    RustLib.instance.api.crateApiSettingsClearAllCache();
-
 /// 获取数据目录路径（用于桌面端打开数据存储目录）
 Future<String> getDataDirPath() =>
     RustLib.instance.api.crateApiSettingsGetDataDirPath();
