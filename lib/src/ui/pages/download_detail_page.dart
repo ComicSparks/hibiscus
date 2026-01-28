@@ -302,12 +302,6 @@ class _DownloadDetailPageState extends State<DownloadDetailPage> {
       appBar: AppBar(
         title: const Text('下载详情'),
         actions: [
-          if (_player.supportsPictureInPicture)
-            IconButton(
-              tooltip: '画中画',
-              icon: const Icon(Icons.picture_in_picture_alt),
-              onPressed: () => _player.enterPictureInPicture(),
-            ),
           IconButton(
             tooltip: '溯源',
             icon: const Icon(Icons.travel_explore),

@@ -31,7 +31,7 @@ class AppSettings {
     this.fullscreenOrientationMode = FullscreenOrientationMode.landscape,
     this.proxyUrl,
     this.enableProxy = false,
-    this.preferredPlayerType = PlayerType.mediaKit,
+    this.preferredPlayerType = PlayerType.betterPlayer,
   });
 
   /// 获取实际使用的播放器类型（PC 端强制 mediaKit）

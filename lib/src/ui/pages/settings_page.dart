@@ -417,7 +417,7 @@ class _SettingsPageState extends State<SettingsPage> {
               return RadioListTile<PlayerType>(
                 title: Text(_playerTypeLabel(type)),
                 subtitle: type == PlayerType.betterPlayer
-                    ? const Text('支持画中画')
+                    ? const Text('仅支持移动端')
                     : const Text('跨平台通用'),
                 value: type,
                 groupValue: current,

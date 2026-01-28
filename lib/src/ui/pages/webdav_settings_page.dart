@@ -1,5 +1,7 @@
 // WebDAV 同步设置页
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hibiscus/src/rust/api/sync.dart' as sync_api;
 
@@ -11,6 +13,11 @@ class WebDavSettingsPage extends StatefulWidget {
 }
 
 class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
+  final _urlFocusNode = FocusNode();
+  final _usernameFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _encryptionKeyFocusNode = FocusNode();
+
   final _formKey = GlobalKey<FormState>();
   final _urlController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -22,7 +29,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
   bool _isLoading = true;
   bool _isTesting = false;
   bool _isSyncing = false;
-  bool _isSaving = false;
+  bool _isAutoSaving = false;
   bool _obscurePassword = true;
   bool _obscureEncryptionKey = true;
   int? _lastSyncTime;
@@ -30,11 +37,26 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
   @override
   void initState() {
     super.initState();
+    _attachFocusListeners();
     _loadSettings();
+  }
+
+  Future<void> _autoSaveSettings() async {
+    await _saveSettings(showSuccessSnack: false, isAuto: true);
+  }
+
+  Future<void> _blurAndSave() async {
+    FocusScope.of(context).unfocus();
+    await _saveSettings(showSuccessSnack: false, isAuto: true);
   }
 
   @override
   void dispose() {
+    unawaited(_saveSettings(showSuccessSnack: false, isAuto: true));
+    _urlFocusNode.dispose();
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _encryptionKeyFocusNode.dispose();
     _urlController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
@@ -67,10 +89,32 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
     }
   }
 
-  Future<void> _saveSettings() async {
+  void _attachFocusListeners() {
+    for (final node in [
+      _urlFocusNode,
+      _usernameFocusNode,
+      _passwordFocusNode,
+      _encryptionKeyFocusNode,
+    ]) {
+      node.addListener(() {
+        if (!node.hasFocus) {
+          _autoSaveSettings();
+        }
+      });
+    }
+  }
+
+  Future<void> _saveSettings({
+    bool showSuccessSnack = true,
+    bool isAuto = false,
+  }) async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSaving = true);
+    if (isAuto) {
+      if (_isAutoSaving) return;
+      _isAutoSaving = true;
+    }
+
     try {
       await sync_api.saveWebdavSettings(
         settings: sync_api.ApiWebDavSettings(
@@ -83,16 +127,20 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
         ),
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('设置已保存')),
-      );
+      if (showSuccessSnack) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('设置已保存')),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('保存失败: $e')),
       );
     } finally {
-      if (mounted) setState(() => _isSaving = false);
+      if (isAuto) {
+        _isAutoSaving = false;
+      }
     }
   }
 
@@ -107,6 +155,8 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
       );
       return;
     }
+
+    await _blurAndSave();
 
     setState(() => _isTesting = true);
     try {
@@ -126,7 +176,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('连接失败: $e'),
+          content: Text('连接失败: ${_friendlyErrorMessage(e)}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -143,8 +193,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
       return;
     }
 
-    // 先保存设置
-    await _saveSettings();
+    await _blurAndSave();
 
     setState(() => _isSyncing = true);
     try {
@@ -178,9 +227,10 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
         );
       }
     } catch (e) {
+      debugPrint('WebDAV sync error: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('同步失败: $e')),
+        SnackBar(content: Text('同步失败: ${_friendlyErrorMessage(e)}')),
       );
     } finally {
       if (mounted) setState(() => _isSyncing = false);
@@ -224,6 +274,11 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
         ],
       ),
     );
+  }
+
+  String _friendlyErrorMessage(Object error) {
+    final message = error is Exception ? error.toString() : '$error';
+    return message.split('\n').first;
   }
 
   void _showChangeKeyDialog() {
@@ -349,23 +404,6 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('WebDAV 同步'),
-        actions: [
-          if (_isSaving)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.save_outlined),
-              tooltip: '保存设置',
-              onPressed: _saveSettings,
-            ),
-        ],
       ),
       body: Form(
         key: _formKey,
@@ -430,6 +468,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
 
             TextFormField(
               controller: _urlController,
+              focusNode: _urlFocusNode,
               decoration: const InputDecoration(
                 labelText: 'WebDAV 地址',
                 hintText: 'https://example.com/dav/',
@@ -453,6 +492,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
 
             TextFormField(
               controller: _usernameController,
+              focusNode: _usernameFocusNode,
               decoration: const InputDecoration(
                 labelText: '用户名',
                 prefixIcon: Icon(Icons.person_outline),
@@ -464,6 +504,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
 
             TextFormField(
               controller: _passwordController,
+              focusNode: _passwordFocusNode,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 labelText: '密码',
@@ -507,6 +548,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
 
             TextFormField(
               controller: _encryptionKeyController,
+              focusNode: _encryptionKeyFocusNode,
               obscureText: _obscureEncryptionKey,
               decoration: InputDecoration(
                 labelText: '加密密钥',
@@ -545,6 +587,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
               value: _autoSyncOnStart,
               onChanged: (value) {
                 setState(() => _autoSyncOnStart = value);
+                _autoSaveSettings();
               },
               contentPadding: EdgeInsets.zero,
             ),
@@ -557,7 +600,13 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('自动同步间隔'),
+                      const Text('浏览时自动同步'),
+                      Text(
+                        '设置为 0 则不自动同步；在进入/退出视频详情页时检测',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                       Text(
                         _autoSyncInterval == 0
                             ? '不自动同步'
@@ -583,13 +632,7 @@ class _WebDavSettingsPageState extends State<WebDavSettingsPage> {
               onChanged: (value) {
                 setState(() => _autoSyncInterval = value.toInt());
               },
-            ),
-
-            Text(
-              '设置为 0 则不自动同步；在进入/退出视频详情页时检测',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              onChangeEnd: (_) => _autoSaveSettings(),
             ),
 
             const SizedBox(height: 32),

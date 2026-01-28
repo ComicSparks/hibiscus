@@ -53,6 +53,6 @@ class PlayerFactory {
     if (!Platform.isAndroid && !Platform.isIOS) {
       return PlayerType.mediaKit;
     }
-    return PlayerType.mediaKit;
+    return PlayerType.betterPlayer;
   }
 }

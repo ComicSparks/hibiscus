@@ -360,12 +360,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         ),
         actions: [
           _buildQualityAction(),
-          if (_player.supportsPictureInPicture)
-            IconButton(
-              icon: const Icon(Icons.picture_in_picture_alt),
-              tooltip: '画中画',
-              onPressed: () => _player.enterPictureInPicture(),
-            ),
           IconButton(
             icon: const Icon(Icons.share_outlined),
             tooltip: '分享',
