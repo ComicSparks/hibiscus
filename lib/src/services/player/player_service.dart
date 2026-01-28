@@ -139,7 +139,7 @@ abstract class PlayerService {
   /// 获取默认播放器类型
   static PlayerType defaultType() {
     if (Platform.isAndroid || Platform.isIOS) {
-      return PlayerType.betterPlayer;
+      return PlayerType.mediaKit;
     }
     return PlayerType.mediaKit;
   }

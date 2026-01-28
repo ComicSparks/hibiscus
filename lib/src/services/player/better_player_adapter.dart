@@ -17,13 +17,9 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
   bool _isInPip = false;
   Timer? _positionTimer;
   Orientation _lastOrientation = Orientation.portrait;
+  GlobalKey? _playerKey;
 
-  /// 画中画是否启用（设置项）
-  bool enablePictureInPicture;
-
-  BetterPlayerAdapter({
-    this.enablePictureInPicture = true,
-  }) {
+  BetterPlayerAdapter() {
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -138,8 +134,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
     Duration? startPosition,
     bool autoPlay = true,
   }) {
-    final pipEnabled =
-        enablePictureInPicture && (Platform.isAndroid || Platform.isIOS);
+    final pipEnabled = Platform.isAndroid || Platform.isIOS;
     return BetterPlayerConfiguration(
       autoPlay: autoPlay,
       startAt: startPosition,
@@ -162,8 +157,6 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
         progressBarBackgroundColor: Colors.white24,
       ),
       allowedScreenSleep: false,
-      // 画中画配置
-      handleLifecycle: !pipEnabled, // 启用 PiP 时不自动处理生命周期
     );
   }
 
@@ -191,6 +184,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
       ),
     );
 
+    _playerKey = GlobalKey();
     _controller = BetterPlayerController(
       _buildConfiguration(
         startPosition: startPosition,
@@ -198,6 +192,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
       ),
       betterPlayerDataSource: dataSource,
     );
+    _controller?.setBetterPlayerGlobalKey(_playerKey!);
 
     _setupListeners();
   }
@@ -224,6 +219,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
       ),
     );
 
+    _playerKey = GlobalKey();
     _controller = BetterPlayerController(
       _buildConfiguration(
         startPosition: startPosition,
@@ -231,6 +227,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
       ),
       betterPlayerDataSource: dataSource,
     );
+    _controller?.setBetterPlayerGlobalKey(_playerKey!);
 
     _setupListeners();
   }
@@ -266,6 +263,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
     
     final controller = _controller;
     _controller = null;
+    _playerKey = null;
     
     if (controller != null) {
       try {
@@ -298,14 +296,13 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
   }
 
   @override
-  bool get supportsPictureInPicture =>
-      enablePictureInPicture && (Platform.isAndroid || Platform.isIOS);
+  bool get supportsPictureInPicture => Platform.isAndroid || Platform.isIOS;
 
   @override
   Future<void> enterPictureInPicture() async {
     if (!supportsPictureInPicture) return;
     final controller = _controller;
-    final key = controller?.betterPlayerGlobalKey;
+    final key = controller?.betterPlayerGlobalKey ?? _playerKey;
     if (controller == null || key == null) return;
     controller.enablePictureInPicture(key);
   }
@@ -411,7 +408,7 @@ class BetterPlayerAdapter with WidgetsBindingObserver implements PlayerService {
 
     return Container(
       color: backgroundColor,
-      child: BetterPlayer(controller: _controller!),
+      child: BetterPlayer(controller: _controller!, key: _playerKey),
     );
   }
 }

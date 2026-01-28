@@ -1,6 +1,7 @@
 import Flutter
 import Photos
 import UIKit
+import AVFoundation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -40,7 +41,19 @@ import UIKit
       }
     }
 
+    configureAudioSession()
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  private func configureAudioSession() {
+    let session = AVAudioSession.sharedInstance()
+    do {
+      try session.setCategory(.playback, options: [.mixWithOthers, .allowBluetooth])
+      try session.setActive(true)
+    } catch {
+      debugPrint("AVAudioSession setup failed: \(error)")
+    }
   }
 
   private func saveVideoToGallery(url: URL, completion: @escaping (Error?) -> Void) {

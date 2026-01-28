@@ -20,7 +20,6 @@ class AppSettings {
   final String? proxyUrl;
   final bool enableProxy;
   final PlayerType preferredPlayerType;
-  final bool enablePictureInPicture;
   
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -32,8 +31,7 @@ class AppSettings {
     this.fullscreenOrientationMode = FullscreenOrientationMode.landscape,
     this.proxyUrl,
     this.enableProxy = false,
-    this.preferredPlayerType = PlayerType.betterPlayer,
-    this.enablePictureInPicture = true,
+    this.preferredPlayerType = PlayerType.mediaKit,
   });
 
   /// 获取实际使用的播放器类型（PC 端强制 mediaKit）
@@ -55,7 +53,6 @@ class AppSettings {
     String? proxyUrl,
     bool? enableProxy,
     PlayerType? preferredPlayerType,
-    bool? enablePictureInPicture,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -69,7 +66,6 @@ class AppSettings {
       proxyUrl: proxyUrl ?? this.proxyUrl,
       enableProxy: enableProxy ?? this.enableProxy,
       preferredPlayerType: preferredPlayerType ?? this.preferredPlayerType,
-      enablePictureInPicture: enablePictureInPicture ?? this.enablePictureInPicture,
     );
   }
   
@@ -84,7 +80,6 @@ class AppSettings {
     'proxyUrl': proxyUrl,
     'enableProxy': enableProxy,
     'preferredPlayerType': preferredPlayerType.index,
-    'enablePictureInPicture': enablePictureInPicture,
   };
   
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -98,11 +93,11 @@ class AppSettings {
           .clamp(0, FullscreenOrientationMode.values.length - 1);
       return FullscreenOrientationMode.values[idx];
     }
-    PlayerType parsePlayerType(dynamic v) {
+    int parsePlayerType(dynamic v) {
       final parsed = (v is num) ? v.toInt() : int.tryParse('$v');
-      final idx = (parsed ?? PlayerType.betterPlayer.index)
+      final idx = (parsed ?? PlayerType.mediaKit.index)
           .clamp(0, PlayerType.values.length - 1);
-      return PlayerType.values[idx];
+      return idx;
     }
     return AppSettings(
       themeMode: ThemeMode.values[json['themeMode'] ?? 0],
@@ -115,8 +110,7 @@ class AppSettings {
           parseFullscreenMode(json['fullscreenOrientationMode']),
       proxyUrl: json['proxyUrl'],
       enableProxy: json['enableProxy'] ?? false,
-      preferredPlayerType: parsePlayerType(json['preferredPlayerType']),
-      enablePictureInPicture: json['enablePictureInPicture'] ?? true,
+      preferredPlayerType: PlayerType.values[parsePlayerType(json['preferredPlayerType'])],
     );
   }
 }
@@ -186,8 +180,6 @@ class SettingsState {
     }
   }
   
-  /// 设置自动播放
-  /// 设置默认播放清晰度
   Future<void> setDefaultPlayQuality(String quality) async {
     settings.value = settings.value.copyWith(defaultPlayQuality: quality);
     await _save();
@@ -233,12 +225,6 @@ class SettingsState {
     await _save();
   }
 
-  /// 设置画中画开关
-  Future<void> setEnablePictureInPicture(bool enabled) async {
-    settings.value = settings.value.copyWith(enablePictureInPicture: enabled);
-    await _save();
-  }
-  
   /// 重置设置
   Future<void> reset() async {
     settings.value = const AppSettings();

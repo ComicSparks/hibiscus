@@ -20,9 +20,7 @@ class PlayerFactory {
 
     switch (effectiveType) {
       case PlayerType.betterPlayer:
-        final enablePip =
-            settingsState.settings.value.enablePictureInPicture;
-        return BetterPlayerAdapter(enablePictureInPicture: enablePip);
+        return BetterPlayerAdapter();
       case PlayerType.mediaKit:
         return MediaKitPlayer();
     }
@@ -55,6 +53,6 @@ class PlayerFactory {
     if (!Platform.isAndroid && !Platform.isIOS) {
       return PlayerType.mediaKit;
     }
-    return PlayerType.betterPlayer;
+    return PlayerType.mediaKit;
   }
 }

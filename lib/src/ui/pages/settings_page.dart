@@ -93,21 +93,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   settings.fullscreenOrientationMode,
                 ),
               ),
-            if (Platform.isAndroid || Platform.isIOS) ...[
+            if (Platform.isAndroid || Platform.isIOS)
               ListTile(
                 title: const Text('播放器内核'),
                 subtitle: Text(_playerTypeLabel(settings.preferredPlayerType)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showPlayerTypePicker(context, settings.preferredPlayerType),
               ),
-              if (settings.preferredPlayerType == PlayerType.betterPlayer)
-                SwitchListTile(
-                  title: const Text('画中画'),
-                  subtitle: const Text('使用 BetterPlayer 时支持画中画模式'),
-                  value: settings.enablePictureInPicture,
-                  onChanged: (value) => settingsState.setEnablePictureInPicture(value),
-                ),
-            ],
           
             const Divider(),
           
@@ -402,8 +394,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String _playerTypeLabel(PlayerType type) {
     return switch (type) {
-      PlayerType.betterPlayer => 'BetterPlayer（支持画中画）',
       PlayerType.mediaKit => 'MediaKit（通用）',
+      PlayerType.betterPlayer => 'BetterPlayer（支持画中画）',
     };
   }
 
@@ -425,7 +417,7 @@ class _SettingsPageState extends State<SettingsPage> {
               return RadioListTile<PlayerType>(
                 title: Text(_playerTypeLabel(type)),
                 subtitle: type == PlayerType.betterPlayer
-                    ? const Text('iOS/Android 默认，支持画中画')
+                    ? const Text('支持画中画')
                     : const Text('跨平台通用'),
                 value: type,
                 groupValue: current,
