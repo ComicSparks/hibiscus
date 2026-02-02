@@ -40,26 +40,26 @@ const List<HostChoice> _hostChoices = [
     host: 'hanime1.me',
     useCustomDns: true,
     label: 'hanime1.me（自定义 DNS）',
-    description: '使用内置 Cloudflare IP（https 请求走 Rust，绕过 DNS 污染）。',
+    description: '使用内置 Cloudflare IP（绕过 DNS 污染）。',
   ),
   HostChoice(
     host: 'hanime1.me',
     useCustomDns: false,
     label: 'hanime1.me（官方 DNS）',
-    description: '走系统 DNS，适合官方渠道。',
+    description: '使用系统 DNS 解析域名 IP。',
   ),
-  HostChoice(
-    host: 'hanimeone.me',
-    useCustomDns: false,
-    label: 'hanimeone.me',
-    description: '备用域名，Cookie/登录状态独立。',
-  ),
-  HostChoice(
-    host: 'javchu.com',
-    useCustomDns: false,
-    label: 'javchu.com',
-    description: '备用域名，Cookie/登录状态独立。',
-  ),
+  // HostChoice(
+  //   host: 'hanimeone.me',
+  //   useCustomDns: false,
+  //   label: 'hanimeone.me',
+  //   description: '备用域名，Cookie/登录状态独立。',
+  // ),
+  // HostChoice(
+  //   host: 'javchu.com',
+  //   useCustomDns: false,
+  //   label: 'javchu.com',
+  //   description: '备用域名，Cookie/登录状态独立。',
+  // ),
 ];
 
 class ActiveHostState {

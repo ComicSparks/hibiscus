@@ -9,7 +9,7 @@ const String _remoteConfigBodyKey = 'remote_config.body_json';
 const String _remoteConfigLastFetchMsKey = 'remote_config.last_fetch_ms';
 const String _otlpUrlKey = 'otlp.url';
 
-const Duration _defaultCacheTtl = Duration(minutes: 10);
+const Duration _defaultCacheTtl = Duration(hours: 3);
 const Duration _maxRemoteConfigStale = Duration(hours: 48);
 
 const String _configOwnerKey = 'remote_config.owner';

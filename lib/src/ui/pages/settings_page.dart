@@ -171,19 +171,19 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
             _buildUserHeader(context, theme, loginStatus, user),
             const Divider(),
-            _SectionHeader(title: '更新'),
-            ListTile(
-              title: const Text('检查更新'),
-              subtitle: Text(_updateStatusLabel(updateStatus, updateEnabled)),
-              trailing: Badge(
-                label: const Text('新', style: TextStyle(fontSize: 10)),
-                isLabelVisible: updateEnabled && updateStatus.hasUpdate,
-                child: const Icon(Icons.system_update_alt),
-              ),
-              onTap: () => manualCheckUpdate(context),
-            ),
-
-            const Divider(),
+            // TODO: 暂时注释掉手动检查更新功能
+            // _SectionHeader(title: '更新'),
+            // ListTile(
+            //   title: const Text('检查更新'),
+            //   subtitle: Text(_updateStatusLabel(updateStatus, updateEnabled)),
+            //   trailing: Badge(
+            //     label: const Text('新', style: TextStyle(fontSize: 10)),
+            //     isLabelVisible: updateEnabled && updateStatus.hasUpdate,
+            //     child: const Icon(Icons.system_update_alt),
+            //   ),
+            //   onTap: () => manualCheckUpdate(context),
+            // ),
+            // const Divider(),
 
             // 外观设置
             _SectionHeader(title: '外观'),
