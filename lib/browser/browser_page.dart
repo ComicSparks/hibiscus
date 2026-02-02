@@ -62,8 +62,20 @@ class _BrowserPageState extends State<BrowserPage>
     widget.onActivated?.call();
   }
 
-  void _onWebViewCreated(InAppWebViewController controller) {
+  void _onWebViewCreated(InAppWebViewController controller) async {
     _controller.setWebViewController(controller);
+    
+    // 捕获并保存 UserAgent 到数据库
+    try {
+      final settings = await controller.getSettings();
+      final ua = settings?.userAgent;
+      if (ua != null && ua.isNotEmpty) {
+        await browserState.saveUserAgent(ua);
+      }
+      debugPrint('UserAgent: $ua');
+    } catch (e) {
+      debugPrint('Failed to capture UserAgent: $e');
+    }
   }
 
   void _onLoadStart(InAppWebViewController controller, WebUri? url) {
@@ -762,15 +774,15 @@ class _BrowserPageState extends State<BrowserPage>
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: '首页地址',
-                hintText: 'https://www.google.com',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.url,
-            ),
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    labelText: '首页地址',
+                    hintText: 'https://www.bing.com',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.url,
+                ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               icon: const Icon(Icons.my_location, size: 16),

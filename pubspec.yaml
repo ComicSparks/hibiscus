@@ -43,9 +43,6 @@ dependencies:
   # State Management
   signals: ^6.0.1
   
-  # Routing
-  go_router: ^14.8.1
-  
   # UI Components
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0

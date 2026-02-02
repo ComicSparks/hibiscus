@@ -44,9 +44,8 @@ where
 /// 获取缓存
 fn get_cache(key: &str) -> Result<Option<(String, i64)>> {
     let db = crate::core::storage::get_db()?;
-    let mut stmt = db.prepare_cached(
-        "SELECT cache_content, cache_time FROM web_cache WHERE cache_key = ?1",
-    )?;
+    let mut stmt =
+        db.prepare_cached("SELECT cache_content, cache_time FROM web_cache WHERE cache_key = ?1")?;
     let mut rows = stmt.query(params![key])?;
 
     if let Some(row) = rows.next()? {

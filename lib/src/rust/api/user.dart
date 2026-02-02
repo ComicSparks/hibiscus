@@ -154,6 +154,10 @@ Future<bool> setCfClearance({required String cookieValue}) =>
 Future<ApiCloudflareChallenge?> getCloudflareChallengeInfo() =>
     RustLib.instance.api.crateApiUserGetCloudflareChallengeInfo();
 
+/// 重新加载 UserAgent（当 Flutter 端保存了新的 UA 后调用）
+Future<String> reloadUserAgent() =>
+    RustLib.instance.api.crateApiUserReloadUserAgent();
+
 /// 获取登录页面的表单 `_token`
 Future<String> getLoginFormToken() =>
     RustLib.instance.api.crateApiUserGetLoginFormToken();

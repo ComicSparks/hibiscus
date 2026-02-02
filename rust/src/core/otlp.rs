@@ -26,7 +26,11 @@ fn load_otlp_url() -> Option<String> {
     match storage::get_setting(OTLP_URL_KEY) {
         Ok(Some(v)) => {
             let s = v.trim().to_string();
-            if s.is_empty() { None } else { Some(s) }
+            if s.is_empty() {
+                None
+            } else {
+                Some(s)
+            }
         }
         _ => None,
     }
@@ -209,12 +213,14 @@ fn spans_to_protobuf_base64(spans: &[SpanData], resource: &Resource) -> Option<S
         .collect();
 
     let scope_spans = ScopeSpans {
-        scope: Some(opentelemetry_proto::tonic::common::v1::InstrumentationScope {
-            name: "hibiscus".to_string(),
-            version: env!("CARGO_PKG_VERSION").to_string(),
-            attributes: vec![],
-            dropped_attributes_count: 0,
-        }),
+        scope: Some(
+            opentelemetry_proto::tonic::common::v1::InstrumentationScope {
+                name: "hibiscus".to_string(),
+                version: env!("CARGO_PKG_VERSION").to_string(),
+                attributes: vec![],
+                dropped_attributes_count: 0,
+            },
+        ),
         spans: proto_spans,
         schema_url: String::new(),
     };
@@ -310,7 +316,10 @@ async fn background_reporter() {
 
     loop {
         let wait_secs = if consecutive_failures > 0 {
-            std::cmp::min(REPORT_INTERVAL_SECS * (2_u64.pow(consecutive_failures - 1)), 300)
+            std::cmp::min(
+                REPORT_INTERVAL_SECS * (2_u64.pow(consecutive_failures - 1)),
+                300,
+            )
         } else {
             REPORT_INTERVAL_SECS
         };

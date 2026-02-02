@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/router/router.dart';
+import 'package:hibiscus/browser/browser_state.dart';
 import 'package:hibiscus/src/rust/api/video.dart' as video_api;
 import 'package:hibiscus/src/rust/api/download.dart' as download_api;
 import 'package:hibiscus/src/rust/api/user.dart' as user_api;
@@ -14,6 +15,7 @@ import 'package:hibiscus/src/state/search_state.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:hibiscus/src/state/download_state.dart';
 import 'package:hibiscus/src/state/user_state.dart';
+import 'package:hibiscus/src/state/host_state.dart';
 import 'package:hibiscus/src/ui/pages/login_page.dart';
 import 'package:hibiscus/src/ui/widgets/cached_image.dart' as rust_image;
 import 'package:hibiscus/src/services/webdav_sync_service.dart';
@@ -100,11 +102,17 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   Duration _lastDur = Duration.zero;
   int _lastSavedAtMs = 0;
 
-  static const Map<String, String> _kDefaultHeaders = {
-    'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Referer': 'https://hanime1.me/',
-  };
+  static const _kFallbackUserAgent =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+  Map<String, String> get _headersForPlayer {
+    final hostInfo = activeHostState.activeHost.value;
+    final ua = browserState.userAgent.value ?? _kFallbackUserAgent;
+    return {
+      'User-Agent': ua,
+      'Referer': hostInfo.referer,
+    };
+  }
 
   @override
   void initState() {
@@ -129,6 +137,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     });
   }
 
+  @override
   @override
   void dispose() {
     _flushHistory(force: true);
@@ -271,7 +280,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       if (mounted) setState(() {});
     }
     
-    await _player.openUrl(url, headers: _kDefaultHeaders, autoPlay: true);
+    await _player.openUrl(url, headers: _headersForPlayer, autoPlay: true);
   }
 
   Future<void> _playSelectedQuality(ApiVideoDetail detail) async {
@@ -329,7 +338,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     
     await _player.openUrl(
       url,
-      headers: _kDefaultHeaders,
+      headers: _headersForPlayer,
       autoPlay: true,
       startPosition: resumeAt,
     );
@@ -1013,7 +1022,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   }
 
   Future<void> _shareCurrent() async {
-    final url = 'https://hanime1.me/watch?v=${widget.videoId}';
+    final hostInfo = activeHostState.activeHost.value;
+    final url = '${hostInfo.baseUrl}/watch?v=${widget.videoId}';
     if (!mounted) return;
     final rootContext = context;
     await showModalBottomSheet(

@@ -2,6 +2,7 @@
 // 使用 Rust 端 sqlite(settings 表) 持久化存储应用是否已激活等状态
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/services/rust_kv_store.dart';
+import 'package:hibiscus/src/rust/api/user.dart' as user_api;
 
 /// 浏览器/激活状态管理
 class BrowserState {
@@ -15,12 +16,13 @@ class BrowserState {
   static const _keyBookmarks = 'hibiscus_bookmarks';
   static const _keyBrowseHistory = 'hibiscus_browse_history';
   static const _keyHomePage = 'hibiscus_browser_home_page';
+  static const _keyUserAgent = 'hibiscus_browser_user_agent';
 
   /// 激活协议
   static const activationScheme = 'hibi://start';
 
   /// 默认首页
-  static const defaultHomePage = 'https://www.google.com';
+  static const defaultHomePage = 'https://www.bing.com';
 
   // 应用是否已激活（首次进入浏览器后输入 hibi://start 激活）
   final isActivated = signal(false);
@@ -51,6 +53,9 @@ class BrowserState {
 
   // 浏览历史
   final browseHistory = signal<List<BrowserHistoryItem>>([]);
+
+  // 用户代理
+  final userAgent = signal<String?>(null);
 
   /// 初始化状态
   Future<void> init() async {
@@ -85,6 +90,9 @@ class BrowserState {
     // 加载上次访问的 URL
     currentUrl.value =
         await RustKvStore.getString(_keyLastVisitedUrl) ?? homePage.value;
+
+    // 加载 UserAgent
+    userAgent.value = await RustKvStore.getString(_keyUserAgent);
   }
 
   /// 检查输入的 URL 是否是激活协议
@@ -195,6 +203,18 @@ class BrowserState {
   Future<void> _saveHistory() async {
     final list = browseHistory.value.map((h) => h.toString()).toList();
     await RustKvStore.setStringList(_keyBrowseHistory, list);
+  }
+
+  /// 保存 UserAgent 并通知 Rust 端重新加载
+  Future<void> saveUserAgent(String ua) async {
+    userAgent.value = ua;
+    await RustKvStore.setString(_keyUserAgent, ua);
+    // 通知 Rust 端重新加载 UserAgent
+    try {
+      await user_api.reloadUserAgent();
+    } catch (_) {
+      // 忽略错误
+    }
   }
 }
 

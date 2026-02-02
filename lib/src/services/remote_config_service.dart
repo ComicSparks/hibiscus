@@ -9,7 +9,8 @@ const String _remoteConfigBodyKey = 'remote_config.body_json';
 const String _remoteConfigLastFetchMsKey = 'remote_config.last_fetch_ms';
 const String _otlpUrlKey = 'otlp.url';
 
-const Duration _defaultCacheTtl = Duration(hours: 6);
+const Duration _defaultCacheTtl = Duration(minutes: 10);
+const Duration _maxRemoteConfigStale = Duration(hours: 48);
 
 const String _configOwnerKey = 'remote_config.owner';
 const String _configRepoKey = 'remote_config.repo';
@@ -99,31 +100,27 @@ Future<RemoteConfig?> getRemoteConfig({
   Duration cacheTtl = _defaultCacheTtl,
   Duration timeout = const Duration(seconds: 8),
 }) async {
-  if (!forceRefresh) {
-    final lastMs = int.tryParse(
-          (await RustKvStore.getString(_remoteConfigLastFetchMsKey)) ?? '',
-        ) ??
-        0;
-    final nowMs = DateTime.now().millisecondsSinceEpoch;
-    if (lastMs > 0 && nowMs - lastMs < cacheTtl.inMilliseconds) {
-      final cached = await loadCachedRemoteConfig();
-      if (cached != null) {
-        remoteConfigSignal.value = cached;
-        return cached;
-      }
+  final nowMs = DateTime.now().millisecondsSinceEpoch;
+  final lastMs = int.tryParse(
+        (await RustKvStore.getString(_remoteConfigLastFetchMsKey)) ?? '',
+      ) ??
+      0;
+
+  if (!forceRefresh && lastMs > 0 && nowMs - lastMs < cacheTtl.inMilliseconds) {
+    final cached = await loadCachedRemoteConfig();
+    if (cached != null) {
+      remoteConfigSignal.value = cached;
+      return cached;
     }
   }
 
   final fetched = await _fetchRemoteConfig(timeout: timeout);
-  if (fetched == null) {
-    final cached = await loadCachedRemoteConfig();
-    if (cached != null) {
-      remoteConfigSignal.value = cached;
-    }
-    return cached;
+  if (fetched != null) {
+    remoteConfigSignal.value = fetched;
+    return fetched;
   }
-  remoteConfigSignal.value = fetched;
-  return fetched;
+
+  return _handleFetchFailure(lastMs, nowMs);
 }
 
 Future<void> _syncOtlpUrl(String? otlpUrl) async {
@@ -209,4 +206,26 @@ Future<RemoteConfig?> _fetchRemoteConfig({required Duration timeout}) async {
   } finally {
     client.close(force: true);
   }
+}
+
+Future<RemoteConfig?> _handleFetchFailure(int lastMs, int nowMs) async {
+  final cached = await loadCachedRemoteConfig();
+  if (cached != null) {
+    remoteConfigSignal.value = cached;
+  } else {
+    remoteConfigSignal.value = null;
+  }
+
+  if (lastMs > 0 && nowMs - lastMs >= _maxRemoteConfigStale.inMilliseconds) {
+    await _clearCachedRemoteConfig();
+    remoteConfigSignal.value = null;
+    return null;
+  }
+
+  return cached;
+}
+
+Future<void> _clearCachedRemoteConfig() async {
+  await RustKvStore.remove(_remoteConfigBodyKey);
+  await RustKvStore.remove(_remoteConfigLastFetchMsKey);
 }

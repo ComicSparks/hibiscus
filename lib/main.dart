@@ -12,6 +12,7 @@ import 'package:hibiscus/src/ui/theme/app_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hibiscus/src/state/user_state.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
+import 'package:hibiscus/src/state/host_state.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/services/app_logger.dart';
 import 'package:hibiscus/src/services/update_service.dart';
@@ -48,6 +49,7 @@ class _AppEntryState extends State<AppEntry> {
     debugPrint('App Support Directory: ${appSupportDir.path}');
     await init_api.initApp(dataPath: appSupportDir.path);
     AppLogger.installGlobalHandlers();
+    await activeHostState.init();
     await userState.checkLoginStatus();
     await settingsState.init();
     await browserState.init();

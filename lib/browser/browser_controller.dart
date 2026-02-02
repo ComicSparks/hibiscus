@@ -48,7 +48,7 @@ class BrowserController {
         finalUrl = 'https://$finalUrl';
       } else {
         // 否则当作搜索
-        finalUrl = 'https://www.google.com/search?q=${Uri.encodeComponent(finalUrl)}';
+        finalUrl = 'https://www.bing.com/search?q=${Uri.encodeComponent(finalUrl)}';
       }
     }
 

@@ -103,7 +103,11 @@ pub async fn sync_history(force_upload: bool) -> anyhow::Result<ApiSyncStatus> {
     let (remote_records, decrypt_ok) =
         match webdav::download_and_parse_history(&client, encryption_key).await {
             Ok(r) => r,
-            Err(e) => return Ok(ApiSyncStatus::NetworkError { message: e.to_string() }),
+            Err(e) => {
+                return Ok(ApiSyncStatus::NetworkError {
+                    message: e.to_string(),
+                })
+            }
         };
 
     if !decrypt_ok && !force_upload {
@@ -145,7 +149,11 @@ pub async fn sync_history(force_upload: bool) -> anyhow::Result<ApiSyncStatus> {
     // 5. 上传到云端
     let new_filename = match webdav::upload_history(&client, &sync_records, encryption_key).await {
         Ok(f) => f,
-        Err(e) => return Ok(ApiSyncStatus::NetworkError { message: e.to_string() }),
+        Err(e) => {
+            return Ok(ApiSyncStatus::NetworkError {
+                message: e.to_string(),
+            })
+        }
     };
 
     // 6. 清理旧文件
@@ -189,21 +197,21 @@ pub async fn update_last_sync_time() -> anyhow::Result<bool> {
 #[frb]
 pub async fn should_auto_sync() -> anyhow::Result<bool> {
     let settings = get_webdav_settings().await?;
-    
+
     // 未配置
     if settings.url.is_empty() {
         return Ok(false);
     }
-    
+
     // 未启用自动同步
     if settings.auto_sync_interval <= 0 {
         return Ok(false);
     }
-    
+
     // 检查上次同步时间
     let last_sync = get_last_sync_time().await?.unwrap_or(0);
     let now = chrono::Utc::now().timestamp();
     let interval_seconds = settings.auto_sync_interval as i64 * 60;
-    
+
     Ok(now - last_sync >= interval_seconds)
 }

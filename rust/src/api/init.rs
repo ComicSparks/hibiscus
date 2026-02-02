@@ -112,27 +112,36 @@ fn init_logging(log_dir: &Path) -> anyhow::Result<()> {
 
 /// 加载保存的 Cookies
 async fn load_saved_cookies() -> anyhow::Result<()> {
-    let cookies = storage::get_cookies("hanime1.me")?;
+    for host in network::HANIME_HOSTNAMES {
+        let cookies = storage::get_cookies(host)?;
+        if cookies.is_empty() {
+            continue;
+        }
 
-    if !cookies.is_empty() {
-        let cookie_str: String = cookies
+        let cookie_str = cookies
             .iter()
             .map(|(k, v)| format!("{}={}", k, v))
             .collect::<Vec<_>>()
             .join("; ");
 
-        network::set_cookies(&cookie_str)?;
-        tracing::info!("Loaded {} cookies from storage", cookies.len());
+        if !cookie_str.is_empty() {
+            network::set_cookies(&cookie_str, Some(host))?;
+            tracing::info!("Loaded {} cookies for {}", cookies.len(), host);
+        }
     }
 
     Ok(())
 }
 
 /// 设置 Cookies（从 WebView 获取后调用）
+/// domain: 可选的域名，如果不提供则使用当前活跃域名
 #[frb]
-pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
+pub async fn set_cookies(cookie_string: String, domain: Option<String>) -> anyhow::Result<()> {
+    // 使用传入的域名或当前活跃域名
+    let host = domain.unwrap_or_else(|| network::get_active_domain().host.clone());
+    
     // 设置到网络模块
-    network::set_cookies(&cookie_string)?;
+    network::set_cookies(&cookie_string, Some(&host))?;
 
     // 解析并保存到数据库
     let mut last_expires: Option<i64> = None;
@@ -168,7 +177,7 @@ pub async fn set_cookies(cookie_string: String) -> anyhow::Result<()> {
         if let Some(idx) = trimmed.find('=') {
             let name = trimmed[..idx].trim();
             let value = trimmed[idx + 1..].trim();
-            storage::save_cookie("hanime1.me", name, value, "/", last_expires)?;
+            storage::save_cookie(&host, name, value, "/", last_expires)?;
             last_expires = None;
         }
     }
@@ -195,8 +204,9 @@ pub async fn check_cloudflare() -> anyhow::Result<bool> {
 /// 清除所有 Cookies（登出时调用）
 #[frb]
 pub async fn clear_cookies() -> anyhow::Result<()> {
-    storage::clear_cookies()?;
-    let _ = network::clear_cookies();
+    let host = network::get_active_domain().cookie_domain().to_string();
+    storage::clear_cookies(Some(&host))?;
+    let _ = network::clear_cookies(Some(&host));
     tracing::info!("All cookies cleared");
     Ok(())
 }
@@ -211,18 +221,31 @@ pub fn report_flutter_error(message: String, stack: Option<String>) {
 ///
 /// `level` 支持：`trace|debug|info|warn|error`（大小写不敏感），其他值默认按 `info` 处理。
 #[frb]
-pub fn report_flutter_log(level: String, message: String, tag: Option<String>, stack: Option<String>) {
+pub fn report_flutter_log(
+    level: String,
+    message: String,
+    tag: Option<String>,
+    stack: Option<String>,
+) {
     let level = level.to_ascii_lowercase();
     let tag = tag.unwrap_or_else(|| "app".to_string());
 
     let stack = stack.unwrap_or_default();
     if !stack.is_empty() {
         match level.as_str() {
-            "trace" => tracing::trace!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
-            "debug" => tracing::debug!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
+            "trace" => {
+                tracing::trace!(target: "flutter", tag = %tag, msg = %message, stack = %stack)
+            }
+            "debug" => {
+                tracing::debug!(target: "flutter", tag = %tag, msg = %message, stack = %stack)
+            }
             "info" => tracing::info!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
-            "warn" | "warning" => tracing::warn!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
-            "error" => tracing::error!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
+            "warn" | "warning" => {
+                tracing::warn!(target: "flutter", tag = %tag, msg = %message, stack = %stack)
+            }
+            "error" => {
+                tracing::error!(target: "flutter", tag = %tag, msg = %message, stack = %stack)
+            }
             _ => tracing::info!(target: "flutter", tag = %tag, msg = %message, stack = %stack),
         }
     } else {
@@ -290,7 +313,8 @@ pub fn export_logs_zip() -> anyhow::Result<String> {
         let Some(name) = path.file_name().and_then(|s| s.to_str()) else {
             continue;
         };
-        if !name.starts_with("hibiscus_") || path.extension().and_then(|s| s.to_str()) != Some("log")
+        if !name.starts_with("hibiscus_")
+            || path.extension().and_then(|s| s.to_str()) != Some("log")
         {
             continue;
         }
@@ -348,7 +372,9 @@ pub fn cleanup_logs(
     cleanup_logs_internal(
         &log_dir,
         max_total_bytes.unwrap_or(LOG_TOTAL_MAX_BYTES_DEFAULT),
-        max_files.map(|v| v as usize).unwrap_or(LOG_MAX_FILES_DEFAULT),
+        max_files
+            .map(|v| v as usize)
+            .unwrap_or(LOG_MAX_FILES_DEFAULT),
         max_age_days.unwrap_or(LOG_MAX_AGE_DAYS_DEFAULT),
     )?;
     Ok(())
@@ -363,11 +389,11 @@ pub fn get_version() -> String {
 /// 检查网络连接
 #[frb]
 pub async fn check_network() -> anyhow::Result<bool> {
-    match reqwest::get("https://www.google.com").await {
+    match reqwest::get("https://www.bing.com").await {
         Ok(_) => Ok(true),
         Err(_) => {
             // 尝试备用地址
-            match reqwest::get("https://www.baidu.com").await {
+            match reqwest::get("https://www.google.com").await {
                 Ok(_) => Ok(true),
                 Err(_) => Ok(false),
             }
@@ -513,7 +539,9 @@ fn cleanup_logs_internal(
         let Some(name) = path.file_name().and_then(|s| s.to_str()) else {
             continue;
         };
-        if !name.starts_with("hibiscus_") || path.extension().and_then(|s| s.to_str()) != Some("log") {
+        if !name.starts_with("hibiscus_")
+            || path.extension().and_then(|s| s.to_str()) != Some("log")
+        {
             continue;
         }
         let meta = match entry.metadata() {
@@ -543,7 +571,9 @@ fn cleanup_logs_internal(
         let Some(name) = path.file_name().and_then(|s| s.to_str()) else {
             continue;
         };
-        if !name.starts_with("hibiscus_") || path.extension().and_then(|s| s.to_str()) != Some("log") {
+        if !name.starts_with("hibiscus_")
+            || path.extension().and_then(|s| s.to_str()) != Some("log")
+        {
             continue;
         }
         let meta = match entry.metadata() {
@@ -590,7 +620,9 @@ fn cleanup_export_zips_internal(tmp_dir: &Path) -> anyhow::Result<()> {
         let Some(name) = path.file_name().and_then(|s| s.to_str()) else {
             continue;
         };
-        if !name.starts_with("hibiscus_logs_") || path.extension().and_then(|s| s.to_str()) != Some("zip") {
+        if !name.starts_with("hibiscus_logs_")
+            || path.extension().and_then(|s| s.to_str()) != Some("zip")
+        {
             continue;
         }
         let meta = match entry.metadata() {

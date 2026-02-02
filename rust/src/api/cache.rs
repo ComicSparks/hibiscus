@@ -1,6 +1,8 @@
 // 缓存相关 API（暴露给 Flutter）
 
-use crate::core::cache::{image_cache, utils, web_cache, IMAGE_CACHE_EXPIRE_MS, WEB_CACHE_EXPIRE_MS};
+use crate::core::cache::{
+    image_cache, utils, web_cache, IMAGE_CACHE_EXPIRE_MS, WEB_CACHE_EXPIRE_MS,
+};
 use flutter_rust_bridge::frb;
 
 /// 缓存大小信息

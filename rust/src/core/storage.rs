@@ -194,7 +194,7 @@ pub(crate) fn get_all_history_for_sync() -> Result<Vec<HistoryRecord>> {
 pub(crate) fn get_history_count() -> Result<i64> {
     let db = get_db()?;
     let mut stmt = db.prepare(
-        "SELECT COUNT(1) FROM history WHERE deleted_at IS NULL OR deleted_at < watched_at"
+        "SELECT COUNT(1) FROM history WHERE deleted_at IS NULL OR deleted_at < watched_at",
     )?;
     let count: i64 = stmt.query_row([], |row| row.get(0))?;
     Ok(count)
@@ -249,17 +249,17 @@ pub fn clear_history() -> Result<()> {
 pub fn cleanup_expired_history() -> Result<u64> {
     let db = get_db()?;
     let one_month_ago = chrono::Utc::now().timestamp() - 30 * 24 * 60 * 60;
-    
+
     // 删除已逻辑删除超过1个月的记录
     let deleted = db.execute(
         "DELETE FROM history WHERE deleted_at IS NOT NULL AND deleted_at >= watched_at AND deleted_at < ?1",
         params![one_month_ago],
     )?;
-    
+
     if deleted > 0 {
         tracing::info!("Cleaned up {} expired history records", deleted);
     }
-    
+
     Ok(deleted as u64)
 }
 
@@ -278,13 +278,13 @@ pub fn merge_history_record(
     deleted_at: Option<i64>,
 ) -> Result<()> {
     let db = get_db()?;
-    
+
     // 先查询现有记录
     let mut stmt = db.prepare(
         "SELECT watched_at, deleted_at, watch_progress, total_duration FROM history WHERE video_id = ?1"
     )?;
     let mut rows = stmt.query(params![video_id])?;
-    
+
     if let Some(row) = rows.next()? {
         let local_watched_at: i64 = row.get(0)?;
         let local_deleted_at: Option<i64> = row.get(1)?;
@@ -292,7 +292,7 @@ pub fn merge_history_record(
         let local_total_duration: i32 = row.get(3)?;
         drop(rows);
         drop(stmt);
-        
+
         // 合并逻辑
         let final_watched_at = local_watched_at.max(watched_at);
         let final_deleted_at = match (local_deleted_at, deleted_at) {
@@ -301,20 +301,28 @@ pub fn merge_history_record(
             (None, Some(b)) => Some(b),
             (None, None) => None,
         };
-        
+
         // 浏览进度以 watched_at 最大的为准
         let (final_progress, final_total_duration) = if watched_at > local_watched_at {
             (watch_progress, total_duration)
         } else {
             (local_watch_progress, local_total_duration)
         };
-        
+
         db.execute(
             "UPDATE history SET title = ?1, cover_url = ?2, duration = ?3, 
              watch_progress = ?4, total_duration = ?5, watched_at = ?6, deleted_at = ?7 
              WHERE video_id = ?8",
-            params![title, cover_url, duration, final_progress, final_total_duration, 
-                    final_watched_at, final_deleted_at, video_id],
+            params![
+                title,
+                cover_url,
+                duration,
+                final_progress,
+                final_total_duration,
+                final_watched_at,
+                final_deleted_at,
+                video_id
+            ],
         )?;
     } else {
         drop(rows);
@@ -326,7 +334,7 @@ pub fn merge_history_record(
             params![video_id, title, cover_url, duration, watch_progress, total_duration, watched_at, deleted_at],
         )?;
     }
-    
+
     Ok(())
 }
 
@@ -675,9 +683,8 @@ pub fn create_download_folder(id: &str, name: &str) -> Result<()> {
 /// 获取所有下载文件夹
 pub(crate) fn get_download_folders() -> Result<Vec<DownloadFolderRecord>> {
     let db = get_db()?;
-    let mut stmt = db.prepare(
-        "SELECT id, name, created_at FROM download_folders ORDER BY created_at ASC",
-    )?;
+    let mut stmt =
+        db.prepare("SELECT id, name, created_at FROM download_folders ORDER BY created_at ASC")?;
 
     let records = stmt.query_map([], |row| {
         Ok(DownloadFolderRecord {
@@ -714,10 +721,7 @@ pub fn delete_download_folder(id: &str) -> Result<()> {
         params![id],
     )?;
     // 再删除文件夹
-    db.execute(
-        "DELETE FROM download_folders WHERE id = ?1",
-        params![id],
-    )?;
+    db.execute("DELETE FROM download_folders WHERE id = ?1", params![id])?;
     Ok(())
 }
 
@@ -818,9 +822,8 @@ pub(crate) fn increment_telemetry_retry_count(ids: &[i64]) -> Result<()> {
         return Ok(());
     }
     let db = get_db()?;
-    let mut sql = String::from(
-        "UPDATE telemetry_queue SET retry_count = retry_count + 1 WHERE id IN (",
-    );
+    let mut sql =
+        String::from("UPDATE telemetry_queue SET retry_count = retry_count + 1 WHERE id IN (");
     for (i, _) in ids.iter().enumerate() {
         if i > 0 {
             sql.push(',');
@@ -906,9 +909,13 @@ pub fn get_cookies(domain: &str) -> Result<Vec<(String, String)>> {
 }
 
 /// 清除所有 Cookies
-pub fn clear_cookies() -> Result<()> {
+pub fn clear_cookies(domain: Option<&str>) -> Result<()> {
     let db = get_db()?;
-    db.execute("DELETE FROM cookies", [])?;
+    if let Some(domain) = domain {
+        db.execute("DELETE FROM cookies WHERE domain = ?1", params![domain])?;
+    } else {
+        db.execute("DELETE FROM cookies", [])?;
+    }
     Ok(())
 }
 

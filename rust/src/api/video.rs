@@ -11,7 +11,8 @@ use urlencoding::encode;
 /// 获取视频详情
 #[frb]
 pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail> {
-    let url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+    let base = network::base_url();
+    let url = format!("{}/watch?v={}", base, video_id);
     tracing::info!("Getting video detail: {}", url);
 
     // 尝试发起网络请求
@@ -117,11 +118,8 @@ pub async fn get_video_detail(video_id: String) -> anyhow::Result<ApiVideoDetail
 /// 获取视频评论
 #[frb]
 pub async fn get_video_comments(video_id: String, page: u32) -> anyhow::Result<ApiCommentList> {
-    let url = format!(
-        "{}/loadComment?type=video&id={}",
-        network::BASE_URL,
-        encode(&video_id)
-    );
+    let base = network::base_url();
+    let url = format!("{}/loadComment?type=video&id={}", base, encode(&video_id));
     tracing::info!("Getting video comments: {}", url);
     let body = network::get(&url).await?;
     let (_csrf_token, _current_user_id, comments) = parser::parse_video_comments(&body)?;
@@ -152,11 +150,8 @@ pub async fn get_video_comments(video_id: String, page: u32) -> anyhow::Result<A
 /// 获取评论的回复
 #[frb]
 pub async fn get_comment_replies(comment_id: String) -> anyhow::Result<Vec<ApiComment>> {
-    let url = format!(
-        "{}/loadReplies?id={}",
-        network::BASE_URL,
-        encode(&comment_id)
-    );
+    let base = network::base_url();
+    let url = format!("{}/loadReplies?id={}", base, encode(&comment_id));
     tracing::info!("Getting comment replies: {}", url);
     let body = network::get(&url).await?;
     let replies = parser::parse_comment_replies(&body)?;
@@ -215,7 +210,8 @@ pub async fn post_comment(
     reply_to: Option<String>,
 ) -> anyhow::Result<ApiComment> {
     if let Some(reply_id) = reply_to.filter(|s| !s.trim().is_empty()) {
-        let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+        let base = network::base_url();
+        let watch_url = format!("{}/watch?v={}", base, video_id);
         let html = network::get(&watch_url).await?;
         let detail = parser::parse_video_detail(&html)?;
         let Some(form_token) = detail.form_token else {
@@ -228,7 +224,7 @@ pub async fn post_comment(
             encode(&content)
         );
         let _ = network::post_with_x_csrf_token(
-            &format!("{}/replyComment", network::BASE_URL),
+            &format!("{}/replyComment", network::base_url()),
             &body,
             &form_token,
         )
@@ -247,7 +243,8 @@ pub async fn post_comment(
     }
 
     // 发布主评论：需要当前用户 id 与 form token（来自 watch 页面）
-    let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+    let base = network::base_url();
+    let watch_url = format!("{}/watch?v={}", base, video_id);
     let html = network::get(&watch_url).await?;
     let detail = parser::parse_video_detail(&html)?;
     let Some(form_token) = detail.form_token else {
@@ -265,7 +262,7 @@ pub async fn post_comment(
         encode(&content),
     );
     let _ = network::post_with_x_csrf_token(
-        &format!("{}/createComment", network::BASE_URL),
+        &format!("{}/createComment", network::base_url()),
         &body,
         &form_token,
     )

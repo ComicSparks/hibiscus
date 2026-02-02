@@ -81,7 +81,7 @@ pub async fn add_download(
         return Ok(task);
     }
 
-    let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+    let watch_url = format!("{}/watch?v={}", network::base_url(), video_id);
     let cover_path = download_cover(&video_id, &cover_url).await.ok().flatten();
     storage::add_download(
         &video_id,
@@ -481,14 +481,11 @@ pub async fn get_local_video_path(video_id: String) -> anyhow::Result<Option<Str
     let record = records.into_iter().find(|r| r.video_id == video_id);
     Ok(record.and_then(|r| {
         if r.status == storage::DownloadStatus::Completed {
-            r.save_path
-                .as_deref()
-                .and_then(basename)
-                .and_then(|name| {
-                    resolve_download_path(&name)
-                        .ok()
-                        .map(|p| p.to_string_lossy().into_owned())
-                })
+            r.save_path.as_deref().and_then(basename).and_then(|name| {
+                resolve_download_path(&name)
+                    .ok()
+                    .map(|p| p.to_string_lossy().into_owned())
+            })
         } else {
             None
         }
@@ -737,7 +734,7 @@ async fn run_download(
         .unwrap_or_else(|| "1080P".to_string());
 
     // 模拟播放：访问 watch 页获取链接 + 元数据
-    let watch_url = format!("{}/watch?v={}", network::BASE_URL, video_id);
+    let watch_url = format!("{}/watch?v={}", network::base_url(), video_id);
     tracing::info!("download simulate_playback GET {}", watch_url);
     let html = network::get(&watch_url).await?;
     let detail = parser::parse_video_detail(&html)?;
@@ -763,10 +760,14 @@ async fn run_download(
     // 尝试补齐作者信息（用于离线展示）
     if let Some(creator) = detail.creator.clone() {
         let avatar_path = if record.author_avatar_path.is_none() {
-            download_author_avatar(&video_id, &creator.id, creator.avatar_url.as_deref().unwrap_or(""))
-                .await
-                .ok()
-                .flatten()
+            download_author_avatar(
+                &video_id,
+                &creator.id,
+                creator.avatar_url.as_deref().unwrap_or(""),
+            )
+            .await
+            .ok()
+            .flatten()
         } else {
             record.author_avatar_path.clone()
         };

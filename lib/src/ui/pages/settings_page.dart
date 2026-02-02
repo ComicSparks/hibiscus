@@ -7,10 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:hibiscus/src/state/settings_state.dart';
 import 'package:hibiscus/src/state/user_state.dart';
+import 'package:hibiscus/src/state/host_state.dart';
 import 'package:hibiscus/src/ui/pages/login_page.dart';
 import 'package:hibiscus/src/ui/pages/log_viewer_page.dart';
 import 'package:hibiscus/src/ui/pages/webdav_settings_page.dart';
+import 'package:hibiscus/browser/browser_state.dart';
 import 'package:hibiscus/src/rust/api/settings.dart' as settings_api;
+import 'package:hibiscus/src/rust/api/init.dart' as init_api;
 import 'package:hibiscus/src/services/image_cache_service.dart';
 import 'package:hibiscus/src/services/log_export_service.dart';
 import 'package:hibiscus/src/services/player/player_service.dart';
@@ -36,6 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
       userState.checkLoginStatus();
     }
     _loadCacheSize();
+    
     unawaited(preloadUpdateRepo());
     unawaited(refreshRecommendations());
   }
@@ -58,6 +62,87 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Future<void> _showHostPicker(BuildContext context, ActiveHostInfo current) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return SimpleDialog(
+          title: const Text('选择访问域名'),
+          children: activeHostState.choices.map((choice) {
+            final isSelected = choice.host == current.host &&
+                choice.useCustomDns == current.useCustomDns;
+            return ListTile(
+              title: Text(choice.label),
+              subtitle: Text(choice.description),
+              trailing: isSelected
+                  ? const Icon(Icons.check, color: Colors.blue)
+                  : null,
+              onTap: () async {
+                Navigator.of(dialogContext).pop();
+                await _applyHostChoice(choice, context);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Future<void> _applyHostChoice(HostChoice choice, BuildContext context) async {
+    try {
+      await activeHostState.setActiveHost(choice);
+      await userState.checkLoginStatus();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('已切换到 ${choice.label}，登录状态独立')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('切换域名失败：$e')),
+      );
+    }
+  }
+
+  Future<void> _clearDomainCookies(
+    BuildContext context,
+    ActiveHostInfo current,
+  ) async {
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('清除登录'),
+            content: Text('确认清除 ${current.label} 的 Cookies 和登录状态？'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('取消'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('确认'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (!confirmed) return;
+
+    try {
+      await init_api.clearCookies();
+      await userState.checkLoginStatus();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('已清除 ${current.label} 的登录信息')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('清除登录失败：$e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -66,6 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(title: const Text('设置')),
       body: Watch((context) {
         final settings = settingsState.settings.value;
+        final activeHostInfo = activeHostState.activeHost.value;
         final loginStatus = userState.loginStatus.value;
         final user = userState.userInfo.value;
         final updateStatus = updateStatusSignal.value;
@@ -207,6 +293,42 @@ class _SettingsPageState extends State<SettingsPage> {
                   MaterialPageRoute(builder: (_) => const WebDavSettingsPage()),
                 );
               },
+            ),
+
+            const Divider(),
+
+            _SectionHeader(title: '网络'),
+            Watch((context) {
+              final ua = browserState.userAgent.value;
+              return ListTile(
+                title: const Text('User-Agent (只读)'),
+                subtitle: Text(
+                  ua ?? '尚未捕获，请先打开浏览器页面',
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }),
+            ListTile(
+              title: const Text('访问域名'),
+              subtitle: Text(activeHostInfo.label),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showHostPicker(context, activeHostInfo),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                activeHostInfo.useCustomDns
+                    ? '使用内置 Cloudflare DNS（WebView 仍走系统 DNS）。'
+                    : '使用官方 DNS，适用于未污染的网络环境。',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            ListTile(
+              title: const Text('清除当前域名登录'),
+              subtitle: Text('${activeHostInfo.label} 的 Cookies 和登录状态会被清除'),
+              trailing: const Icon(Icons.delete_outline),
+              onTap: () => _clearDomainCookies(context, activeHostInfo),
             ),
 
             const Divider(),

@@ -18,7 +18,7 @@ pub const LIST_TYPE_SAVE: &str = "SL"; // 已保存
 /// 获取当前用户信息
 #[frb]
 pub async fn get_current_user() -> anyhow::Result<Option<ApiUserInfo>> {
-    let url = format!("{}/", network::BASE_URL);
+    let url = format!("{}/", network::base_url());
     match network::get(&url).await {
         Ok(html) => {
             let home = parser::parse_homepage(&html)?;
@@ -31,12 +31,12 @@ pub async fn get_current_user() -> anyhow::Result<Option<ApiUserInfo>> {
             let _ = storage::save_setting(LAST_USERNAME_KEY, &name);
             otlp::update_span_attribute("user.account", Some(name.clone())).await;
             // if changed {
-                otlp::record_event(
-                    "auth",
-                    "user.login",
-                    vec![KeyValue::new("user.account", name.clone())],
-                )
-                .await;
+            otlp::record_event(
+                "auth",
+                "user.login",
+                vec![KeyValue::new("user.account", name.clone())],
+            )
+            .await;
             // }
             Ok(Some(ApiUserInfo {
                 id: String::new(),
@@ -64,8 +64,9 @@ pub async fn is_logged_in() -> anyhow::Result<bool> {
 /// 登出
 #[frb]
 pub async fn logout() -> anyhow::Result<bool> {
-    storage::clear_cookies()?;
-    let _ = network::clear_cookies();
+    let host = network::get_active_domain().host.clone();
+    storage::clear_cookies(Some(&host))?;
+    let _ = network::clear_cookies(Some(&host));
     otlp::update_span_attribute("user.account", None).await;
     //otlp::record_event("auth", "user.logout", vec![]).await;
     Ok(true)
@@ -82,7 +83,7 @@ pub async fn get_favorites(page: u32) -> anyhow::Result<ApiFavoriteList> {
 pub async fn get_my_list(list_type: String, page: u32) -> anyhow::Result<ApiFavoriteList> {
     let url = format!(
         "{}/playlist?list={}&page={}",
-        network::BASE_URL,
+        network::base_url(),
         list_type,
         page
     );
@@ -140,7 +141,7 @@ pub async fn add_to_favorites(
     x_csrf_token: String,
     user_id: String,
 ) -> anyhow::Result<bool> {
-    let url = format!("{}/like", network::BASE_URL);
+    let url = format!("{}/like", network::base_url());
     let body = format!(
         "like-foreign-id={}&like-status=1&_token={}&like-user-id={}&like-is-positive=1",
         video_code, form_token, user_id
@@ -166,7 +167,7 @@ pub async fn remove_from_favorites(
     x_csrf_token: String,
     user_id: String,
 ) -> anyhow::Result<bool> {
-    let url = format!("{}/like", network::BASE_URL);
+    let url = format!("{}/like", network::base_url());
     let body = format!(
         "like-foreign-id={}&like-status=0&_token={}&like-user-id={}&like-is-positive=1",
         video_code, form_token, user_id
@@ -192,7 +193,7 @@ pub async fn delete_from_list(
     _form_token: String,
     x_csrf_token: String,
 ) -> anyhow::Result<bool> {
-    let url = format!("{}/deletePlayitem", network::BASE_URL);
+    let url = format!("{}/deletePlayitem", network::base_url());
     let body = format!("playlist_id={}&video_id={}&count=1", list_type, video_code);
 
     match network::post_with_x_csrf_token(&url, &body, &x_csrf_token).await {
@@ -212,7 +213,7 @@ pub async fn delete_from_list(
 pub async fn get_subscribed_authors(
     page: u32,
 ) -> anyhow::Result<Vec<crate::api::models::ApiAuthorInfo>> {
-    let url = format!("{}/subscriptions?page={}", network::BASE_URL, page);
+    let url = format!("{}/subscriptions?page={}", network::base_url(), page);
     tracing::info!("Getting subscriptions: {}", url);
 
     match network::get(&url).await {
@@ -240,11 +241,18 @@ pub async fn get_subscribed_authors(
 
 /// 获取我的订阅页（作者 + 订阅更新视频）
 #[frb]
-pub async fn get_my_subscriptions(page: u32, query: Option<String>) -> anyhow::Result<ApiSubscriptionsPage> {
-    let mut url = format!("{}/subscriptions?page={}", network::BASE_URL, page);
+pub async fn get_my_subscriptions(
+    page: u32,
+    query: Option<String>,
+) -> anyhow::Result<ApiSubscriptionsPage> {
+    let mut url = format!("{}/subscriptions?page={}", network::base_url(), page);
     if let Some(q) = query.as_ref().and_then(|s| {
         let trimmed = s.trim();
-        if trimmed.is_empty() { None } else { Some(trimmed) }
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed)
+        }
     }) {
         url.push_str("&query=");
         url.push_str(&urlencoding::encode(q));
@@ -310,7 +318,7 @@ pub async fn subscribe_author(
         form_token.len(),
         x_csrf_token.len()
     );
-    let url = format!("{}/subscribe", network::BASE_URL);
+    let url = format!("{}/subscribe", network::base_url());
     let body = format!(
         // 参考 Han1meViewer / HAR：订阅时 subscribe-status 为空；取消订阅时为 "1"
         "_token={}&subscribe-user-id={}&subscribe-artist-id={}&subscribe-status=",
@@ -344,7 +352,7 @@ pub async fn unsubscribe_author(
         form_token.len(),
         x_csrf_token.len()
     );
-    let url = format!("{}/subscribe", network::BASE_URL);
+    let url = format!("{}/subscribe", network::base_url());
     let body = format!(
         // 参考 Han1meViewer / HAR：取消订阅时 subscribe-status 为 "1"
         "_token={}&subscribe-user-id={}&subscribe-artist-id={}&subscribe-status=1",
@@ -473,18 +481,23 @@ pub async fn set_cookies(_cookies: Vec<(String, String)>) -> anyhow::Result<bool
 #[frb]
 pub async fn set_cf_clearance(cookie_value: String) -> anyhow::Result<bool> {
     // TODO: 保存 cf_clearance Cookie
-    network::set_cookies(&format!("cf_clearance={}", cookie_value))?;
+    let host = network::get_active_domain().host.clone();
+    network::set_cookies(&format!("cf_clearance={}", cookie_value), Some(&host))?;
     Ok(true)
 }
 
 /// 获取需要 Cloudflare 验证时的 URL 和 User-Agent
 #[frb]
 pub async fn get_cloudflare_challenge_info() -> anyhow::Result<Option<ApiCloudflareChallenge>> {
-    // TODO: 返回当前需要验证的信息
     Ok(Some(ApiCloudflareChallenge {
-        url: network::BASE_URL.to_string(),
-        user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36".to_string(),
+        url: network::base_url().to_string(),
+        user_agent: network::get_or_init_user_agent()?,
     }))
+}
+/// 重新加载 UserAgent（当 Flutter 端保存了新的 UA 后调用）
+#[frb]
+pub async fn reload_user_agent() -> anyhow::Result<String> {
+    network::reload_user_agent()
 }
 
 // ============================================================================
@@ -494,7 +507,7 @@ pub async fn get_cloudflare_challenge_info() -> anyhow::Result<Option<ApiCloudfl
 /// 获取登录页面的表单 `_token`
 #[frb]
 pub async fn get_login_form_token() -> anyhow::Result<String> {
-    let url = format!("{}/login", network::BASE_URL);
+    let url = format!("{}/login", network::base_url());
     tracing::info!("Getting login page: {}", url);
 
     match network::get(&url).await {
@@ -530,7 +543,7 @@ pub async fn login(
     form_token: String,
     x_csrf_token: String,
 ) -> anyhow::Result<bool> {
-    let url = format!("{}/login", network::BASE_URL);
+    let url = format!("{}/login", network::base_url());
     let body = format!(
         "_token={}&email={}&password={}",
         urlencoding::encode(&form_token),
@@ -541,7 +554,7 @@ pub async fn login(
     match network::post_with_x_csrf_token(&url, &body, &x_csrf_token).await {
         Ok(_) => {
             // 检查是否登录成功（再次访问 /login 应该返回 404 或重定向）
-            match network::get(&format!("{}/login", network::BASE_URL)).await {
+            match network::get(&format!("{}/login", network::base_url())).await {
                 Ok(html) => {
                     // 如果还能看到登录表单，说明登录失败
                     if html.contains("input[name=_token]") {

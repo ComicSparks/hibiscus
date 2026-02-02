@@ -15,8 +15,12 @@ Future<void> initApp({required String dataPath}) =>
     RustLib.instance.api.crateApiInitInitApp(dataPath: dataPath);
 
 /// 设置 Cookies（从 WebView 获取后调用）
-Future<void> setCookies({required String cookieString}) =>
-    RustLib.instance.api.crateApiInitSetCookies(cookieString: cookieString);
+/// domain: 可选的域名，如果不提供则使用当前活跃域名
+Future<void> setCookies({required String cookieString, String? domain}) =>
+    RustLib.instance.api.crateApiInitSetCookies(
+      cookieString: cookieString,
+      domain: domain,
+    );
 
 /// 检查是否需要 Cloudflare 验证
 Future<bool> checkCloudflare() =>

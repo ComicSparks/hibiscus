@@ -144,7 +144,7 @@ fn derive_key(password: &str) -> [u8; 32] {
     } else {
         password
     };
-    
+
     // 使用简单的 PBKDF-like 派生（多次 SHA256）
     let mut key = [0u8; 32];
     let hash = md5::compute(format!("hibiscus_sync_{}_salt", password).as_bytes());
@@ -157,19 +157,19 @@ fn derive_key(password: &str) -> [u8; 32] {
 /// AES-GCM 加密
 pub fn encrypt(plaintext: &[u8], password: &str) -> Result<Vec<u8>> {
     let key = derive_key(password);
-    let cipher = Aes256Gcm::new_from_slice(&key)
-        .map_err(|e| anyhow!("Invalid key length: {:?}", e))?;
-    
+    let cipher =
+        Aes256Gcm::new_from_slice(&key).map_err(|e| anyhow!("Invalid key length: {:?}", e))?;
+
     // 生成随机 nonce
     let mut nonce_bytes = [0u8; 12];
     use rand::RngCore;
     rand::thread_rng().fill_bytes(&mut nonce_bytes);
     let nonce = Nonce::from_slice(&nonce_bytes);
-    
+
     let ciphertext = cipher
         .encrypt(nonce, plaintext)
         .map_err(|e| anyhow!("Encryption failed: {}", e))?;
-    
+
     // 返回 nonce + ciphertext
     let mut result = nonce_bytes.to_vec();
     result.extend(ciphertext);
@@ -181,16 +181,16 @@ pub fn decrypt(ciphertext: &[u8], password: &str) -> Result<Vec<u8>> {
     if ciphertext.len() < 12 {
         return Err(anyhow!("Ciphertext too short"));
     }
-    
+
     let key = derive_key(password);
-    let cipher = Aes256Gcm::new_from_slice(&key)
-        .map_err(|e| anyhow!("Invalid key length: {:?}", e))?;
-    
+    let cipher =
+        Aes256Gcm::new_from_slice(&key).map_err(|e| anyhow!("Invalid key length: {:?}", e))?;
+
     let nonce = Nonce::from_slice(&ciphertext[..12]);
     let plaintext = cipher
         .decrypt(nonce, &ciphertext[12..])
         .map_err(|_| anyhow!("Decryption failed: invalid key or corrupted data"))?;
-    
+
     Ok(plaintext)
 }
 
@@ -224,7 +224,7 @@ pub fn serialize_history(records: &[SyncHistoryRecord]) -> String {
 pub fn deserialize_history(content: &str) -> (Vec<SyncHistoryRecord>, bool) {
     let mut records = Vec::new();
     let mut is_complete = false;
-    
+
     for line in content.lines() {
         let line = line.trim();
         if line.is_empty() {
@@ -238,7 +238,7 @@ pub fn deserialize_history(content: &str) -> (Vec<SyncHistoryRecord>, bool) {
             records.push(record);
         }
     }
-    
+
     (records, is_complete)
 }
 
@@ -260,10 +260,7 @@ pub fn extract_timestamp(filename: &str) -> Option<i64> {
 #[derive(Debug, Clone)]
 pub enum SyncResult {
     /// 同步成功
-    Success {
-        merged_count: usize,
-        uploaded: bool,
-    },
+    Success { merged_count: usize, uploaded: bool },
     /// 解密失败，需要用户确认
     DecryptionFailed,
     /// 网络错误
@@ -283,7 +280,7 @@ pub async fn download_and_parse_history(
         return Ok((Vec::new(), true));
     }
     tracing::info!("WebDAV sync: found {} remote files", files.len());
-    
+
     // 按时间戳排序（降序）
     let mut files_with_ts: Vec<(String, i64)> = files
         .into_iter()
@@ -293,7 +290,7 @@ pub async fn download_and_parse_history(
         })
         .collect();
     files_with_ts.sort_by(|a, b| b.1.cmp(&a.1));
-    
+
     // 递归查找有效的完整文件（优先最新；若不完整/损坏则向前找）
     let mut saw_decrypt_failure = false;
     for (filename, _ts) in &files_with_ts {
@@ -302,7 +299,7 @@ pub async fn download_and_parse_history(
             Ok(d) => d,
             Err(_) => continue,
         };
-        
+
         // 尝试解密
         let decrypted = match decrypt(&data, password) {
             Ok(d) => d,
@@ -314,7 +311,7 @@ pub async fn download_and_parse_history(
                 continue;
             }
         };
-        
+
         // 解压
         let decompressed = match decompress(&decrypted) {
             Ok(d) => d,
@@ -323,11 +320,11 @@ pub async fn download_and_parse_history(
                 continue;
             }
         };
-        
+
         // 解析
         let content = String::from_utf8_lossy(&decompressed);
         let (records, is_complete) = deserialize_history(&content);
-        
+
         if is_complete {
             tracing::info!(
                 "WebDAV sync: using remote file {filename} with {} records",
@@ -338,7 +335,7 @@ pub async fn download_and_parse_history(
         // 如果不完整，继续查找更旧的文件
         tracing::warn!("WebDAV sync: remote file {filename} missing end marker, fallback");
     }
-    
+
     // 没有找到完整文件
     tracing::warn!("WebDAV sync: no complete file found");
     Ok((Vec::new(), !saw_decrypt_failure))
@@ -352,31 +349,31 @@ pub async fn upload_history(
 ) -> Result<String> {
     // 序列化
     let content = serialize_history(records);
-    
+
     // 压缩
     let compressed = compress(content.as_bytes())?;
-    
+
     // 加密
     let encrypted = encrypt(&compressed, password)?;
-    
+
     // 生成文件名
     let filename = generate_sync_filename();
-    
+
     // 上传
     client.upload(&filename, &encrypted).await?;
-    
+
     Ok(filename)
 }
 
 /// 清理旧的同步文件（保留最新的）
 pub async fn cleanup_old_files(client: &WebDavClient, keep_latest: &str) -> Result<()> {
     let files = client.list_files().await?;
-    
+
     for file in files {
         if file != keep_latest {
             let _ = client.delete(&file).await;
         }
     }
-    
+
     Ok(())
 }

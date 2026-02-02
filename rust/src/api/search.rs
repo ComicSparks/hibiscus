@@ -11,11 +11,10 @@ use chrono::Datelike;
 use flutter_rust_bridge::frb;
 use std::time::Duration;
 
-const BASE_URL: &str = "https://hanime1.me";
-
 /// 构建搜索 URL
 fn build_search_url(filters: &ApiSearchFilters) -> String {
-    let mut url = format!("{}/search?", BASE_URL);
+    let base = network::base_url();
+    let mut url = format!("{}/search?", base);
     let mut params = vec![];
 
     // 搜索关键词
@@ -384,7 +383,8 @@ pub async fn get_homepage() -> anyhow::Result<ApiHomePage> {
         cache_key,
         Duration::from_millis(WEB_CACHE_EXPIRE_MS as u64),
         || async {
-            let url = format!("{}/", BASE_URL);
+            let base = network::base_url();
+            let url = format!("{}/", base);
             tracing::info!("Getting homepage: {}", url);
 
             match network::get(&url).await {
